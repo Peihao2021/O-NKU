@@ -1,0 +1,71 @@
+{include file="header.htm" /}
+<body class="bodystyle" style="cursor: default; -moz-user-select: inherit; min-width:400px;">
+<div class="page" style="min-width: 400px;">
+    <div style="border: 1px solid rgb(204, 204, 204);padding: 10px;margin: 10px 20px;">
+        <p style="color: #0C0C0C;font-size: 14px;"><strong>安全建议:</strong></p>
+        <p>1、本检测uploads目录下是否被人非法上传了存在木马的图片；</p>
+    </div>
+    <form class="form-horizontal" id="post_form" action="{:weapp_url('Systemdoctor/Systemdoctor/virus_upload')}" method="post">
+        <div class="ncap-form-default">
+
+            <dl class="row">
+                <dt class="tit">
+                    <label for="info">&nbsp;</label>
+                </dt>
+                <dd class="opt">
+                    <a href="JavaScript:void(0);" class="ncap-btn-big ncap-btn-green" id="submitBtn">开始检测</a>
+                </dd>
+            </dl>
+        </div>
+    </form>
+    <div id="virus_files">
+        <p id="virus_files_p" style="padding-bottom: 10px;"><strong style="font-size: 14px;color: forestgreen;">检测结果：</strong>(结果仅供参考，请人工排查核对，请务必查看源码后才删除非法文件)</p>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    //检查
+    $("#submitBtn").click(function(){
+        $("#virus_files_p").siblings().remove();
+        var  url = "{:weapp_url('Systemdoctor/Systemdoctor/virus_channel')}";
+        var index = layer.open({
+            type: 2,
+            title: '开始扫描',
+            area: ['500px', '300px'],
+            fix: false,
+            maxmin: false,
+            content: url
+        });
+    });
+    // 删除
+    function delete_uploads_file(obj){
+        layer.confirm('此操作不可恢复，确认彻底删除？', {
+            title: false,
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            layer_loading('正在处理');
+            // 确定
+            $.ajax({
+                type : 'post',
+                url : "{:weapp_url('Systemdoctor/Systemdoctor/delete_uploads_file')}",
+                data : {filename:$(obj).attr('data-filename'), _ajax:1},
+                dataType : 'json',
+                success : function(data){
+                    layer.closeAll();
+                    if(data.code == 1){
+                        layer.msg(data.msg, {icon: 1,time:1500},function () {
+                            $(obj).parent().parent().remove();
+                        });
+                    }else{
+                        layer.alert(data.msg, {icon: 2 ,time:1500,title:false});
+                    }
+                }
+            })
+        }, function(index){
+            layer.close(index);
+        });
+        return false;
+    }
+</script>
+{include file="footer.htm" /}

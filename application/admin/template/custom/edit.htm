@@ -1,0 +1,407 @@
+{include file="public/layout" /}
+
+{eq name="$editor.editor_select" value="1"}
+    {load href="__PUBLIC__/plugins/Ueditor/ueditor.config.js" /}
+    {load href="__PUBLIC__/plugins/Ueditor/ueditor.all.min.js" /}
+    {load href="__PUBLIC__/plugins/Ueditor/lang/zh-cn/zh-cn.js" /}
+{else/}
+    {load href="__PUBLIC__/plugins/ckeditor/ckeditor.js" /}
+{/eq}
+
+<body class="bodysy-w">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div id="geduan_div" class="h15"></div>
+<div id="page_div" class="page min-hg-c mb-20" style="min-width:auto;box-shadow:none;">
+    <div class="fixed-bar">
+        <div class="item-title">
+            <a class="back_xin" href="javascript:history.back();" title="返回"><i class="iconfont e-fanhui"></i></a>
+            <a class="back_sz" href="javascript:void(0);"  data-href="{:url('Custom/help',['channel'=>$channeltype])}" onclick="openHelpframe(this, '设置与帮助', '500px', '100%', 'r');" title="设置与帮助"><i class="iconfont e-shezhi-tongyong"></i></a>
+            <div class="subject">
+                <h3>编辑文档</h3>
+                <h5></h5>
+            </div>
+            <ul class="tab-base nc-row">
+                <li><a href="javascript:void(0);" data-index='1' class="tab current"><span>基础内容</span></a></li>
+                <li><a href="javascript:void(0);" data-index='2' class="tab"><span>SEO优化</span></a></li>
+                <li><a href="javascript:void(0);" data-index='3' class="tab"><span>更多设置</span></a></li>
+                <!-- #weapp_diy001_tab# -->
+                <!-- #weapp_diy002_tab# -->
+                <!-- #weapp_demontrate_li# -->
+            </ul>
+        </div>
+    </div>
+    <form class="form-horizontal" id="post_form" action="{:url('Custom/edit')}" method="post">
+        <!-- 常规信息 -->
+        <div class="ncap-form-default tab_div_1">
+            <dl class="row">
+                <dt class="tit">
+                    <label for="title"><em>*</em>文档标题</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="title" value="{$field.title}" id="title" class="input-txt" maxlength="200" {eq name="$channelRow.is_repeat_title" value="0"} oninput="check_title_repeat(this,'{$field.aid}');" {/eq}>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    副标题：<input type="text" name="subtitle" value="{$field.subtitle}" id="subtitle" class="w200">
+                    <span class="err"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="title"><em>*</em>栏目分类</label>
+                </dt>
+                <dd class="opt"> 
+                    <input type="hidden" name="attr[typeid]" id="attr_typeid" value="{$field.typeid}">
+                    <select name="typeid" id="typeid">
+                        {$arctype_html}
+                    </select>
+                    <span class="err"></span>
+                </dd>
+            </dl>
+            {notempty name='$global.web_stypeid_open'}
+            <dl class="row">
+                <dt class="tit">
+                    <label for="stypeid">副栏目分类</label>
+                </dt>
+                <dd class="opt"> 
+                    <input type="hidden" name="stypeid" id="stypeid" value="{$field.stypeid}" class="input-txt" onkeyup="this.value=this.value.replace(/[^\d\,]/g,'');" onpaste="this.value=this.value.replace(/[^\d\,]/g,'');" placeholder="">
+                    &nbsp;<a href="javascript:void(0);" data-channel="{$channeltype}" onclick="select_stypeid(this);" class="ncap-btn ncap-btn-green">选择副栏目</a>
+                    <span class="err"></span>
+                    <div id="stypeid_txt" class="pt5">
+                        {volist name='$stypeid_arr' id='vo'}{gt name='$key' value='0'}&nbsp;&nbsp;|&nbsp;&nbsp;{/gt}<span>{$vo.typename}({$vo.id})</span>{/volist}
+                    </div>
+                </dd>
+            </dl>
+            {/notempty}
+            <dl class="row">
+                <dt class="tit">
+                    <label>文档属性</label>
+                </dt>
+                <dd class="opt">
+                    {volist name="archives_flags" id="vo"}
+                        <input type="hidden" name="attr[{$vo.flag_fieldname}]" {if $field[$vo.flag_fieldname] == 1}value="1"{else/}value="0"{/if}>
+                        <label><input type="checkbox" name="{$vo.flag_fieldname}" value="1" {if $field[$vo.flag_fieldname] == 1}checked{/if}>{$vo.flag_name}<!-- [{$vo.flag_attr}] --></label>&nbsp;
+                    {/volist}
+                    <span class="err"></span>
+                    <p class="notic">如需管理，请点击右上角设置与帮助按钮</p>
+                </dd>
+            </dl>
+            <dl class="row {if condition="$field.is_jump != 1"}none{/if} dl_jump">
+                <dt class="tit">
+                    <label>跳转网址</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" value="{$field.jumplinks}" name="jumplinks" id="jumplinks" class="input-txt" placeholder="http://">
+                    <span class="err"></span>
+                </dd>
+            </dl>
+            <dl class="row" style="z-index:2;">
+                <dt class="tit">
+                    <label>文档标签</label>
+                </dt>
+                <dd class="opt">          
+                    <input type="text" value="{$field.tags}" name="tags" id="tags" class="input-txt" placeholder="多个标签之间以逗号隔开" autocomplete="off" oninput="get_common_tagindex_input(this);" onfocus="$('#often_tags').hide();" onkeyup="this.value=this.value.replace(/[\，]/g,',');" onpaste="this.value=this.value.replace(/[\，]/g,',')">&nbsp;
+                    <a href="javascript:void(0);" onclick="get_common_tagindex(this);">显示常用标签</a>&nbsp;<img id="tag_loading" src="__STATIC__/common/images/loading.gif" style="display: none;" />
+                    <div class="often_tags" id="often_tags" data-opt="edit" style="display: none;"></div>
+                    <div class="often_tags" id="often_tags_input" style="display: none;"></div>
+                    <input type="hidden" id="tags_click_count">
+                </dd>
+            </dl>
+            <dl class="row {empty name="$global.web_citysite_open"} none {/empty} ">
+                <dt class="tit">
+                    <label for="title">所属区域</label>
+                </dt>
+                <dd class="opt"> 
+                    <select name="province_id" id="province_id" onchange="set_city_list(0);">
+                        <option value="0">全国</option>
+                        {volist name=':get_site_province_list()' id='vo'}
+                        <option value="{$vo.id}" {eq name="$field.province_id" value="$vo.id" } selected {/eq} >{$vo.name}</option>
+                        {/volist}
+                    </select>
+                    <select name="city_id" id="city_id" class="none ml5" onchange="set_area_list(0);">
+                        <option value="">--请选择--</option>
+                    </select>
+                    <select name="area_id" id="area_id" class="none ml5">
+                        <option value="">--请选择--</option>
+                    </select>
+                    <span class="err"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            {if condition="!empty($channelfield_row['litpic']) AND 1 == $channelfield_row['litpic']['ifeditable']"}
+            <dl class="row">
+                <dt class="tit">
+                  <label>封面图片</label>
+                </dt>
+                <dd class="opt">
+                    <div class="input-file-show div_litpic_local" {neq name="$field.is_remote" value="0"}style="display: none;"{/neq}>
+                        <span class="show">
+                            <a id="img_a" target="_blank" class="nyroModal" rel="gal" href="{$field.litpic_local|default='javascript:void(0);'}">
+                                <i id="img_i" class="fa fa-picture-o" {notempty name="$field.litpic_local"}onmouseover="layer_tips=layer.tips('<img src={$field.litpic_local|default=''} class=\'layer_tips_img\'>',this,{tips: [1, '#fff']});"{/notempty} onmouseout="layer.close(layer_tips);"></i>
+                            </a>
+                        </span>
+                        <span class="type-file-box">
+                            <input type="text" id="litpic_local" name="litpic_local" value="{$field.litpic_local|default=''}" class="type-file-text" autocomplete="off">
+                            <input type="button" name="button" id="button1" value="选择上传..." class="type-file-button">
+                            <input class="type-file-file" onClick="GetUploadify(1,'','allimg','img_call_back')" size="30" hidefocus="true" nc_type="change_site_logo"
+                                 title="点击前方预览图可查看大图，点击按钮选择文件并提交表单后上传生效">
+                        </span>
+                    </div>
+                    <input type="text" id="litpic_remote" name="litpic_remote" value="{$field.litpic_remote|default=''}" placeholder="http://" class="input-txt" onKeyup="keyupRemote(this, 'litpic');" {neq name="$field.is_remote" value="1"}style="display: none;"{/neq}>
+                    &nbsp;
+                    <label><input type="checkbox" name="is_remote" id="is_remote" value="1" {eq name="$field.is_remote" value="1"}checked="checked"{/eq} onClick="clickRemote(this, 'litpic');">远程图片</label>
+                    <span class="err"></span>
+                </dd>
+            </dl>
+            {/if}
+            
+            {include file="archives/get_field_addonextitem" /}
+            <!-- #weapp_diy001_excel# -->
+            <!-- #weapp_diy002_excel# -->
+        </div>
+        <!-- 常规信息 -->
+        <!-- SEO参数 -->
+        <div class="ncap-form-default tab_div_2" style="display:none;">
+            <dl class="row">
+                <dt class="tit">
+                    <label for="seo_title">SEO标题</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" value="{$field.seo_title}" name="seo_title" id="seo_title" class="input-txt">
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>SEO关键词</label>
+                </dt>
+                <dd class="opt">          
+                    <textarea rows="5" cols="60" id="seo_keywords" name="seo_keywords" style="height:40px;">{$field.seo_keywords}</textarea>
+                    <span class="err"></span>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>SEO描述</label>
+                </dt>
+                <dd class="opt">          
+                    <textarea rows="5" cols="60" id="seo_description" name="seo_description" style="height:60px;">{$field.seo_description}</textarea>
+                    <span class="err"></span>
+                </dd>
+            </dl>
+        </div>
+        <!-- SEO参数 -->
+        <!-- 其他参数 -->
+        <div class="ncap-form-default tab_div_3" style="display:none;">
+            {if condition="!empty($channelfield_row['author']) AND 1 == $channelfield_row['litpic']['ifeditable']"}
+            <dl class="row">
+                <dt class="tit">
+                    <label for="author">作者</label>
+                </dt>
+                <dd class="opt">
+                    <input type="hidden" value="{$field.users_id}" name="users_id" class="input-txt">
+                    <input type="text" value="{$field.author}" name="author" id="author" class="input-txt">
+                </dd>
+            </dl>
+            {/if}
+            <dl class="row dl_origin">
+                <dt class="tit">
+                    <label>来源</label>
+                </dt>
+                <dd class="opt origin-hot">
+                    <input type="text" value="{$field.origin}" name="origin" id="origin" class="input-txt" onclick="searchOrigin(this);" autocomplete="off">
+                    <div class="origin-hot-list" style="display: none;" id="search_keywords_list_origin"></div>
+                    <textarea id="system_originlist_str" style="display: none;">{$system_originlist_str}</textarea>
+                    <span class="err"></span>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>点击数</label>
+                </dt>
+                <dd class="opt">    
+                    <input type="text" value="{$field.click}" name="click" id="click" class="input-txt">
+                    <span class="err"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>阅读权限</label>
+                </dt>
+                <dd class="opt">
+                    <input type="hidden" value="{$field.arcrank}" name="old_arcrank" class="input-txt">
+                    <select name="arcrank" id="arcrank" {if $field.arcrank < 0 && $admin_info.role_id > 0 && $auth_role_info.check_oneself < 1} disabled="disabled" {/if}>
+                        {volist name="arcrank_list" id="vo"}
+                        <option value="{$vo.rank}" {eq name="$vo.rank" value="$field.arcrank"}selected{/eq}>{$vo.name}</option>
+                        {/volist}
+                    </select>
+                    <span class="err"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <!-- #weapp_UsersGroup_content_users_id={$field.users_id}#--><!-- #weapp_UsersGroup_content# -->
+            <dl class="row">
+                <dt class="tit">
+                    <label for="articleForm">发布时间</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" class="input-txt" id="add_time" name="add_time" value="{$field.add_time|date='Y-m-d H:i:s',###}" autocomplete="off">        
+                    <span class="add-on input-group-addon">
+                        <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                    </span> 
+                    <span class="err"></span>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="tempview">文档模板</label>
+                </dt>
+                <dd class="opt">
+                    <select name="tempview" id="tempview">
+                        {volist name='$templateList' id='vo'}
+                        <option value="{$vo}" {eq name='$vo' value='$tempview'}selected{/eq}>{$vo}</option>
+                        {/volist}
+                    </select>
+                    <input type="hidden" name="type_tempview" value="{$tempview}" />
+                    <span class="err"></span>
+                </dd>
+            </dl>
+            <dl class="row {notin name='$seo_pseudo' value='2'}no-grey{/notin}">
+                <dt class="tit">
+                    <label>自定义文件名</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" {notin name='$seo_pseudo' value='2'}readonly="readonly" title="仅在静态模式下使用"{/notin} value="{$field.htmlfilename}" name="htmlfilename" id="htmlfilename" autocomplete="off" onkeyup="this.value=this.value.replace(/[^\w\-]/g,'-');" onpaste="this.value=this.value.replace(/[^\w\-]/g,'-');" class="input-txt {notin name='$seo_pseudo' value='2'}no-drop{/notin}">.html
+                    <span class="err"></span>
+                </dd>
+            </dl>
+        </div>
+        <!-- 其他参数 -->
+
+        <!-- #weapp_diy001_body# -->
+        <!-- #weapp_diy002_body# -->
+        
+        <div class="ncap-form-default">
+            <div class="bot2">
+                <input type="hidden" name="gourl" value="{$gourl|default=''}">
+                <input type="hidden" name="aid" value="{$field.aid|default='0'}">
+                <input type="hidden" name="channel" value="{$Request.param.channel|default=''}">
+                <input type="hidden" id="editor_addonFieldExt" value="">
+                <a href="JavaScript:void(0);" onclick="check_submit();" class="ncap-btn-big ncap-btn-green" id="submitBtn">确认提交</a>
+                <a class="ncap-btn-big ncap-btn-no" href="javascript:history.back();" title="返回">返回</a>
+            </div>
+        </div> 
+    </form>
+</div>
+<script type="text/javascript">
+    layui.use('laydate', function() {
+        var laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#add_time'
+            ,type: 'datetime'
+        });
+    })
+    $(function () {
+        try {
+            var web_citysite_open = {$global['web_citysite_open']|default=0};
+            if (web_citysite_open > 0) {
+                set_city_list({$field.city_id|default=0});
+                set_area_list({$field.area_id|default=0});
+            }
+        }catch(e){}
+     
+        //选项卡切换列表
+        $('.tab-base').find('.tab').click(function(){
+            $('.tab-base').find('.tab').each(function(){
+                $(this).removeClass('current');
+            });
+            $(this).addClass('current');
+            var tab_index = $(this).data('index');          
+            $(".tab_div_1, .tab_div_2, .tab_div_3").hide();          
+            $(".tab_div_"+tab_index).show();
+            layer.closeAll();
+        });
+
+        $('input[name=is_jump]').click(function(){
+            if ($(this).is(':checked')) {
+                $('.dl_jump').show();
+            } else {
+                $('.dl_jump').hide();
+            }
+        });
+
+        var dftypeid = {$field.typeid|default='0'};
+        $('#typeid').change(function(){
+            var current_channel = $(this).find('option:selected').data('current_channel');
+            if (0 < $(this).val() && {$channeltype} != current_channel) {
+                showErrorMsg('请选择对应模型的栏目！');
+                $(this).val(dftypeid);
+            } else if ({$channeltype} == current_channel) {
+                layer.closeAll();
+            }
+            var aid = $("input[name=aid]").val();
+            GetAddonextitem(1, $(this).val(), {$channeltype}, aid, true);
+        });
+
+        $(document).click(function(){
+            $('#often_tags').hide();
+            $('#often_tags_input').hide();
+            event.stopPropagation();
+        });
+
+        $('#often_tags').click(function(){
+            $('#often_tags').show();
+            event.stopPropagation();
+        });
+    });
+
+    // 判断输入框是否为空
+    function check_submit(){
+        if($.trim($('input[name=title]').val()) == ''){
+            showErrorMsg('标题不能为空！');
+            $($('.tab-base').find('.tab')[0]).trigger('click'); 
+            $('input[name=title]').focus();
+            return false;
+        }
+        if ($('#typeid').val() == 0) {
+            showErrorMsg('请选择栏目…！');
+            $($('.tab-base').find('.tab')[0]).trigger('click'); 
+            $('#typeid').focus();
+            return false;
+        }
+        
+        layer_loading('正在处理');
+        if(!ajax_check_htmlfilename())
+        {
+            layer.closeAll();
+            showErrorMsg('自定义文件名已存在！');
+            $('input[name=htmlfilename]').focus();
+            return false;
+        }
+        setTimeout(function (){
+            editor_auto_210607();
+            $('#post_form').submit();
+        }, 1);
+    }
+
+    function img_call_back(fileurl_tmp)
+    {
+        $("#litpic_local").val(fileurl_tmp);
+        $("#img_a").attr('href', fileurl_tmp);
+        $("#img_i").attr('onmouseover', "layer_tips=layer.tips('<img src="+fileurl_tmp+" class=\\'layer_tips_img\\'>',this,{tips: [1, '#fff']});");
+        $("input[name=is_litpic]").attr('checked', true); // 自动勾选属性[图片]
+    }
+</script>
+<script>
+    try{
+        var mt20_1649209614 = sessionStorage.getItem("mt20_1649209614");
+        if (mt20_1649209614 == 1){
+            $("#geduan_div").removeClass("h15");
+        }else{
+            $("#geduan_div").addClass("h15");
+        }
+    }catch(e){}
+</script>
+{include file="public/footer" /}

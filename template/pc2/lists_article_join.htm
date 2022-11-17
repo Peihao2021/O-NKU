@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width" />
+ <title>{$eyou.field.seo_title}</title>
+<meta name="description" content="{$eyou.field.seo_description}" />
+<meta name="keywords" content="{$eyou.field.seo_keywords}" />
+<link href="{eyou:global name='web_ico' /}" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="screen-orientation" content="portrait"><!-- uc强制竖屏 -->
+<meta name="x5-orientation" content="portrait"><!-- QQ强制竖屏 -->
+<link href="{eyou:global name='web_ico' /}" rel="shortcut icon" type="image/x-icon" />
+<link href="/template/pc/static/css/pagv2.css" rel="stylesheet" type="text/css" />
+<script src="/template/pc/static/js/jquery-1.8.1.min.js" type="text/javascript"></script>
+<script src="/template/pc/static/js/common.js" type="text/javascript"></script>
+
+
+</head>
+<body><div id="warp">
+ 
+    
+{eyou:include file="header.htm" /}
+
+
+
+    <!--banner begin-->
+   
+    <!-- /header -->
+    <div class="bannerArea wcon">
+        <img src="{eyou:notempty name='$eyou.field.typelitpic' /}{$eyou.field.typelitpic} {eyou:else /}{$eyou.field.typeid|gettoptype=###,'litpic'}{/eyou:notempty}"  />
+        <!--栏目-->
+        <div class="hiArea">
+            <div class="rightArea">当前位置：{eyou:position style=' ' /}</div>
+        </div>
+    </div>
+    <div class="container wcon">
+        <!--左边-->
+        <div class="contactleft">
+            <div class="left">
+    <!--菜单-->
+   <div class="menuArea">
+  <div class="titleArea">
+    <h3>{$eyou.field.typeid|gettoptype=###,'typename'}</h3> 
+  </div>
+  <div class="conArea ">
+   
+    <ul class="navmenu">
+        
+        {eyou:models  type='sonself' loop='20'}
+         <li class="{eyou:eq name='$i' value='2'}cur{/eyou:eq}"><h3><a href="{$field.typeurl}">{$field.typename}</a></h3></li>
+        {/eyou:models}
+       
+             
+        </ul>  
+  </div>
+            
+</div>
+</div>
+        </div>
+        <!--右边-->
+        <div class="padd hrcon">
+            <!--信息列表--简单-->
+            <div class="imp">
+                <div class="impfl">
+                    <h3>
+                        如果你热爱这个行业，<br />
+                        那它就不只是一份工作!
+                    </h3>
+                    <p>
+                        有这样一群人，<br />
+                        他们愿意把自己的全部能量挥洒在这里，愿意把对事业的美好憧憬寄托在这里，<br />
+                        愿意忘记时间的流转并把对生活的热情融入这里。这里没有沉闷的交流，没有超越忍耐的合作，<br />
+                        没有失去自由的畅想，没有无法逾越的隔阂；<br />
+                        有的是心照不宣，轻松和谐；有的是放纵思绪，丰富且自得。
+                    </p>
+                </div>
+            </div>
+            <br />
+            <h2 class="hometitmid"><a href="javascript:;">人才招聘</a></h2>
+            <table class="table01">
+                <tr>
+                    <th width="50%">职位名称</th>
+                    <th>相关信息</th>
+                </tr>
+                   {eyou:list loop='100' titlelen='30' infolen='160' orderby='add_time'}
+                <tr>
+                    <td>
+                        <a href="{$field.arcurl}" target="_blank" class="title">{$field.title}</a>
+                    <td>
+                        {$field.add_time|MyDate='Y-m-d',###}
+                    </td>
+                </tr>
+                    {/eyou:list}
+                
+            </table>
+            <div class="dede_pages" style="display:none;">
+                <ul class="pagelist">
+               {eyou:pagelist listitem='index,end,pre,next,pageno' listsize='2'/}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <!--footPage begin-->
+  {eyou:include file="kefu.htm" /}
+  <!--联系我们-->
+{eyou:include file="footer.htm" /}
+
+    <!--footPage end-->
+    <!-- /footer -->
+
+    <script>
+        $(".navmenu li").eq(1).addClass("cur");
+    </script>
+</div></body>
+</html>

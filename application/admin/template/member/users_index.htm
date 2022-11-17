@@ -1,0 +1,366 @@
+{include file="public/layout" /}
+
+<body class="bodystyle" style="overflow-y: scroll; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+{include file="member/left" /}
+<div class="page" style="min-width:auto;margin-left:100px;">
+    <!-- <div class="fixed-bar">
+        <div class="item-title">
+            <ul class="tab-base nc-row">
+                {eq name="'Member@users_index'|is_check_access" value="1"}
+                <li>
+                    <a {if condition="in_array($Request.action, ['users_index','users_add','users_edit'])"}class="current"{/if} href='{:url("Member/users_index")}'>
+                        <span>会员列表</span>
+                    </a>
+                </li>
+                {/eq}
+            </ul>
+        </div>
+    </div> -->
+    <div class="flexigrid member_lt">
+        
+        <div class="mDiv" style=" padding-top: 0; ">
+            <div class="ftitle_nav">
+                {volist name='$levelCountList' id='vo'}
+                <div class="fbutton">
+                    <a href="{:url('Member/users_index', ['level'=>$vo.level_id])}">
+                        <div class="{eq name='$Request.param.level' value='$vo.level_id'}cur{/eq}" title="{$vo.level_name}〔{$vo.level_count}〕">
+                            {$vo.level_name}<span>{$vo.level_count}</span>
+                        </div>
+                    </a>
+                </div>
+                {/volist}
+            </div>
+            <form class="navbar-form form-inline" id="searchForm" action="{:url('Member/users_index')}" method="get" onsubmit="layer_loading('正在处理');">
+                {$searchform.hidden|default=''}
+                <div class="sDiv">
+                    
+                    <div class="sDiv2" style="margin: 0 6px;">
+                        <input type="text" size="30" name="keywords" value="{$Request.param.keywords}" class="qsbox" placeholder="搜索用户名...">
+                        <input type="submit" class="btn" value="搜索">
+						<i class="iconfont e-sousuo"></i>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th class="sign w40" axis="col0">
+                            <div class="tc"><input type="checkbox" autocomplete="off" class="checkAll"></div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="w40">
+                            <div class="tc">ID</div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="w50">
+                            <div class="tc">头像</div>
+                        </th>
+                        <th abbr="ac_id" axis="col4">
+                            <div class="tl text-l10">昵称/绑定</div>
+                        </th>
+                        <th abbr="ac_id" axis="col4" class="w100">
+                            <div class="tc">级别</div>
+                        </th>
+                        <th abbr="ac_id" axis="col4" class="w60">
+                            <div class="tc">激活</div>
+                        </th>
+                        <th abbr="ac_id" axis="col4" class="w150">
+                            <div class="tc">注册日期</div>
+                        </th>
+                        <th axis="col1" class="w120">
+                            <div class="tc">操作</div>
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table style="width: 100%">
+                    <tbody>
+                    {empty name="list"}
+                        <tr>
+                            <div class="no_row">
+                                <div class="no_pic"><img src="__SKIN__/images/null-data.png"></div>
+                            </div>
+                        </tr>
+                    {else/}
+                        {foreach name="list" item="vo" key="k" }
+                        <tr>
+                            <td class="sign">
+                                <div class="w40 tc">
+                                    <input type="checkbox" autocomplete="off" name="ids[]" value="{$vo.users_id}">
+                                </div>
+                            </td>
+                            <td class="sort">
+                                <div class="w40 tc">{$vo.users_id}</div>
+                            </td>
+                            <td class="sign">
+                                <div class="w50 tc">
+                                    <img id="img_head_pic" style="height: 40px;margin-right: 5px;float: unset;margin: auto;" src="{$vo.head_pic|get_head_pic=###,false,$vo['sex']}" />
+                                </div>
+                            </td>
+                            <td style="width: 100%">
+                                <div class="text-l10">
+                                    <p style="margin-top: -5px;">
+                                    {eq name="'Member@users_edit'|is_check_access" value="1"}
+                                        <a href="{:url('Member/users_edit',array('id'=>$vo['users_id']))}">{$vo.nickname|default=$vo.username}</a>
+                                    {else /}
+                                        {$vo.nickname|default=$vo.username}
+                                    {/eq}
+                                    </p>
+                                    
+                                    <p class="binding">
+                                        {eq name='$vo.is_mobile' value='1'}
+                                            <img src="__STATIC__/admin/images/r_phone.png">
+                                        {/eq}
+                                        {if condition="in_array($vo['thirdparty'], [5]) || !empty($wxlogin[$vo['users_id']]['openid'])"}
+                                            <img src="__STATIC__/admin/images/r_weixin.png">
+                                        {/if}
+                                        {if condition="in_array($vo['thirdparty'], [6])"}
+                                            <img src="__STATIC__/admin/images/r_wechat.png">
+                                        {/if}
+                                        {if condition="!empty($qqlogin[$vo['users_id']])"}
+                                            <img src="__STATIC__/admin/images/r_qq.png">
+                                        {/if}
+                                        {if condition="in_array($vo['thirdparty'], [4])"}
+                                            <img src="__STATIC__/admin/images/r_wxapp.png">
+                                        {/if}
+                                        {if condition="!empty($wblogin[$vo['users_id']])"}
+                                            <img src="__STATIC__/admin/images/r_wb.png">
+                                        {/if}
+                                    </p>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="w100 tc">
+                                    {$vo.level_name}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w60 tc">
+                                    {eq name="$vo['is_activation']" value='1'}
+                                        <span class="yes" {eq name="'Member@users_edit'|is_check_access" value="1"}onClick="changeTableVal('users','users_id','{$vo.users_id}','is_activation',this);"{/eq}><i class="fa fa-check-circle"></i>是</span>
+                                    {else /}
+                                        <span class="no" {eq name="'Member@users_edit'|is_check_access" value="1"}onClick="changeTableVal('users','users_id','{$vo.users_id}','is_activation',this);"{/eq}><i class="fa fa-ban"></i>否</span>
+                                    {/eq}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="w150 tc">
+                                    {$vo.reg_time|MyDate='Y-m-d H:i:s',###}
+                                </div>
+                            </td>
+                            <td class="operation">
+                                <div class="w120 tc">
+                                    {eq name="'Member@users_edit'|is_check_access" value="1"}
+                                    <a href="{:url('Member/users_edit',array('id'=>$vo['users_id']))}" class="btn blue">编辑</a>
+                                    {/eq}
+                                    {eq name="'Member@users_del'|is_check_access" value="1"}
+										<i></i>
+                                        <a class="btn red"  href="javascript:void(0);" data-url="{:url('Member/users_del')}" data-id="{$vo.users_id}" data-admin_id="{$vo.admin_id}" data-username="{$vo.username}" onClick="usersdel(this);">删除</a>
+                                    {/eq}
+                                </div>
+                            </td>
+                        </tr>
+                        {/foreach}
+                    {/empty}
+                    </tbody>
+                </table>
+            </div>
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+        <div class="footer-oper">
+            {eq name="'Member@users_del'|is_check_access" value="1"}
+            <span class="ml15">
+                <input type="checkbox" autocomplete="off" class="checkAll">
+            </span>
+            <div class="nav-dropup">
+                <a onclick="batch_del(this, 'ids');" data-url="{:url('Member/users_del')}" class="layui-btn layui-btn-primary">
+                    <div class="add" title="批量删除">
+                        <span>批量删除</span>
+                    </div>
+                </a>
+            </div>
+            {/eq}
+            {eq name="'Member@users_batch_add'|is_check_access" value="1"}
+                <a href="javascript:void(0);" data-href="{:url('Member/users_batch_add')}" class="layui-btn layui-btn-primary" onclick="openFullframe(this, '会员中心 - 批量新增会员','60%','80%');">
+                    <div class="add" title="批量新增">
+                        <span class="red">批量新增</span>
+                    </div>
+                </a>
+            {/eq}
+			{include file="public/page" /}
+            <div style="clear:both"></div>
+        </div>
+	</div>
+</div>
+<script>
+    $(function(){
+        $('input[name*=ids]').click(function(){
+            if ($('input[name*=ids]').length == $('input[name*=ids]:checked').length) {
+                $('.checkAll').prop('checked','checked');
+            } else {
+                $('.checkAll').prop('checked', false);
+            }
+        });
+        $('input[type=checkbox].checkAll').click(function(){
+            $('input[type=checkbox]').prop('checked',this.checked);
+        });
+    });
+    $(document).ready(function(){
+        // 表格行点击选中切换
+        $('#flexigrid > table>tbody >tr').click(function(){
+            $(this).toggleClass('trSelected');
+        });
+
+        // 点击刷新数据
+        $('.fa-refresh').click(function(){
+            location.href = location.href;
+        });
+
+        {eq name="$is_syn_theme_users" value="1"}
+            syn_theme_users();
+        {/eq}
+        function syn_theme_users()
+        {
+            layer_loading('初始化中');
+            // 确定
+            $.ajax({
+                type : 'get',
+                url : "{:url('Member/ajax_syn_theme_users')}",
+                data : {_ajax:1},
+                dataType : 'json',
+                success : function(res){
+                    layer.closeAll();
+                    if(res.code == 1){
+                        layer.msg(res.msg, {icon: 1, time: 1000}, function(){
+                            window.location.href = res.url;
+                        });
+                    }else{
+                        layer.alert(res.msg, {icon: 2, title:false}, function(){
+                            window.location.reload();
+                        });
+                    }
+                },
+                error: function(e){
+                    layer.closeAll();
+                    layer.alert(e.responseText, {icon: 2, title:false}, function(){
+                        window.location.reload();
+                    });
+                }
+            })
+        }
+    });
+
+    // 删除
+    function usersdel(obj){
+        var admin_id = $(obj).data('admin_id');
+        if (0 < admin_id) {
+            var title = "系统管理员前台ID，删除不可恢复？";
+        } else {
+            var title = "是否删除该会员？删除后不可找回。";
+        }
+        layer.confirm(title, {
+            shade: layer_shade,
+            area: ['480px', '200px'],
+            move: false,
+            title: '提示',//$(obj).attr('data-username'),
+            btnAlign:'r',
+            closeBtn: 3,
+            btn: ['确定','取消'], //按钮
+            success: function () {
+                  $(".layui-layer-content").css('text-align', 'left');
+              }
+        }, function(){
+            layer_loading('正在处理');
+            // 确定
+            $.ajax({
+                type : 'post',
+                url : $(obj).attr('data-url'),
+                data : {del_id:$(obj).attr('data-id'), _ajax:1},
+                dataType : 'json',
+                success : function(data){
+                    layer.closeAll();
+                    if(data.code == 1){
+                        layer.msg(data.msg, {icon: 1});
+                        window.location.reload();
+                    }else{
+                        layer.alert(data.msg, {icon: 2, title:false});
+                    }
+                }
+            })
+        }, function(index){
+            layer.close(index);
+        });
+        return false;
+    }
+
+    /**
+     * 批量删除提交
+     */
+    function batch_del(obj, name) {
+        var a = [];
+        $('input[name^='+name+']').each(function(i,o){
+            if($(o).is(':checked')){
+                a.push($(o).val());
+            }
+        })
+        if(a.length == 0){
+            layer.alert('请至少选择一项', {
+                shade: layer_shade,
+                area: ['480px', '190px'],
+                move: false,
+                title: '提示',
+                btnAlign:'r',
+                closeBtn: 3,
+                success: function () {
+                      $(".layui-layer-content").css('text-align', 'left');
+                  }
+            });
+            return;
+        }
+        // 删除按钮
+        layer.confirm('确认批量彻底删除？', {
+            shade: layer_shade,
+            area: ['480px', '190px'],
+            move: false,
+            title: '提示',
+            btnAlign:'r',
+            closeBtn: 3,
+            btn: ['确定', '取消'] ,//按钮
+            success: function () {
+                  $(".layui-layer-content").css('text-align', 'left');
+              }
+        }, function () {
+            layer_loading('正在处理');
+            $.ajax({
+                type: "POST",
+                url: $(obj).attr('data-url'),
+                data: {del_id:a, _ajax:1},
+                dataType: 'json',
+                success: function (data) {
+                    layer.closeAll();
+                    if(data.code == 1){
+                        layer.msg(data.msg, {icon: 1});
+                        window.location.reload();
+                    }else{
+                        layer.alert(data.msg, {icon: 2, title:false});
+                    }
+                },
+                error:function(e){
+                    layer.closeAll();
+                    layer.alert(e.responseText, {icon: 2, title:false});
+                }
+            });
+        }, function (index) {
+            layer.closeAll(index);
+        });
+    }
+</script>
+
+{include file="public/footer" /}

@@ -1,0 +1,205 @@
+{include file="header.htm" /}
+<!-- 图片列表样式 -->
+<style type="text/css">
+    .button_span {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        overflow: hidden;
+        display: inline-block;
+        margin:0 10px 10px 0;
+    }
+    .icon {
+        cursor: pointer;
+        width: 113px;
+        height: 113px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        z-index: 2;
+        border: 0;
+        background-repeat: no-repeat;
+    }
+    .selected .icon {
+        background-image: url(__ROOT_DIR__/weapp/PictureCleaning/template/skin/images/success.png);
+        background-position: 75px 75px;
+    }
+    .picture-box{
+        margin: 20px auto;
+        width:1120px;
+    }
+</style>
+<!-- 图片列表样式 -- END -->
+
+<body style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    {include file="bar.htm" /}
+    <div class="flexigrid">
+        <div id="explanation" class="explanation" style="color: rgb(44, 188, 163); background-color: rgb(237, 251, 248); width: 99%; height: 100%;">
+            <div id="checkZoom" class="title">
+                <i class="fa fa-lightbulb-o"></i><h4 title="提示相关设置操作时应注意的要点">提示</h4>
+                <span title="收起提示" id="explanationZoom" style="display: block;"></span>
+            </div>
+            <ul>
+                <li>1、执行智能扫描，自动检索数据库是否引用，对前台访问速度有轻微影响</li>
+                <li>2、执行移至回收站，方便先观察是否有误删，可以在回收站还原</li>
+                <li>3、执行直接删除，将彻底删除，请确认无误或备份文件再执行。</li>
+            </ul>
+        </div>
+        <br/>
+
+        <div class="tDiv">
+            <div class="tDiv2" style="float: none;">
+                <div class="fbutton" style="float: right;">
+                        <button style="height: 30px; width: 80px; color: red;margin-right: 10px;" data-select="0" onclick="AllSelected(this);">
+                            本页全选
+                        </button>
+                        <button style="height: 30px; width: 80px; color: red;margin-right: 10px;" id="CleanUp" onclick="ImageDealWith(this);">
+                            移至回收站
+                        </button>
+                        <button style="height: 30px; width: 65px; color: red;" id="Delete" onclick="ImageDealWith(this);">
+                            直接删除
+                        </button>
+                </div>
+
+                <div class="fbutton" id="scanning">
+                    <button style="height: 30px; width: 65px; color: red;" onclick="Scanning()">智能扫描</button>
+                </div>
+
+                <div class="fbutton">
+                    <div style="width: 300px;height: 22px;line-height: 22px;"> 本次扫描到未使用的多余文件 <span id="num"> 0 </span> 个 </div>
+                </div>
+            </div>
+            <div style="clear:both"></div>
+        </div>
+
+        <div class="bDiv" id="PictureList"> </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // 全部选中扫描的图片
+    function AllSelected(obj) {
+        var select = $(obj).attr('data-select');
+        if (select == 0) {
+            $('.button_span').addClass('selected');
+            $(obj).attr('data-select', 1);
+        } else {
+            $('.button_span').removeClass('selected');
+            $(obj).attr('data-select', 0);
+        }
+    }
+
+    // 单个选中扫描的文件
+    function FindSelected(obj) {
+        $(obj).toggleClass("selected");
+    }
+
+    // 扫描图片
+    function Scanning() {
+        layer_loading('正在扫描');
+        $.ajax({
+            url: "{:weapp_url('PictureCleaning/PictureCleaning/picture_query')}",
+            type: "get",
+            dataType: 'json',
+            timeout: 5000,
+            success: function (res) {
+                layer.closeAll();
+                $('#CleanUp').attr('data-with', 'CleanUp');
+                $('#Delete').attr('data-with', 'Delete');
+                $('#num').html(res.data.count).css('color', 'red');
+
+                // AJAX加载图片数据，自动加载
+                AjaxPagePicData(1);
+            },
+            error: function() {
+                layer.closeAll();
+                layer.msg('扫描超时，若图片量大请选择空闲时间扫描', {icon: 2, time: 1500, closeBtn: 0});
+            }
+        });
+    }
+
+    // AJAX加载图片数据，分页按钮调用
+    $(document).on('click', '#PictureList .pagination a', function () {
+        AjaxPagePicData($(this).data('p'));
+    });
+
+    // AJAX加载图片数据
+    function AjaxPagePicData(page) {
+        layer_loading('加载图片');
+
+        var url = "{:weapp_url('PictureCleaning/PictureCleaning/picture_list')}";
+        $.ajax({
+            url : url,
+            data: {p: page, '_ajax': 1},
+            type:'post',
+            success:function(res) {
+                layer.closeAll();
+                $('#PictureList').empty().html(res);
+            }
+        });
+    }
+
+    // 清理图片至回收站
+    function ImageDealWith(th) {
+        var type = $(th).attr('data-with');
+        if (!type) {
+            layer.msg('清先执行智能扫描', {icon: 2,time: 2000, closeBtn: 0});
+            return false;
+        }
+
+        if ('Delete' == type) {
+            layer.confirm('此操作不可逆，将会把所有扫描到的文件彻底删除，请确认所有文件是否都是不使用的文件！', {
+                closeBtn: 0,
+                title: false,
+                btn: ['确认','取消']
+            }, function() {
+                // 确认执行彻底删除扫描到的图片文件
+                DealWith(type);
+                }, function(index){
+                    // 取消执行
+                    layer.close(index); return false;
+                }
+            );
+        }else if ('CleanUp' == type) {
+            // 执行清理图片至回收站
+            DealWith(type);
+        }
+    }
+
+    // 彻底删除图片文件
+    function DealWith(type) {
+        var picArr = $('.selected');
+        var PostPicArr = [];
+        picArr.each(function() {
+            var obj = $(this);
+            PostPicArr.push($(obj).data('id'));
+        });
+
+        if (PostPicArr.length == 0) {
+            layer.alert('请至少选择一张图片！', {icon: 5, title: false, closeBtn: false});
+            return false;
+        }
+
+        layer_loading('正在处理');
+        $.ajax({
+            type:'post',
+            data:{type: type, pic_arr: PostPicArr},
+            url: "{:weapp_url('PictureCleaning/PictureCleaning/image_deal_with')}",
+            dataType : 'json',
+            success : function(data) {
+                layer.closeAll();
+                if (data.code == 1) {
+                    layer.msg(data.msg, {icon: 1,time: 1500, closeBtn: 0}, function() {
+                        AjaxPagePicData($('#PictureList .pagination a').data('p'));
+                    });
+                } else {
+                    layer.msg(data.msg, {icon: 2,time: 1500, closeBtn: 0});
+                }
+            }
+        });
+    }
+</script>
+{include file="footer.htm" /}

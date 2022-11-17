@@ -1,0 +1,84 @@
+ <div id="heardBox">
+    <div id="headerPage" class="wcon pr">
+      <div class="logo"><a href="{eyou:global name='web_basehost' /}">{eyou:global name='web_name' /}</a></div>
+      <!--logo end-->
+      
+      <div class="searchBox">
+       {eyou:searchform type='sonself'}
+    <form method="get" action="{$field.action}">
+          <INPUT type="text" class="searchInput" value="请输入产品型号" name="keywords" onblur="if(value=='')value='请输入产品型号';" onfocus="if(value == '请输入产品型号')value = ''">
+          <span class="searchBtn">
+          <INPUT class="searchBtn" type="submit" value="">
+          </span>
+        {$field.hidden}
+    </form>
+{/eyou:searchform}
+      </div>
+      <!--searchBox end--> 
+      <!--topNav end-->
+      
+      <div class="headerWid">
+        <div class="mainNav">
+          <ul>
+            <li>
+              <h2><a href="{eyou:global name='web_basehost' /}">首页</a></h2>
+            </li>
+			  {eyou:models type='top' loop='10' id='field1' currentclass='active'} 
+            <li>
+              <h2><a href="{$field1.typeurl}" >{$field1.typename}</a></h2>
+				{eyou:notempty name='$field1.children'} 
+              <div class="SubNav" style="width:100px;">
+                <div class="leftConNav">
+                  <ul>
+                   {eyou:models name='$field1.children' id='field2' loop='10'} 
+                    <li><a href="{$field2.typeurl}">{$field2.typename}</a></li>
+					  {/eyou:models} 
+                  </ul>
+                  <div class="del_float"></div>
+                </div>
+              </div>
+				{/eyou:notempty}
+            </li>
+			  {/eyou:models}
+         
+          </ul>
+        </div>
+        <!--mainNav end-->
+        
+        <div class="appmenubtn">
+          <h1 class="logo"><a href="{eyou:global name='web_basehost' /}">{eyou:global name='web_attr_4' /}</a></h1>
+          <span class="menubtn"> </span> </div>
+        <div class="del_float"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(function () {
+        if ($(window).width() > 790) {
+            $(".mainNav h2").each(function () {
+                $(this).hover(function () {
+                    $(".mainNav li").removeClass("cur");
+                    $(this).parent("li").addClass("cur");
+                }, function () {
+                });
+            })
+
+            $(".mainNav>ul>li").hover(function () {
+            }, function () {
+                $(".mainNav li").removeClass("cur");
+            });
+        }
+        else {
+            //appmenu
+            $(".menubtn").click(function () {
+                if ($(".mainNav").css("display") == "block") {
+                    $(".mainNav").slideUp();
+                }
+                else {
+                    $(".mainNav").slideDown();
+                }
+            });
+        }
+    });
+</script>
+  <div class="clearfix"></div>

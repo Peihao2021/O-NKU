@@ -1,0 +1,113 @@
+{include file="header.htm" /}
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    {include file="bar.htm" /}
+	<div id="explanation" class="explanation" style="color: rgb(44, 188, 163); background-color: rgb(237, 251, 248); width: 99%; height: 100%;">
+		<div id="checkZoom" class="title">
+			<i class="fa fa-lightbulb-o"></i><h4 title="提示相关设置操作时应注意的要点">操作提示</h4>
+			<span title="收起提示" id="explanationZoom" style="display: block;"></span>
+		</div>
+		<ul>
+			<li>1、以下功能只是隐藏，只是隐藏，只是隐藏</li>
+			<li>2、不影响功能的使用和配置</li>
+			<li>3、所以配置好你的功能，再隐藏，不让客户看到</li>
+		</ul>
+	</div>
+    <form class="form-horizontal" id="post_form" action="" method="post">
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit">
+                    <label for="dontup_is_on">系统升级</label>
+                </dt>
+                <dd class="opt">
+                    <div class="onoff">
+                        <label for="dontup_is_on1" class="cb-enable {if condition='!empty($row.is_on)'}selected{/if}">关闭</label>
+                        <label for="dontup_is_on0" class="cb-disable {if condition='empty($row.is_on)'}selected{/if}">启用</label>
+                        <input id="dontup_is_on1" name="captcha[DontUp-plus][is_on]" value="1" type="radio" {if condition='!empty($row.is_on)'}checked="checked"{/if}>
+                        <input id="dontup_is_on0" name="captcha[DontUp-plus][is_on]" value="0" type="radio" {if condition='empty($row.is_on)'}checked="checked"{/if}>
+                    </div>
+                    <span class="err"></span>
+                    <br />
+                    <p style="font-size: 12px;">[ 关闭 ] 则隐藏升级弹窗、专业版同时在核心设置中“多站点”开关不可见，如需升级请启用。</p>
+                </dd>
+			</dl>
+			<dl class="row">
+			    <dt class="tit">
+			        <label for="yunplugin_is_on">云插件库</label>
+			    </dt>
+			    <dd class="opt">
+			        <div class="onoff">
+			            <label for="yunplugin_is_on1" class="cb-enable {if condition='!empty($row.yunplugin_hide)'}selected{/if}">关闭</label>
+			            <label for="yunplugin_is_on0" class="cb-disable {if condition='empty($row.yunplugin_hide)'}selected{/if}">启用</label>
+			            <input id="yunplugin_is_on1" name="captcha[DontUp-plus][yunplugin_hide]" value="1" type="radio" {if condition='!empty($row.yunplugin_hide)'}checked="checked"{/if}>
+			            <input id="yunplugin_is_on0" name="captcha[DontUp-plus][yunplugin_hide]" value="0" type="radio" {if condition='empty($row.yunplugin_hide)'}checked="checked"{/if}>
+			        </div>
+			    </dd>
+			</dl>
+			<dl class="row">
+			    <dt class="tit">
+			        <label for="api_is_on">接口配置</label>
+			    </dt>
+			    <dd class="opt">
+			        <div class="onoff">
+			            <label for="api_is_on1" class="cb-enable {if condition='!empty($row.api_hide)'}selected{/if}">关闭</label>
+			            <label for="api_is_on0" class="cb-disable {if condition='empty($row.api_hide)'}selected{/if}">启用</label>
+			            <input id="api_is_on1" name="captcha[DontUp-plus][api_hide]" value="1" type="radio" {if condition='!empty($row.api_hide)'}checked="checked"{/if}>
+			            <input id="api_is_on0" name="captcha[DontUp-plus][api_hide]" value="0" type="radio" {if condition='empty($row.api_hide)'}checked="checked"{/if}>
+			        </div>
+			    </dd>
+			</dl>
+			<dl class="row">
+			    <dt class="tit">
+			        <label for="sys_is_on">模块开关</label>
+			    </dt>
+			    <dd class="opt">
+			        <div class="onoff">
+			            <label for="sys_is_on1" class="cb-enable {if condition='!empty($row.sys_hide)'}selected{/if}">关闭</label>
+			            <label for="sys_is_on0" class="cb-disable {if condition='empty($row.sys_hide)'}selected{/if}">启用</label>
+			            <input id="sys_is_on1" name="captcha[DontUp-plus][sys_hide]" value="1" type="radio" {if condition='!empty($row.sys_hide)'}checked="checked"{/if}>
+			            <input id="sys_is_on0" name="captcha[DontUp-plus][sys_hide]" value="0" type="radio" {if condition='empty($row.sys_hide)'}checked="checked"{/if}>
+			        </div>
+			    </dd>
+			</dl>
+			<dl class="row">
+			    <dt class="tit">
+			        <label for="hidelist_is_on">隐藏该插件</label>
+			    </dt>
+			    <dd class="opt">
+			        <div class="onoff">
+			            <label for="hidelist_is_on1" class="cb-enable {if condition='!empty($row.config.is_hide)'}selected{/if}">是</label>
+			            <label for="hidelist_is_on0" class="cb-disable {if condition='empty($row.config.is_hide)'}selected{/if}">否</label>
+			            <input id="hidelist_is_on1" name="captcha[DontUp-plus][config][is_hide]" value="1" type="radio" {if condition='!empty($row.config.is_hide)'}checked="checked"{/if}>
+			            <input id="hidelist_is_on0" name="captcha[DontUp-plus][config][is_hide]" value="0" type="radio" {if condition='empty($row.config.is_hide)'}checked="checked"{/if}>
+			        </div>
+			        <span class="err"></span>
+					<br />
+					<p style="font-size: 12px;">隐藏后插件仍然生效
+						<br /><br />重置办法：
+						<br />1.weapp目录中删除插件
+						<br />2.退出并重新登录后台一次
+						<br />3.重新拷贝插件放入weapp目录，安装启用
+					</p>
+					<br />
+					<span style="color:#f60;">提交后重新登录并清理缓存</span></p>
+			    </dd>
+			</dl>
+            <div class="bot">
+                <input type="hidden" name="inc_type" id="inc_type" value="{$inc_type|default='default'}">
+                <a href="JavaScript:void(0);" onclick="checkForm();" class="ncap-btn-big ncap-btn-green" id="submitBtn">确认提交</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    // 判断输入框是否为空
+    function checkForm(){
+        layer_loading('正在处理');
+        $('#post_form').submit();
+    }
+</script>
+{include file="footer.htm" /}

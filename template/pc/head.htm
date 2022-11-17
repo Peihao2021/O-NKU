@@ -1,0 +1,24 @@
+<div class="header clear">
+  <div class="wrap ty">
+    <div class="logo flt"><a href="{eyou:global name='web_basehost' /}" style="font-family: logo"> 
+		{eyou:global name='web_name' /}</a></div>
+    <div class="menu frt">
+      <ul id="starlist">
+        <li {eyou:eq name='$Request.param.m' value='Index'}class="on"{/eyou:eq}>
+			<a href="{eyou:global name='web_basehost' /}" class="on2"><span>Home</span> </a> </li>
+        {eyou:models type='top' loop='10' id='field1' currentclass='on'}
+        <li class="{$field1.currentclass}"><a class="on2"><span>{$field1.typename}</span> </a>
+			{eyou:notempty name='$field1.children'} <em></em>{/eyou:notempty}
+          {eyou:notempty name='$field1.children'}
+          <ul class="sub">
+            {eyou:models name='$field1.children' id='field2' loop='10'}
+            <li><a href="{$field2.typeurl}" >{$field2.typename}</a></li>
+            {/eyou:models}
+          </ul>
+          {/eyou:notempty} </li>
+        {/eyou:models}
+      </ul>
+    </div>
+    <div id="mnavh" class="clear"><span class="navicon"></span></div>
+  </div>
+</div>

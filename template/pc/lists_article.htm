@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+ <title>{$eyou.field.seo_title}</title>
+<meta name="description" content="{$eyou.field.seo_description}" />
+<meta name="keywords" content="{$eyou.field.seo_keywords}" />
+<link href="{eyou:global name='web_cmspath' /}/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="/template/pc/css/index.css" rel="stylesheet" media="screen" type="text/css" />
+</head>
+<body>
+ {eyou:include file="head.htm" /}
+	<main class="ty">
+<button class="sidebar-toggle" >
+	<div class="sidebar-toggle-button">
+	<span></span>
+	<span></span>
+	<span></span>
+	</div></button>
+		
+		<div class="mainleft">
+			
+			{eyou:models type='sonself'  currentclass='active'}
+		<dl class="{$field.currentclass}  ">
+			<em></em>
+			<a href="{$field.typeurl}"><dt>Chapter {$i}</dt>
+			<dd>{$field.typename}</dd></a>
+			</dl>
+{/eyou:models}
+		
+		</div>
+		
+		<div class="mainright">
+		<div class="viewbj"><h2>{$eyou.field.typename}</h2></div>
+			
+		<ul class="liebiao">
+			
+			    {eyou:list loop='1000' titlelen='30' infolen='100' orderby='aid asc'}
+		<li>
+			<a class="dx" href='{$field.arcurl}'>
+			<span class="kaodian">Point{$i}</span><span class="title">{$field.title}</span>
+			<P>{$field.seo_description}...</P>
+			
+			</a>
+			<div class="xiangxi">
+			<span ><img src="/template/pc/images/3.png"> Contributor：{$field.author}</span>
+			<a class="xq" href='{$field.arcurl}'>view details<img src="/template/pc/images/sanjiao.png"> </a>
+			</div>
+			</li>
+	
+			    {/eyou:list}
+			
+			
+			
+			
+			
+			
+			
+		</ul>
+		
+		
+		
+		
+		</div>
+		
+		
+		
+		
+		
+		
+		
+	
+	</main>
+		 {eyou:include file="footer.htm" /}
+</body>
+</html>

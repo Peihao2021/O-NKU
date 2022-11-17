@@ -1,0 +1,226 @@
+{include file="public/layout" /}
+<body class="bodystyle" style="cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    {include file="links/bar" /}
+    <div class="flexigrid">
+        <div class="mDiv">
+            <div class="ftitle">
+                {eq name="'Links@add'|is_check_access" value="1"}
+                <div class="fbutton">
+                    <a href="javascript:void(0);" data-href="{:U('Links/add')}" onclick="openFullframe(this, '新增链接');">
+                        <div class="add" title="新增链接">
+                            <span><i class="layui-icon layui-icon-addition"></i>新增链接</span>
+                        </div>
+                    </a>
+                </div>
+                {/eq}
+                 {include file="links/links_group_bar" /}
+            </div>
+            <form class="navbar-form form-inline" id="searchForm" action="{:U('Links/index')}" method="get" onsubmit="layer_loading('正在处理');">
+                {$searchform.hidden|default=''}
+                <div class="sDiv">
+                    <div class="sDiv2">  
+                        <select name="groupid" class="select" style="margin:0px 5px;">
+                            <option value="">--全部--</option>
+                            {volist name="links_group" id="vo"}
+                                <option value="{$vo.id}" {eq name="$Request.param.groupid" value="$vo.id"}selected{/eq}>{$vo.group_name}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                    <div class="sDiv2">
+                        <input type="text" size="30" name="keywords" value="{$Request.param.keywords}" class="qsbox" placeholder="搜索相关数据...">
+                        <input type="submit" class="btn" value="搜索">
+                        <i class="iconfont e-sousuo"></i>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th class="sign w40" axis="col0">
+                            <div class="tc"><input type="checkbox" autocomplete="off" class="checkAll"></div>
+                        </th>
+                        <th abbr="article_show" axis="col5" class="w40">
+                            <div class="tc">ID</div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="w250">
+                            <div class="text-l10">网站名称</div>
+                        </th>
+                        <th abbr="ac_id" axis="col4">
+                            <div class="text-l10">链接地址</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w50">
+                            <div class="tc">显示</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w80">
+                            <div class="tc">链接类型</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w150">
+                            <div class="tc">链接分组</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w100">
+                            <div class="tc">更新时间</div>
+                        </th>
+                        <th axis="col1" class="w120">
+                            <div class="tc">操作</div>
+                        </th>
+                        <th abbr="article_show" axis="col5" class="w60">
+                            <div class="tc">排序</div>
+                        </th>
+                       
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table style="width: 100%">
+                    <tbody>
+                    {empty name="list"}
+                        <tr>
+                            <td class="no-data" align="center" axis="col0" colspan="50">
+                                <div class="no_row">
+                                    <div class="no_pic"><img src="__SKIN__/images/null-data.png"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    {else/}
+                        {foreach name="list" item="vo" key="k" }
+                        <tr>
+                            <td class="sign">
+                                <div class="w40 tc"><input type="checkbox" autocomplete="off" name="ids[]" value="{$vo.id}"></div>
+                            </td>
+                            <td class="sort">
+                                <div class="w40 tc">
+                                    {$vo.id}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w250 text-l10">
+                                    {eq name="'Links@edit'|is_check_access" value="1"}
+                                    <a href="javascript:void(0);" data-href="{:U('Links/edit',array('id'=>$vo['id']))}" onclick="openFullframe(this, '编辑友情链接');">{$vo.title}</a>
+                                    {else /}
+                                    {$vo.title}
+                                    {/eq}
+                                </div>
+                            </td>
+                            <td style="width: 100%">
+                                <div class="text-l10">
+                                    <a href="{$vo.url}" target="_blank">{$vo.url}</a>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="tc w50">
+                                    {if condition="$vo['status'] eq 1"}
+                                        <span class="yes" {eq name="'Links@edit'|is_check_access" value="1"}onClick="changeTableVal('links','id','{$vo.id}','status',this);"{/eq}><i class="fa fa-check-circle"></i>是</span>
+                                    {else /}
+                                        <span class="no" {eq name="'Links@edit'|is_check_access" value="1"}onClick="changeTableVal('links','id','{$vo.id}','status',this);"{/eq}><i class="fa fa-ban"></i>否</span>
+                                    {/if}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w80 tc">
+                                    {eq name="$vo['typeid']" value='1'}
+                                        文字
+                                    {else /}
+                                        图片
+                                    {/eq}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w150 tc">
+                                    {$vo.group_name}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w100 tc">
+                                    {$vo.update_time|date='Y-m-d',###}
+                                </div>
+                            </td>
+                            <td class="operation">
+                                <div class="w120 tc">
+                                    {eq name="'Links@edit'|is_check_access" value="1"}
+                                    <a href="javascript:void(0);" data-href="{:U('Links/edit',array('id'=>$vo['id']))}" class="btn blue" onclick="openFullframe(this, '编辑友情链接');">编辑</a>
+                                    {/eq}
+                                    <i></i>
+                                    {eq name="'Links@del'|is_check_access" value="1"}
+                                    <a class="btn red"  href="javascript:void(0)" data-url="{:U('Links/del')}" data-id="{$vo.id}" onClick="delfun(this);">删除</a>
+                                    {/eq}
+                                    
+                                </div>
+                            </td>
+                            <i></i>
+                            <td class="sort">
+                                <div class="w60 tc">
+                                    {eq name="'Links@edit'|is_check_access" value="1"}
+                                    <input style="text-align: left;" type="text" onchange="changeTableVal('links','id','{$vo.id}','sort_order',this);" size="4"  value="{$vo.sort_order}" />
+                                    {else /}
+                                    {$vo.sort_order}
+                                    {/eq}
+                                </div>
+                            </td>
+                           
+                        </tr>
+                        {/foreach}
+                    {/empty}
+                    </tbody>
+                </table>
+            </div>
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+        <div class="tDiv">
+            <div class="tDiv2">
+                <div class="fbutton checkboxall">
+                    <input type="checkbox" autocomplete="off" class="checkAll">
+                </div>
+                {eq name="'Links@del'|is_check_access" value="1"}
+                <div class="fbutton">
+                    <a onclick="batch_del(this, 'ids');" data-url="{:U('Links/del')}" class="layui-btn layui-btn-primary">
+                        <span>批量删除</span>
+                    </a>
+                </div>
+                {/eq}
+                {include file="public/page" /}
+            </div>
+            <div style="clear:both"></div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function(){
+        $('input[name*=ids]').click(function(){
+            if ($('input[name*=ids]').length == $('input[name*=ids]:checked').length) {
+                $('.checkAll').prop('checked','checked');
+            } else {
+                $('.checkAll').prop('checked', false);
+            }
+        });
+        $('input[type=checkbox].checkAll').click(function(){
+            $('input[type=checkbox]').prop('checked',this.checked);
+        });
+
+        $('#searchForm select[name=groupid]').change(function(){
+            $('#searchForm').submit();
+        });
+    });
+    
+    $(document).ready(function(){
+        // 表格行点击选中切换
+        $('#flexigrid > table>tbody >tr').click(function(){
+            $(this).toggleClass('trSelected');
+        });
+
+        // 点击刷新数据
+        $('.fa-refresh').click(function(){
+            location.href = location.href;
+        });
+    });
+</script>
+
+{include file="public/footer" /}

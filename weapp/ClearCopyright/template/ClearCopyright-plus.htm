@@ -1,0 +1,90 @@
+{include file="header.htm" /}
+<body style="background-color: #FFF; overflow: auto;">
+	<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+	<div id="append_parent"></div>
+	<div id="ajaxwaitid"></div>
+	<div class="page">
+		{include file="bar.htm" /}
+		<form class="form-horizontal" id="post_form" action="" method="post">
+			<div class="ncap-form-default">
+				<dl class="row">
+					<dt class="tit">
+						<label for="copyright_is_on">是否启用</label>
+					</dt>
+					<dd class="opt">
+						<div class="onoff">
+							<label for="copyright_is_on1" class="cb-enable {if condition='!empty($row.is_on)'}selected{/if}">启用</label>
+							<label for="copyright_is_on0" class="cb-disable {if condition='empty($row.is_on)'}selected{/if}">关闭</label>
+							<input id="copyright_is_on1" name="captcha[ClearCopyright-plus][is_on]" value="1" type="radio" {if condition='!empty($row.is_on)' }checked="checked" {/if}>
+							<input id="copyright_is_on0" name="captcha[ClearCopyright-plus][is_on]" value="0" type="radio" {if condition='empty($row.is_on)' }checked="checked" {/if}>
+						</div>
+						<span class="err"></span>
+						<br />
+						<p style="font-size: 12px;">后台刷新看效果，前台可能需要清除缓存</p>
+					</dd>
+				</dl>
+				<dl class="row">
+					<dt class="tit">
+						<label>附加补丁</label>
+					</dt>
+					<dd class="opt">
+						<input id="downkey" style="width: 260px;" type="text" name="captcha[ClearCopyright-plus][config][luckey]" value="H7y36Dd74KiDA8akeid9D0JJsd1">
+						<a href='javascript:void(0);' onclick='goodluck(this);'>下载补丁</a>
+						<br />
+						<p style="font-size: 12px;">老版本用户跳过，1.5.2及以上版本采用附加补丁破解，详情见网页介绍</p>
+					</dd>
+				</dl>
+				<dl class="row">
+					<dt class="tit">
+						<label for="hidelist_is_on">隐藏该插件</label>
+					</dt>
+					<dd class="opt">
+						<div class="onoff">
+							<label for="hidelist_is_on1" class="cb-enable {if condition='!empty($row.is_hide)'}selected{/if}">隐藏</label>
+							<label for="hidelist_is_on0" class="cb-disable {if condition='empty($row.is_hide)'}selected{/if}">显示</label>
+							<input id="hidelist_is_on1" name="captcha[ClearCopyright-plus][is_hide]" value="1" type="radio" {if condition='!empty($row.is_hide)' }checked="checked" {/if}>
+							<input id="hidelist_is_on0" name="captcha[ClearCopyright-plus][is_hide]" value="0" type="radio" {if condition='empty($row.is_hide)' }checked="checked" {/if}>
+						</div>
+						<span class="err"></span>
+						<br />
+						<p style="font-size: 12px;">隐藏后插件仍然生效
+							<br /><br />重置办法：
+							<br />1.weapp目录中删除插件
+							<br />2.退出并重新登录后台一次
+							<br />3.重新拷贝插件放入weapp目录，安装启用
+						</p>
+						<br />
+						<span style="color:#f60;">提交后重新登录并清理缓存</span></p>
+					</dd>
+				</dl>
+				<div class="bot">
+					<input type="hidden" name="inc_type" id="inc_type" value="{$inc_type|default='default'}">
+					<a href="JavaScript:void(0);" onclick="checkForm();" class="ncap-btn-big ncap-btn-green" id="submitBtn">确认提交</a>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript">
+		// 判断输入框是否为空
+		function checkForm() {
+			layer_loading('正在处理');
+			$('#post_form').submit();
+		}
+
+		function goodluck(obj) {
+			var unified_number = $('#downkey').val();
+			if (!unified_number) {
+				layer.msg('密钥为空', {time: 1500});
+				return;
+			}
+			$.ajax({
+				url: "{:weapp_url('ClearCopyright/ClearCopyright/goodluck', ['_ajax'=>1])}",
+				data: {unified_number: unified_number},
+				type: 'post',
+				success: function(res) {
+					layer.msg(res, {time: 1500});
+				}
+			});
+		}
+	</script>
+	{include file="footer.htm" /}

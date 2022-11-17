@@ -1,0 +1,249 @@
+{include file="header.htm" /}
+<style>
+    .a-upload{
+        padding: 7px 10px;
+        height: 20px;
+        line-height: 20px;
+        position: relative;
+        cursor: pointer;
+        color: #90909e;
+        background: #f9f9f9;
+        border: 1px solid #f9f9f9;
+        border-radius: 4px;
+        overflow: hidden;
+        display: inline-block;
+    }
+    .a-upload input {
+        position: absolute;
+        font-size: 100px;
+        right: 0;
+        top: 0;
+        opacity: 0;
+        filter: alpha(opacity=0);
+        cursor: pointer;
+    }
+    .a-upload:hover {
+        color: #31b4e1;
+        background: #f9f9f9;
+        border-color: #f9f9f9;
+        text-decoration: none;
+    }
+    .doctor-meun{
+        position: relative;
+        width: 100%;
+        margin: 20px auto;
+    }
+    .doctor-meun .meun-item{
+        text-align: center;
+        width: 200px;
+        height: 70px;
+        display: inline-block;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        overflow: hidden;
+        box-shadow: 0 0 7px 0 rgba(197,197,197,0.34);
+        background-color: #f9f9f9;
+        margin: 0 10px 10px 0;
+    }
+    .doctor-meun .meun-item .meun-tit{
+        width: 90%;
+        font-weight: bold;
+        margin: 0 auto;
+        margin-top: 4px;
+        line-height: 30px;
+        border-bottom: 1px solid #eee;
+        font-size: 15px;
+    }
+    .doctor-meun .meun-item .meun-b{
+        line-height: 24px;
+        font-size: 14px;
+    }
+</style>
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    {include file="bar.htm" /}
+    <!-- 操作说明 -->
+    <div id="explanation" class="explanation" style="color: rgb(44, 188, 163); background-color: rgb(237, 251, 248); width: 99%; height: 100%;">
+        <div id="checkZoom" class="title"><i class="fa fa-lightbulb-o"></i>
+            <h4 title="提示相关设置操作时应注意的要点">提示</h4>
+            <span title="收起提示" id="explanationZoom" style="display: block;"></span>
+        </div>
+        <ul>
+            <li>目前易优系统助手还在逐渐完善中，敬请期待更新……</li>
+            <li>专门诊断各种疑难杂症，部分功能诊断后会自动修复。</li>
+        </ul>
+    </div>
+    <div class="doctor-meun">
+        <div class="meun-item">
+            <div class="meun-tit">执行数据库</div>
+            <div class="meun-b">
+                <form class="navbar-form form-inline" action="{:weapp_url('Systemdoctor/Systemdoctor/restoreUpload')}" name="change_System" id="change_System" method="post" enctype="multipart/form-data">
+                    <a href="javascript:void(0);" class="a-upload"><input type="file" name="sqlfile" id="sqlfile" title="请选择…">上传执行sql文件</a>
+                </form>
+            </div>
+        </div>
+        <div class="meun-item">
+            <div class="meun-tit">检测数据库</div>
+            <div class="meun-b">
+                <a href="javascript:void(0);" class="a-upload" onclick="open_iframe('{:weapp_url(\'Systemdoctor/Systemdoctor/check_database\')}')">开始检测</a>
+            </div>
+        </div>
+        <div class="meun-item">
+            <div class="meun-tit">检测目录权限</div>
+            <div class="meun-b">
+                <a href="javascript:void(0);" class="a-upload" onclick="open_iframe('{:weapp_url(\'Systemdoctor/Systemdoctor/check_permission\')}', '检测结果', '80%', '80%')">开始检测</a>
+            </div>
+        </div>
+        <div class="meun-item">
+            <div class="meun-tit">SQL命令行</div>
+            <div class="meun-b">
+                <a href="javascript:void(0);" class="a-upload" onclick="open_full_iframe('{:weapp_url(\'Systemdoctor/Systemdoctor/sql_command\')}','SQL命令行')">进入执行</a>
+            </div>
+        </div>
+        <div class="meun-item">
+            <div class="meun-tit">病毒扫描</div>
+            <div class="meun-b">
+                <a href="javascript:void(0);" class="a-upload" onclick="open_full_iframe('{:weapp_url(\'Systemdoctor/Systemdoctor/virus_scan\')}','病毒扫描')">进入扫描</a>
+            </div>
+        </div>
+        <div class="meun-item">
+            <div class="meun-tit">木马图片扫描</div>
+            <div class="meun-b">
+                <a href="javascript:void(0);" class="a-upload" onclick="open_full_iframe('{:weapp_url(\'Systemdoctor/Systemdoctor/virus_upload\')}','木马图片扫描')">进入扫描</a>
+            </div>
+        </div>
+        <div class="meun-item">
+            <div class="meun-tit">检测重复文档</div>
+            <div class="meun-b">
+                 <a href="javascript:void(0);" class="a-upload" onclick="open_full_iframe('{:weapp_url(\'Systemdoctor/Systemdoctor/repeat_archives_index\')}', '检测重复文档')">进入检测</a>
+            </div>
+        </div>
+        <div class="meun-item">
+            <div class="meun-tit">重置数据表ID</div>
+            <div class="meun-b">
+                <a href="javascript:void(0);" class="a-upload" onclick="open_full_iframe('{:weapp_url(\'Systemdoctor/Systemdoctor/sql_reset\')}', '重置数据表ID')">进入重置</a>
+            </div>
+        </div>
+        <div class="meun-item">
+            <div class="meun-tit">后台操作日志</div>
+            <div class="meun-b">
+                <a href="javascript:void(0);" class="a-upload" onclick="open_full_iframe('{:weapp_url(\'Systemdoctor/Systemdoctor/admin_log\')}', '后台操作日志')">查看日志</a>
+            </div>
+        </div>
+        <div class="meun-item">
+            <div class="meun-tit">数据库内容替换</div>
+            <div class="meun-b">
+                <a href="javascript:void(0);" class="a-upload" onclick="open_full_iframe('{:weapp_url(\'Systemdoctor/Systemdoctor/data_replace_index\')}', '数据库内容替换')">进入执行</a>
+            </div>
+        </div>
+        <div class="meun-item">
+            <div class="meun-tit">验证码管理</div>
+            <div class="meun-b">
+                {if condition="$cms_version >= 'v1.5.6'"}
+                    <a href="javascript:void(0);" class="a-upload" onclick="open_full_iframe('{:url(\'Vertify/index\')}', '验证码管理')">进入管理</a>
+                {else /}
+                    <a href="javascript:void(0);" class="a-upload" onclick="open_full_iframe('{:weapp_url(\'Systemdoctor/Systemdoctor/vertify\')}', '验证码管理')">进入管理</a>
+                {/if}
+            </div>
+        </div>
+        <div class="meun-item">
+            <div class="meun-tit">在线模板编辑</div>
+            <div class="meun-b">
+                <a href="javascript:void(0);" class="a-upload" onclick="open_full_iframe('{:weapp_url(\'Systemdoctor/Systemdoctor/filemanager_index\')}', '在线模板编辑')">在线编辑</a>
+            </div>
+        </div>
+        <div class="meun-item">
+            <div class="meun-tit">上传图片检测木马</div>
+            <div class="meun-b">
+                <a href="javascript:void(0);" class="a-upload" onclick="trojan_horse_submit(0)" {if condition='empty($trojan_horse)'} style="display:none;" {/if}>点击开启</a>
+                <a href="javascript:void(0);" class="a-upload" onclick="trojan_horse_submit(1)" {if condition='!empty($trojan_horse)'} style="display:none;" {/if}>点击关闭</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('#sqlfile').change(function(){
+        restoreUpload();
+    });
+
+    // 上传图片检测木马
+    function trojan_horse_submit(value) {
+        layer_loading('正在处理');
+        $.ajax({
+            url: "{:weapp_url('Systemdoctor/Systemdoctor/trojan_horse')}",
+            data: {value:value,_ajax:1},
+            type: 'post',
+            dataType: 'json',
+            success: function (res) {
+                layer.closeAll();
+                if (1 == res.code) {
+                    layer.msg(res.msg, {time: 1000}, function(){
+                        window.location.reload();
+                    });
+                }
+
+            },
+            error:function (e) {
+                layer.closeAll();
+                showErrorAlert(e.responseText);
+            }
+        });
+    }
+
+    // 判断输入框是否为空
+    function restoreUpload()
+    {
+        var sqlfile = $('input[name=sqlfile]').val();
+        var ext = sqlfile.substr(sqlfile.lastIndexOf('.')).toLowerCase();
+        if ($.trim(sqlfile) == '' || ext != '.sql') {
+            showErrorMsg('请上传sql文件！');
+            return false;
+        }
+
+        layer.confirm('此操作不可恢复，确认执行？', {
+            title: false,//'<font color="red">重要提示</font>',
+            btn: ['确定', '取消'] //按钮
+        }, function () {
+            layer_loading('正在处理');
+            $('#change_System').submit();
+            return false;
+        }, function (index) {
+            $('#sqlfile').val('');
+            layer.closeAll();
+            return false;
+        });
+    }
+
+    function open_iframe(url,title='检测结果',w='60%',h="70%") {
+        var url = url;
+        //iframe窗
+        layer.open({
+            type: 2,
+            title: title,
+            fixed: true, //不固定
+            shadeClose: false,
+            shade: 0.3,
+            maxmin: true, //开启最大化最小化按钮
+            area: [w, w],
+            content: url
+        });
+    }
+
+    function open_full_iframe(url,title) {
+        //iframe窗
+        var iframes = layer.open({
+            type: 2,
+            title: title,
+            fixed: true, //不固定
+            shadeClose: true,
+            shade: 0.3,
+            content: url,
+        });
+        layer.full(iframes);
+    }
+
+</script>
+{include file="footer.htm" /}

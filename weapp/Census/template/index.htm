@@ -1,0 +1,389 @@
+{include file="header.htm" /}
+<style>.row .opt .onoff span{display: inline-block;font-size: 14px;margin-left: 10px;}</style>
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    {include file="bar.htm" /}
+    <!-- 操作说明 -->
+    <div id="explanation" class="explanation" style="color: rgb(44, 188, 163); background-color: rgb(237, 251, 248); width: 99%; height: 100%;">
+        <div id="checkZoom" class="title"><i class="fa fa-lightbulb-o"></i>
+            <h4 title="提示相关设置操作时应注意的要点">操作提示</h4>
+            <span title="收起提示" id="explanationZoom" style="display: block;"></span>
+        </div>
+        <ul>
+            <li>注意事项：不会修改代码的新手用户最好选择4项统计显示！如果需要单独使用请查看【使用指南】<br/>统计介绍：前台统计数量是【真实统计】+【虚假统计数量】！</li>
+        </ul>
+    </div>
+    <form class="form-horizontal" id="post_form" action="{:weapp_url('Census/Census/save')}" method="post">
+        <div class="ncap-form-default">
+		    <dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>JQ调用</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="jq1" class="cb-enable {if condition='isset($info.data.jq) && $info.data.jq eq 1'}selected{/if}">开启</label>
+                        <label for="jq0" class="cb-disable {if condition='!isset($info.data.jq) || $info.data.jq eq 2'}selected{/if}">禁用</label>
+                        <input id="jq1" name="jq" value="1" type="radio" {if condition="isset($info.data.jq) && $info.data.jq eq 1"} checked="checked"{/if}>
+                        <input id="jq0" name="jq" value="2" type="radio" {if condition="!isset($info.data.jq) || $info.data.jq eq 2"} checked="checked"{/if}>
+                    </div>
+                    <p class="" style="color: #f00;margin-left: 20px;display: inline-block;">完成交易产品列表显示需要调用！页面出现错误请禁用JQ</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label for="width">页面宽度</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="width" value="{$info.data.width|default='1200'}" id="width" style="width: 100px;">px
+                    <span class="err"></span>
+                    <p class=""></p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>文章数量统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="arccount1" class="cb-enable {if condition='!isset($info.data.arccount) || $info.data.arccount eq 1'}selected{/if}">显示</label>
+                        <label for="arccount0" class="cb-disable {if condition='isset($info.data.arccount) && $info.data.arccount eq 2'}selected{/if}">隐藏</label>
+                        <input id="arccount1" name="arccount" value="1" type="radio" {if condition="!isset($info.data.arccount) || $info.data.arccount eq 1"} checked="checked"{/if}>
+                        <input id="arccount0" name="arccount" value="2" type="radio" {if condition="isset($info.data.arccount) && $info.data.arccount eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="arccountfalse" value="{$info.data.arccountfalse|default='0'}" id="arccountfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$arccount}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('arccount');" class="ncap-btn ncap-btn-green arccount" data-clipboard-text="{literal}{$arccount}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示文章数量统计</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>今日文章数量统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="todayarccount1" class="cb-enable {if condition='!isset($info.data.todayarccount) || $info.data.todayarccount eq 1'}selected{/if}">显示</label>
+                        <label for="todayarccount0" class="cb-disable {if condition='isset($info.data.todayarccount) && $info.data.todayarccount eq 2'}selected{/if}">隐藏</label>
+                        <input id="todayarccount1" name="todayarccount" value="1" type="radio" {if condition="!isset($info.data.todayarccount) || $info.data.todayarccount eq 1"} checked="checked"{/if}>
+                        <input id="todayarccount0" name="todayarccount" value="2" type="radio" {if condition="isset($info.data.todayarccount) && $info.data.todayarccount eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="todayarccountfalse" value="{$info.data.todayarccountfalse|default='0'}" id="todayarccountfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$todayarccount}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('todayarccount');" class="ncap-btn ncap-btn-green todayarccount" data-clipboard-text="{literal}{$todayarccount}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示今日文章数量统计</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>本周文章数量统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="weekarccount1" class="cb-enable {if condition='!isset($info.data.weekarccount) || $info.data.weekarccount eq 1'}selected{/if}">显示</label>
+                        <label for="weekarccount0" class="cb-disable {if condition='isset($info.data.weekarccount) && $info.data.weekarccount eq 2'}selected{/if}">隐藏</label>
+                        <input id="weekarccount1" name="weekarccount" value="1" type="radio" {if condition="!isset($info.data.weekarccount) || $info.data.weekarccount eq 1"} checked="checked"{/if}>
+                        <input id="weekarccount0" name="weekarccount" value="2" type="radio" {if condition="isset($info.data.weekarccount) && $info.data.weekarccount eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="weekarccountfalse" value="{$info.data.weekarccountfalse|default='0'}" id="weekarccountfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$weekarccount}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('weekarccount');" class="ncap-btn ncap-btn-green weekarccount" data-clipboard-text="{literal}{$weekarccount}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示本周文章数量统计</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>本月文章数量统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="montharccount1" class="cb-enable {if condition='!isset($info.data.montharccount) || $info.data.montharccount eq 1'}selected{/if}">显示</label>
+                        <label for="montharccount0" class="cb-disable {if condition='isset($info.data.montharccount) && $info.data.montharccount eq 2'}selected{/if}">隐藏</label>
+                        <input id="montharccount1" name="montharccount" value="1" type="radio" {if condition="!isset($info.data.montharccount) || $info.data.montharccount eq 1"} checked="checked"{/if}>
+                        <input id="montharccount0" name="montharccount" value="2" type="radio" {if condition="isset($info.data.montharccount) && $info.data.montharccount eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="montharccountfalse" value="{$info.data.montharccountfalse|default='0'}" id="montharccountfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$montharccount}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('montharccount');" class="ncap-btn ncap-btn-green montharccount" data-clipboard-text="{literal}{$montharccount}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示本月文章数量统计</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>未审核文章统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="noarccount1" class="cb-enable {if condition='!isset($info.data.noarccount) || $info.data.noarccount eq 1'}selected{/if}">显示</label>
+                        <label for="noarccount0" class="cb-disable {if condition='isset($info.data.noarccount) && $info.data.noarccount eq 2'}selected{/if}">隐藏</label>
+                        <input id="noarccount1" name="noarccount" value="1" type="radio" {if condition="!isset($info.data.noarccount) || $info.data.noarccount eq 1"} checked="checked"{/if}>
+                        <input id="noarccount0" name="noarccount" value="2" type="radio" {if condition="isset($info.data.noarccount) && $info.data.noarccount eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="noarccountfalse" value="{$info.data.noarccountfalse|default='0'}" id="noarccountfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$noarccount}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('noarccount');" class="ncap-btn ncap-btn-green noarccount" data-clipboard-text="{literal}{$noarccount}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示未审核文章统计</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>会员数量统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="userscount1" class="cb-enable {if condition='!isset($info.data.userscount) || $info.data.userscount eq 1'}selected{/if}">显示</label>
+                        <label for="userscount0" class="cb-disable {if condition='isset($info.data.userscount) && $info.data.userscount eq 2'}selected{/if}">隐藏</label>
+                        <input id="userscount1" name="userscount" value="1" type="radio" {if condition="!isset($info.data.userscount) || $info.data.userscount eq 1"} checked="checked"{/if}>
+                        <input id="userscount0" name="userscount" value="2" type="radio" {if condition="isset($info.data.userscount) && $info.data.userscount eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="userscountfalse" value="{$info.data.userscountfalse|default='0'}" id="userscountfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$userscount}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('userscount');" class="ncap-btn ncap-btn-green userscount" data-clipboard-text="{literal}{$userscount}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示会员数量统计</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>开通收费会员统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="onuserscount1" class="cb-enable {if condition='!isset($info.data.onuserscount) || $info.data.onuserscount eq 1'}selected{/if}">显示</label>
+                        <label for="onuserscount0" class="cb-disable {if condition='isset($info.data.onuserscount) && $info.data.onuserscount eq 2'}selected{/if}">隐藏</label>
+                        <input id="onuserscount1" name="onuserscount" value="1" type="radio" {if condition="!isset($info.data.onuserscount) || $info.data.onuserscount eq 1"} checked="checked"{/if}>
+                        <input id="onuserscount0" name="onuserscount" value="2" type="radio" {if condition="isset($info.data.onuserscount) && $info.data.onuserscount eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="onuserscountfalse" value="{$info.data.onuserscountfalse|default='0'}" id="onuserscountfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$onuserscount}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('onuserscount');" class="ncap-btn ncap-btn-green onuserscount" data-clipboard-text="{literal}{$onuserscount}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示开通收费会员统计</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>产品数量统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="procount1" class="cb-enable {if condition='!isset($info.data.procount) || $info.data.procount eq 1'}selected{/if}">显示</label>
+                        <label for="procount0" class="cb-disable {if condition='isset($info.data.procount) && $info.data.procount eq 2'}selected{/if}">隐藏</label>
+                        <input id="procount1" name="procount" value="1" type="radio" {if condition="!isset($info.data.procount) || $info.data.procount eq 1"} checked="checked"{/if}>
+                        <input id="procount0" name="procount" value="2" type="radio" {if condition="isset($info.data.procount) && $info.data.procount eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="procountfalse" value="{$info.data.procountfalse|default='0'}" id="procountfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$procount}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('procount');" class="ncap-btn ncap-btn-green procount" data-clipboard-text="{literal}{$procount}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示产品数量统计</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>交易金额统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="moncount1" class="cb-enable {if condition='!isset($info.data.moncount) || $info.data.moncount eq 1'}selected{/if}">显示</label>
+                        <label for="moncount0" class="cb-disable {if condition='isset($info.data.moncount) && $info.data.moncount eq 2'}selected{/if}">隐藏</label>
+                        <input id="moncount1" name="moncount" value="1" type="radio" {if condition="!isset($info.data.moncount) || $info.data.moncount eq 1"} checked="checked"{/if}>
+                        <input id="moncount0" name="moncount" value="2" type="radio" {if condition="isset($info.data.moncount) && $info.data.moncount eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="moncountfalse" value="{$info.data.moncountfalse|default='0'}" id="moncountfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$moncount}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('moncount');" class="ncap-btn ncap-btn-green moncount" data-clipboard-text="{literal}{$moncount}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示交易金额统计</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>完成订单数量统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="onmoncount1" class="cb-enable {if condition='!isset($info.data.onmoncount) || $info.data.onmoncount eq 1'}selected{/if}">显示</label>
+                        <label for="onmoncount0" class="cb-disable {if condition='isset($info.data.onmoncount) && $info.data.onmoncount eq 2'}selected{/if}">隐藏</label>
+                        <input id="onmoncount1" name="onmoncount" value="1" type="radio" {if condition="!isset($info.data.onmoncount) || $info.data.onmoncount eq 1"} checked="checked"{/if}>
+                        <input id="onmoncount0" name="onmoncount" value="2" type="radio" {if condition="isset($info.data.onmoncount) && $info.data.onmoncount eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="onmoncountfalse" value="{$info.data.onmoncountfalse|default='0'}" id="onmoncountfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$onmoncount}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('onmoncount');" class="ncap-btn ncap-btn-green onmoncount" data-clipboard-text="{literal}{$onmoncount}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示完成订单数量统计</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>完成交易产品列表</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="onmoncounts1" class="cb-enable {if condition='!isset($info.data.onmoncounts) || $info.data.onmoncounts eq 1'}selected{/if}">显示</label>
+                        <label for="onmoncounts0" class="cb-disable {if condition='isset($info.data.onmoncounts) && $info.data.onmoncounts eq 2'}selected{/if}">隐藏</label>
+                        <input id="onmoncounts1" name="onmoncounts" value="1" type="radio" {if condition="!isset($info.data.onmoncounts) || $info.data.onmoncounts eq 1"} checked="checked"{/if}>
+                        <input id="onmoncounts0" name="onmoncounts" value="2" type="radio" {if condition="isset($info.data.onmoncounts) && $info.data.onmoncounts eq 2"} checked="checked"{/if}>
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{empty name="onmoncounts"}没有符合条件的记录{else/}{volist name="onmoncounts" id="vo"}会员&lt;img src="{$vo.head_pic}" />{$vo.username}于{$vo.add_time|MyDate='Y-m-d H:i:s',###}购买&lt;a href="{$vo.arcurl}">&lt;img src="{$vo.litpic}" />{$vo.title}&lt;/a>价值{$vo.order_amount}{/volist}{/empty}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('onmoncounts');" class="ncap-btn ncap-btn-green onmoncounts" data-clipboard-text="{literal}{empty name='onmoncounts'}没有符合条件的记录{else/}{volist name='onmoncounts' id='vo'}会员&lt;img src='{$vo.head_pic}' />{$vo.username}于{$vo.add_time|MyDate='Y-m-d H:i:s',###}购买&lt;a href='{$vo.arcurl}'>&lt;img src='{$vo.litpic}' />{$vo.title}&lt;/a>价值{$vo.order_amount}{/volist}{/empty}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示完成交易产品列表</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>留言数量统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="bookcounts1" class="cb-enable {if condition='!isset($info.data.bookcounts) || $info.data.bookcounts eq 1'}selected{/if}">显示</label>
+                        <label for="bookcounts0" class="cb-disable {if condition='isset($info.data.bookcounts) && $info.data.bookcounts eq 2'}selected{/if}">隐藏</label>
+                        <input id="bookcounts1" name="bookcounts" value="1" type="radio" {if condition="!isset($info.data.bookcounts) || $info.data.bookcounts eq 1"} checked="checked"{/if}>
+                        <input id="bookcounts0" name="bookcounts" value="2" type="radio" {if condition="isset($info.data.bookcounts) && $info.data.bookcounts eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="bookcountsfalse" value="{$info.data.bookcountsfalse|default='0'}" id="bookcountsfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$bookcounts}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('bookcounts');" class="ncap-btn ncap-btn-green bookcounts" data-clipboard-text="{literal}{$bookcounts}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示留言数量统计</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>友情链接数量统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="linkcounts1" class="cb-enable {if condition='!isset($info.data.linkcounts) || $info.data.linkcounts eq 1'}selected{/if}">显示</label>
+                        <label for="linkcounts0" class="cb-disable {if condition='isset($info.data.linkcounts) && $info.data.linkcounts eq 2'}selected{/if}">隐藏</label>
+                        <input id="linkcounts1" name="linkcounts" value="1" type="radio" {if condition="!isset($info.data.linkcounts) || $info.data.linkcounts eq 1"} checked="checked"{/if}>
+                        <input id="linkcounts0" name="linkcounts" value="2" type="radio" {if condition="isset($info.data.linkcounts) && $info.data.linkcounts eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="linkcountsfalse" value="{$info.data.linkcountsfalse|default='0'}" id="linkcountsfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$linkcounts}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('linkcounts');" class="ncap-btn ncap-btn-green linkcounts" data-clipboard-text="{literal}{$linkcounts}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示友情链接数量统计</p>
+                </dd>
+            </dl>
+			{eyou:notempty name='$isask' /}
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>问答提问数量统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="questioncounts1" class="cb-enable {if condition='!isset($info.data.questioncounts) || $info.data.questioncounts eq 1'}selected{/if}">显示</label>
+                        <label for="questioncounts0" class="cb-disable {if condition='isset($info.data.questioncounts) && $info.data.questioncounts eq 2'}selected{/if}">隐藏</label>
+                        <input id="questioncounts1" name="questioncounts" value="1" type="radio" {if condition="!isset($info.data.questioncounts) || $info.data.questioncounts eq 1"} checked="checked"{/if}>
+                        <input id="questioncounts0" name="questioncounts" value="2" type="radio" {if condition="isset($info.data.questioncounts) && $info.data.questioncounts eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="questioncountsfalse" value="{$info.data.questioncountsfalse|default='0'}" id="questioncountsfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$questioncounts}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('questioncounts');" class="ncap-btn ncap-btn-green questioncounts" data-clipboard-text="{literal}{$questioncounts}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示问答提问数量统计</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>问答今日提问数量统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="tquestioncounts1" class="cb-enable {if condition='!isset($info.data.tquestioncounts) || $info.data.tquestioncounts eq 1'}selected{/if}">显示</label>
+                        <label for="tquestioncounts0" class="cb-disable {if condition='isset($info.data.tquestioncounts) && $info.data.tquestioncounts eq 2'}selected{/if}">隐藏</label>
+                        <input id="tquestioncounts1" name="tquestioncounts" value="1" type="radio" {if condition="!isset($info.data.tquestioncounts) || $info.data.tquestioncounts eq 1"} checked="checked"{/if}>
+                        <input id="tquestioncounts0" name="tquestioncounts" value="2" type="radio" {if condition="isset($info.data.tquestioncounts) && $info.data.tquestioncounts eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="tquestioncountsfalse" value="{$info.data.tquestioncountsfalse|default='0'}" id="tquestioncountsfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$tquestioncounts}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('tquestioncounts');" class="ncap-btn ncap-btn-green tquestioncounts" data-clipboard-text="{literal}{$tquestioncounts}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示问答今日提问数量统计</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>问答本周提问数量统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="wquestioncounts1" class="cb-enable {if condition='!isset($info.data.wquestioncounts) || $info.data.wquestioncounts eq 1'}selected{/if}">显示</label>
+                        <label for="wquestioncounts0" class="cb-disable {if condition='isset($info.data.wquestioncounts) && $info.data.wquestioncounts eq 2'}selected{/if}">隐藏</label>
+                        <input id="wquestioncounts1" name="wquestioncounts" value="1" type="radio" {if condition="!isset($info.data.wquestioncounts) || $info.data.wquestioncounts eq 1"} checked="checked"{/if}>
+                        <input id="wquestioncounts0" name="wquestioncounts" value="2" type="radio" {if condition="isset($info.data.wquestioncounts) && $info.data.wquestioncounts eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="wquestioncountsfalse" value="{$info.data.wquestioncountsfalse|default='0'}" id="wquestioncountsfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$wquestioncounts}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('wquestioncounts');" class="ncap-btn ncap-btn-green wquestioncounts" data-clipboard-text="{literal}{$wquestioncounts}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示问答本周提问数量统计</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>问答本月提问数量统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="mquestioncounts1" class="cb-enable {if condition='!isset($info.data.mquestioncounts) || $info.data.mquestioncounts eq 1'}selected{/if}">显示</label>
+                        <label for="mquestioncounts0" class="cb-disable {if condition='isset($info.data.mquestioncounts) && $info.data.mquestioncounts eq 2'}selected{/if}">隐藏</label>
+                        <input id="mquestioncounts1" name="mquestioncounts" value="1" type="radio" {if condition="!isset($info.data.mquestioncounts) || $info.data.mquestioncounts eq 1"} checked="checked"{/if}>
+                        <input id="mquestioncounts0" name="mquestioncounts" value="2" type="radio" {if condition="isset($info.data.mquestioncounts) && $info.data.mquestioncounts eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="mquestioncountsfalse" value="{$info.data.mquestioncountsfalse|default='0'}" id="mquestioncountsfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$mquestioncounts}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('mquestioncounts');" class="ncap-btn ncap-btn-green mquestioncounts" data-clipboard-text="{literal}{$mquestioncounts}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示问答本月提问数量统计</p>
+                </dd>
+            </dl>
+			<dl class="row">
+                <dt class="tit" style="width: 150px;">
+                    <label>问答回答数量统计</label>
+                </dt>
+                <dd class="opt" style="width: 75%;">
+                    <div class="onoff">
+                        <label for="askcounts1" class="cb-enable {if condition='!isset($info.data.askcounts) || $info.data.askcounts eq 1'}selected{/if}">显示</label>
+                        <label for="askcounts0" class="cb-disable {if condition='isset($info.data.askcounts) && $info.data.askcounts eq 2'}selected{/if}">隐藏</label>
+                        <input id="askcounts1" name="askcounts" value="1" type="radio" {if condition="!isset($info.data.askcounts) || $info.data.askcounts eq 1"} checked="checked"{/if}>
+                        <input id="askcounts0" name="askcounts" value="2" type="radio" {if condition="isset($info.data.askcounts) && $info.data.askcounts eq 2"} checked="checked"{/if}>
+						<span style="">虚假统计：</span><input type="text" name="askcountsfalse" value="{$info.data.askcountsfalse|default='0'}" id="askcountsfalse" style="width: 100px;padding: 2px 6px;">
+                    </div>
+					<p style="margin-left: 20px;display: inline-block;">标签：</p>
+					<p class="" style="color: #f00;display: inline-block;">{literal}{$askcounts}{/literal}</p>
+					<a href="javascript:void(0);" onclick="showtext('askcounts');" class="ncap-btn ncap-btn-green askcounts" data-clipboard-text="{literal}{$askcounts}{/literal}">点击复制</a>
+                    <p class="notic">前台页面是否显示问答回答数量统计</p>
+                </dd>
+            </dl>
+			{/eyou:notempty}
+            <div class="bot">
+                <a href="JavaScript:void(0);" onclick="checkForm();" class="ncap-btn-big ncap-btn-green" id="submitBtn">确认提交</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    // 判断输入框是否为空
+    function checkForm(){
+        layer_loading('正在处理');
+        $('#post_form').submit();
+    }
+</script>
+<script type="text/javascript" src="__SKIN__/js/clipboard.min.js"></script>
+<script type="text/javascript">
+    function showtext(classname){
+        var clipboard1 = new Clipboard("."+classname);clipboard1.on("success", function(e) {layer.msg("复制成功");});clipboard1.on("error", function(e) {layer.msg("复制失败！请手动复制", {icon:2});}); 
+    }
+</script>
+{include file="footer.htm" /}

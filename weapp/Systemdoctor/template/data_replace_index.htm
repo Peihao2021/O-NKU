@@ -1,0 +1,136 @@
+{include file="header.htm" /}
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    <form class="form-horizontal" id="form1"  method="post">
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit" style="width:100%; color:red;">
+                    <h1>程序用于批量替换数据库中某字段的内容，此操作极为危险，请小心使用。</h1>
+                </dt>
+                <dd class="opt">
+
+                </dd>
+            </dl>
+            <dl>
+                <dt class="tit">数据表与字段：</dt>
+                <dd class="opt" style="padding-bottom:20px;">
+                    <select name="tables" id="tables" size="20" style="width:61%;">
+                        {volist name='tables' id='vi'}
+                        <option value="{$vi}">{$vi}</option>
+                        {/volist}
+                    </select>
+                    <div id="fields" style="display:none;">
+                        <div  style="border:1px solid #ababab; width:60%; background-color:#1a569a36;margin-top:6px;padding:3px;line-height:160%">
+                            表(<span id="targetTable">eyoucms_addonspec</span>)含有的字段：<br>
+                            <div id="fields_son"></div>
+                        </div>
+                    </div>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">要替换的字段：</dt>
+                <dd class="opt">
+                    <input style="width:60%;" name="rpfield" type="text" placeholder="请选择要替换的字段,例如：title" id="rpfield" class="alltxt" />
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">替换方式：</dt>
+                <dd class="opt">
+                    <input name="rptype" type="radio"   value="replace" checked='checked' />
+                    普通替换
+                    <!--<input  name="rptype" type="radio"  value="regex" />-->
+                    <!--正则表达式 主键字段：-->
+                    <!--<input name="keyfield" type="text" id="keyfield" size="12">-->
+                    <!--（正则模式必须指定）-->
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">被替换内容：</dt>
+                <dd class="opt">
+                    <textarea placeholder="请输入被替换内容" name="rpstring" id="rpstring" class="alltxt" style="width:60%;height:50px"></textarea>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">替换为：</dt>
+                <dd class="opt">
+                    <textarea placeholder="被替换的内容替换为" name="tostring" id="tostring" class="alltxt" style="width:60%;height:50px"></textarea>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">替换条件：</dt>
+                <dd class="opt">
+                    <input placeholder="请输入替换条件,例如：id=1" name="condition" type="text" id="condition" style="width:55%" />　(空完全替换)
+                </dd>
+            </dl>
+        <div class="bot">
+            <a class="ncap-btn-big ncap-btn-green" type="button" id="submitBtn">开始替换数据</a>
+        </div>
+    </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#tables").change(function(){
+            $targetTable = $(this).val();
+            if($targetTable){
+                // weapp_url('Contact/Contact/index')
+                $.get("{:weapp_url('Systemdoctor/getTableField')}",{
+                    table_name: $targetTable
+                },function(res){
+                    if(res.code==1)
+                    {
+                        $("#fields").show();
+                        $("#targetTable").text(res.data.targetTable);
+                        $content = '';
+                        for($i=0; $i<res.data.fields.length; $i++)
+                        {
+                            $content += '<a href="javascript:void(0);" title='+res.data.fields[$i]+' onclick="pf(this)" style="text-decoration:underline; padding:5px;" class="son">'+res.data.fields[$i]+'</a>';
+                        }
+                        $("#fields_son").html($content);
+                    }else{
+                        layer.msg(res.msg,{icon:2});
+                    }
+                })
+            }
+        })
+        $("#submitBtn").click(function(){
+            $targetTable = $("#tables").val(); //选择表
+            $field = $("#rpfield").val(); //选择字段
+            $rpstring = $("#rpstring").val(); //被替换的内容
+            $rptype = $("input[name='rptype']:checked").val();// 替换模式
+            $tostring = $("#tostring").val(); //替换为
+            // if($targetTable!=='' && $field!=='' && $rpstring!=='' && $rptype!=='' && $tostring!=='') {
+            if($targetTable!=='' && $field!=='' && $rpstring!=='' && $rptype!=='') {
+                if($rptype=='regex'){
+                    $keyField = $("#keyfield").val();
+                    if($keyField==''){
+                        layer.msg("如果选择了正则匹配模式,请保证主键字段完整",{icon:2});
+                        return false;
+                    }
+                }
+                $.ajax({
+                    type: 'post',
+                    url: "{:weapp_url('Systemdoctor/th')}",
+                    data: $("#form1").serialize(),
+                    dataType: 'json',
+                    success:function(res){
+                        if(res.code==1){
+                            layer.msg(res.msg,{icon:1});
+                        }else{
+                            layer.msg(res.msg,{icon:2});
+                        }
+                    }
+                })
+            }else{
+                layer.msg("请保证[选择表][选择字段][被替换的内容][替换为]选项已选择或填写",{icon:2});
+            }
+        })
+    });
+    function pf(is) {
+        $("#rpfield").attr("value",$(is).text());
+    }
+</script>
+{include file="footer.htm" /}

@@ -1,0 +1,51 @@
+<div class="flexigrid">
+    {notempty name="result"}
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th class="sign w10" axis="col0">
+                                <div class="tc">
+                                    执行 
+                                    <span style="color: red;">移至回收站操作</span> 
+                                    将会把选中的文件移动到网站的 
+                                    <span style="color: red;">data/tempimg/{$times}</span> 目录下，请先确认文件是可以清理移动的并做好备份，以免误操作造成图片丢失
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    {/notempty}
+
+    <div class="bDiv" style="height: auto;">
+        <div id="flexigrid" cellpadding="0" cellspacing="0" border="0" class="picture-box">
+            <table style="width: 100%">
+                <tbody>
+                {empty name="result"}
+                    <tr>
+                        <td class="no-data" align="center" axis="col0" colspan="50">
+                            <i class="fa fa-exclamation-circle"></i>没有扫描到未使用的文件
+                        </td>
+                    </tr>
+                {else/}
+                    {foreach name="result" item="vo"}
+                        <span class="button_span" data-id="{$vo.id}" onclick="FindSelected(this);">
+                            <img src="{$vo.url}" style="height: 150px; width: 150px;"> <span class="icon"></span>
+                        </span>
+                    {/foreach}
+                {/empty}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tDiv"> <div class="tDiv2"> {$Page} </div> </div>
+</div>
+<script type="text/javascript">
+    $(function() {
+        var surplus_count = "{$surplus_count}";
+        if (surplus_count >= 0) $('#num').html(surplus_count).css('color', 'red');
+    });
+</script>

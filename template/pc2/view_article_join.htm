@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width" />
+ <title>{$eyou.field.seo_title}</title>
+<meta name="description" content="{$eyou.field.seo_description}" />
+<meta name="keywords" content="{$eyou.field.seo_keywords}" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="screen-orientation" content="portrait"><!-- uc强制竖屏 -->
+<meta name="x5-orientation" content="portrait"><!-- QQ强制竖屏 -->
+<link href="{eyou:global name='web_ico' /}" rel="shortcut icon" type="image/x-icon" />
+<link href="/template/pc/static/css/pagv2.css" rel="stylesheet" type="text/css" />
+<script src="/template/pc/static/js/jquery-1.8.1.min.js" type="text/javascript"></script>
+<script src="/template/pc/static/js/common.js" type="text/javascript"></script>
+
+
+</head>
+<body><div id="warp">
+  {eyou:include file="header.htm" /}
+    <!--banner begin-->
+    <!-- /header -->
+    <div class="bannerArea wcon">
+        <img src="{eyou:notempty name='$eyou.field.typelitpic' /}{$eyou.field.typelitpic} {eyou:else /}{$eyou.field.typeid|gettoptype=###,'litpic'}{/eyou:notempty}"  />
+        <!--栏目-->
+        <div class="hiArea">
+            <div class="rightArea">当前位置：{eyou:position style=' ' /} </div>
+        </div>
+    </div>
+    <div class="container wcon">
+        <!--左边-->
+        <div class="contactleft">
+            <div class="left">
+    <!--菜单-->
+   <div class="menuArea">
+  <div class="titleArea">
+    <h3>{$eyou.field.typeid|gettoptype=###,'typename'}</h3> 
+  </div>
+  <div class="conArea ">
+   
+    <ul class="navmenu">
+        
+        {eyou:models  type='sonself' loop='20'}
+         <li class="{eyou:eq name='$i' value='2'}cur{/eyou:eq}"><h3><a href="{$field.typeurl}">{$field.typename}</a></h3></li>
+        {/eyou:models}
+             
+        </ul>  
+  </div>
+            
+</div>
+</div>
+        </div>
+        <!--右边-->
+        <div class="padd">
+            <!--信息详细--中等-->
+            <div class="nsArea-medium">
+                <div class="titleArea">
+                    <h2>{$eyou.field.title}</h2>
+                    <div class="caption">
+                        <em><b>来源：</b>{$eyou.field.origin}</em> <em><b>时间：</b>{$eyou.field.add_time|MyDate='Y-m-d H:i:s',###}</em> <em><b>发布人：</b>{$eyou.field.author}</em> <em>
+                            <b>阅读：</b>
+                            {eyou:arcclick /}
+
+                        </em>
+                    </div>
+                </div>
+                <div class="conArea">
+                  {$eyou.field.content}
+
+                </div>
+            </div>
+            <div class="handle">
+                <div class="context">
+                    <ul>
+                        <li>{eyou:prenext get='pre'}
+<a href='{$field.arcurl}' title='{$field.title}' class='page-link'> 上一篇 <span>: {$field.title}</span> </a>
+{eyou:else /}
+<a class='page-link'>上一篇：没有了</a>
+{/eyou:prenext}
+ </li>
+                        <li>{eyou:prenext get='next'}
+<a href='{$field.arcurl}' title='{$field.title}' class='page-link'> 下一篇 <span>: {$field.title}</span> </a>
+{eyou:else /}
+<a class='page-link'>下一篇：没有了</a>
+{/eyou:prenext}
+</li>
+                    </ul>
+                </div>
+                <!-- /context -->
+            </div>
+            <div class="clear"></div>
+            <div class="About_Article">
+                <strong>相关文章</strong>
+                <ul class="e8">
+                    
+
+                 {eyou:relevarticle limit='0,6' titlelen='30' }
+                    
+
+                    <li> <a href='{$field.arcurl}'>{$field.title}</a> </li>
+                    {/eyou:relevarticle}
+
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+	
+	  {eyou:include file="kefu.htm" /}
+
+{eyou:include file="footer.htm" /}
+	
+	</div>
+	</body>
+</html>

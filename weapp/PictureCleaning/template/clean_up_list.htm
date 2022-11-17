@@ -1,0 +1,48 @@
+{include file="header.htm" /}
+<body style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit; min-width:400px;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page" style="min-width: 400px;">
+    <div class="flexigrid">
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th class="sign w10" axis="col0">
+                            <div class="tc">网站目录 <span style="color: red;">{$path}</span> 目录下所有被移动的文件，请先确认文件是可以清理的并做好备份，以免误删造成图片丢失。</div>
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table style="width: 100%">
+                    <tbody>
+                    {empty name="result"}
+                        <tr>
+                            <td class="no-data" align="center" axis="col0" colspan="50">
+                                <i class="fa fa-exclamation-circle"></i>没有符合条件的记录
+                            </td>
+                        </tr>
+                    {else/}
+                        {foreach name="result" item="vo"}
+                            <span class="button_span" data-id="{$vo.id}" onclick="FindSelected(this);">
+                                <img src="{$vo.url}" style="height: 150px; width: 150px;"> <span class="icon"></span>
+                            </span>
+                            &nbsp;
+                        {/foreach}
+                    {/empty}
+                    </tbody>
+                </table>
+            </div>
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+
+        <div class="tDiv"> <div class="tDiv2"> {$Page} </div> </div>
+    </div>
+</div>
+{include file="footer.htm" /}

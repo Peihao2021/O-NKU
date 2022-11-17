@@ -1,0 +1,322 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Apple devices fullscreen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- Apple devices fullscreen -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>内容管理</title>
+    <link rel="shortcut icon" type="image/x-icon" href="__ROOT_DIR__/favicon.ico" media="screen"/>
+    <!-- <link rel="stylesheet" href="__PUBLIC__/plugins/ztree/css/amazeui.min.css"> -->
+    <link rel="stylesheet" href="__PUBLIC__/plugins/ztree/css/iframe.css?v={$version}">
+    <link rel="stylesheet" href="__PUBLIC__/plugins/ztree/css/zTreeStyle/zTreeStyle.css?v={$version}" type="text/css">
+    <link href="__SKIN__/font/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="__SKIN__/css/left_nav_tree.css?v={$version}" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        .ztree{padding:0px 5px 30px 10px;}
+        /* .ztree li{line-height: 30px;} */
+        .ztree .node_name{font-size: 14px !important;}
+        .ztree .level1 .node_name{font-size: 14px !important;display: block;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;line-height: 16px;padding-right: 5px;}
+        .ztree li a:hover{text-decoration: none;color: #3398cc;}
+        .ztree li a.curSelectedNode{background-color:#3398cc;color: #fff;border-color: #3398cc;opacity: 1;vertical-align: middle; height: unset;line-height: unset;}
+        .ztree li a.curSelectedNode:hover{color: #fff !important;}
+        .ztree li span{margin: 0 2px;}
+        .ui-layout-west{background-color: #fff;}
+        .title-cate{padding:8px 0 8px 30px;border-bottom: 1px solid #eee;color: #999;font-size: 16px;height: 24px;line-height: 24px; background: url("__PUBLIC__/plugins/ztree/css/zTreeStyle/img/titleIcon.png") no-repeat 10px center;}
+        .allshow-wrap{padding:10px 0 0 10px;}
+        .allshow{font-size: 14px;color: #333;cursor: pointer;display: inline-block;line-height: 30px;height: 30px;}
+        .allshow i{width: 18px; height: 18px;display: inline-block;background-image: url("__PUBLIC__/plugins/ztree/css/zTreeStyle/img/zTreeStandard.png");vertical-align: middle;}
+        .allshow span{margin-left: 4px;}
+        .allshow .center_close {background-position: -74px -18px;}
+        .allshow .center_open {background-position: -92px -18px;}
+        .layout-main{position: fixed; width:100%; height:100%;} 
+        .layout-left{float: left; position: relative; margin-top: 15px;margin-right: 15px; width: 160px; height: calc(100% - 20px); background-color: #fff; overflow: hidden; overflow-y:auto;} 
+        .layout-left .on-off-btn{cursor: pointer; position: absolute; text-align: center; display: block; right: 0; top: 50%; margin-top: -13px; width: 12px; height: 26px; line-height: 26px; background-color: #3398cc; border-radius: 4px 0 0 4px;} 
+        .layout-left .on-off-btn i{font-size: 18px; color: #fff;} 
+        .layout-left .layout-left-box{display: block; overflow: hidden; height:auto; width: 100%;} 
+        .layout-right{float: left; display: block; width: calc(100% - 182px); background-color: #F5F5F5; height: 100%; overflow: hidden;} 
+        .layout-left.close{width: 12px; background-color: #f4f4f4; margin-right: 0;} .layout-left.close .layout-left-box{display: none;}
+    </style>
+    {include file="public/theme_css" /}
+    <script type="text/javascript">
+        var eyou_basefile = "{$Request.baseFile}";
+        var module_name = "{$Think.const.MODULE_NAME}";
+        var __root_dir__ = "__ROOT_DIR__";
+        var __lang__ = "{$admin_lang}";
+        var __main_lang__ = "{$main_lang}";
+    </script>
+    <script type="text/javascript" src="__SKIN__/js/jquery.js"></script>
+    <script src="__STATIC__/admin/js/jquery.layout-latest.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/plugins/ztree/js/jquery.ztree.core.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/plugins/layer-v3.1.0/layer.js"></script>
+    <script src="__SKIN__/js/global.js?v={$version}"></script>
+    <!--[if lt IE 9]>
+    <script src="__STATIC__/admin/js/html5shiv.js"></script>
+    <script src="__STATIC__/admin/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript">
+
+        // 读取 cookie
+        function getCookie(c_name)
+        {
+            if (document.cookie.length>0)
+            {
+              c_start = document.cookie.indexOf(c_name + "=")
+              if (c_start!=-1)
+              { 
+                c_start=c_start + c_name.length+1 
+                c_end=document.cookie.indexOf(";",c_start)
+                if (c_end==-1) c_end=document.cookie.length
+                    return unescape(document.cookie.substring(c_start,c_end))
+              } 
+            }
+            return "";
+        }
+
+        function setCookies(name, value, time)
+        {
+            var cookieString = name + "=" + escape(value) + ";";
+            if (time != 0) {
+                var Times = new Date();
+                Times.setTime(Times.getTime() + time);
+                cookieString += "expires="+Times.toGMTString()+";"
+            }
+            document.cookie = cookieString+"path=/";
+        }
+
+        // var myLayout;
+        // $(document).ready(function () {
+        //     myLayout = $("body").layout({
+        //     /*  全局配置 */
+        //         closable:                   true    /* 是否显示点击关闭隐藏按钮*/
+        //     ,   resizable:                  true    /* 是否允许拉动*/
+        //     ,   maskContents:               true    /* 加入此参数，框架内容页就可以拖动了*/
+        //     /*  顶部配置 */
+        //     ,   north__spacing_open:        0       /* 顶部边框大小*/
+        //     /*  底部配置 */
+        //     ,   south__spacing_open:        0       /* 底部边框大小*/
+        //     /*  some pane-size settings*/
+        //     ,   west__minSize:              160     /*左侧最小宽度*/
+        //     ,   west__maxSize:              160     /*左侧最大宽度*/
+        //     /*  左侧配置 */
+        //     ,   west__slidable:             false
+        //     ,   west__animatePaneSizing:    false
+        //     ,   west__fxSpeed_size:         "slow"  /* 'fast' animation when resizing west-pane*/
+        //     ,   west__fxSpeed_open:         1000    /* 1-second animation when opening west-pane*/
+        //     ,   west__fxSettings_open:      { easing: "easeOutBounce" } // 'bounce' effect when opening*/
+        //     ,   west__fxName_close:         "none"  /* NO animation when closing west-pane*/
+        //     ,   stateManagement__enabled:   false   /*是否读取cookies*/
+        //     ,   showDebugMessages:          false 
+        //     }); 
+        // });
+
+        var zNodes = {$zNodes};
+        var setting = {
+            view:{
+                dblClickExpand:false
+                ,showLine:true
+                 ,showIcon: false
+            },
+            data:{
+                simpleData:{
+                    enable:true
+                }
+            },
+            callback:{
+                beforeCollapse:zTreeBeforeCollapse
+                ,beforeExpand:beforeExpand
+                ,onExpand:onExpand
+                ,onClick:onClick
+            }
+        };
+
+        var curExpandNode=null;
+        function beforeExpand(treeId, treeNode) {
+            var pNode=curExpandNode?curExpandNode.getParentNode():null;
+            var treeNodeP=treeNode.parentTId?treeNode.getParentNode():null;
+            var zTree=$.fn.zTree.getZTreeObj("tree");
+            for(var i=0,l=!treeNodeP?0:treeNodeP.children.length;i<l; i++){
+                if(treeNode!==treeNodeP.children[i]){zTree.expandNode(treeNodeP.children[i],false);}
+            };
+            while (pNode){
+                if(pNode===treeNode){break;}
+                pNode=pNode.getParentNode();
+            };
+            if(!pNode){singlePath(treeNode);}
+
+            // 记忆功能
+            var str = getCookie('admin-arctreeClicked-Arr');
+            var arr = [];
+            if('' == str || null == str || 'null' == str){
+                arr.push(treeNode.id);
+            }else{
+                arr = JSON.parse(str);
+                if (!arr.includes(treeNode.id) ){
+                    arr.push(treeNode.id);
+                }
+            }
+            arr = JSON.stringify(arr);
+            setCookies('admin-arctreeClicked-Arr', arr);
+        };
+
+        function zTreeBeforeCollapse(treeId, treeNode) {
+            // 记忆功能
+            var str = getCookie('admin-arctreeClicked-Arr');
+            var arr = [];
+            if('' != str){
+                arr = JSON.parse(str);
+                arr.splice($.inArray(treeNode.id,arr),1);
+                arr = JSON.stringify(arr);
+                setCookies('admin-arctreeClicked-Arr', arr);
+                setCookies('admin-arctreeClicked_All', 0);
+            }
+        };
+
+        function singlePath(newNode) {
+            if (newNode === curExpandNode) return;
+            if (curExpandNode && curExpandNode.open==true) {
+                var zTree = $.fn.zTree.getZTreeObj("tree");
+                if (newNode.parentTId === curExpandNode.parentTId) {
+                    zTree.expandNode(curExpandNode, false);
+                } else {
+                    var newParents = [];
+                    while (newNode) {
+                        newNode = newNode.getParentNode();
+                        if (newNode === curExpandNode) {
+                            newParents = null;
+                            break;
+                        } else if (newNode) {
+                            newParents.push(newNode);
+                        }
+                    }
+                    if (newParents!=null) {
+                        var oldNode = curExpandNode;
+                        var oldParents = [];
+                        while (oldNode) {
+                            oldNode = oldNode.getParentNode();
+                            if (oldNode) {
+                                oldParents.push(oldNode);
+                            }
+                        }
+                        if (newParents.length>0) {
+                            zTree.expandNode(oldParents[Math.abs(oldParents.length-newParents.length)-1], false);
+                        } else {
+                            zTree.expandNode(oldParents[oldParents.length-1], false);
+                        }
+                    }
+                }
+            }
+            curExpandNode = newNode;
+        };
+
+        function onExpand(event,treeId,treeNode){curExpandNode=treeNode;};
+        
+        function onClick(e,treeId,treeNode){
+            var zTree=$.fn.zTree.getZTreeObj("tree");
+            zTree.expandNode(treeNode,null,null,null,true);
+        }
+
+        $(function(){
+            $.fn.zTree.init($("#tree"),setting,zNodes);
+            $(".ui-layout-north li:first-child").click();
+        });
+
+        function expandAll(obj){
+            var expand = $(obj).attr('data-expand');
+            var zTree = $.fn.zTree.getZTreeObj("tree");
+            if ('shrink' == expand) { // 展开时收缩
+                zTree.expandAll(false);
+                $(obj).attr('data-expand', 'spread').attr('title', '点击全部展开').html('<i class="center_close"></i><span>全部展开</span>');
+                setCookies('admin-arctreeClicked-Arr', '');
+                setCookies('admin-arctreeClicked_All', 0);
+            } else { // 收缩时展开
+                zTree.expandAll(true);
+                $(obj).attr('data-expand', 'shrink').attr('title', '点击全部收缩').html('<i class="center_open"></i><span>全部收缩</span>');
+                setCookies('admin-arctreeClicked-Arr', JSON.stringify({$tree.parent_ids}));
+                setCookies('admin-arctreeClicked_All', 1);//1为全部展开,0-为非全部展开
+            }
+        }
+
+        $(function(){
+            setCookies('admin-arctreeClicked-Arr',JSON.stringify({$tree.cookied_treeclicked_arr}) );
+        })
+    </script>
+
+    <script type="text/javascript">
+        function quick_release()
+        {
+            //iframe窗
+            layer.open({
+                type: 2,
+                title: '快捷发布文档',
+                fixed: true, //不固定
+                shadeClose: false,
+                shade: layer_shade,
+                maxmin: true, //开启最大化最小化按钮
+                area: ['600px', '520px'],
+                content: "//{$Request.host}{$Request.baseFile}?m=admin&c=Archives&a=release&iframe=1&lang={$Request.param.lang}"
+            });
+        }
+    </script>
+    <script type="text/javascript">
+         $(function(){
+             //左侧菜单按钮
+            $('.on-off-btn').on('click',function(){
+                var hidden=$(this).parent().hasClass('close');
+                if(!hidden){
+                    $(this).parent().addClass('close');
+                    $(this).children('i').attr("class", "fa fa-angle-right");
+                    $('.layout-right').css("width","calc(100% - 27px)");
+                    setCookies('admin-treeClicked-1649642233', 'close');
+                }else{
+                    $(this).parent().removeClass('close');
+                    $(this).children('i').attr("class", "fa fa-angle-left");
+                    $('.layout-right').css("width","calc(100% - 190px)");
+                    setCookies('admin-treeClicked-1649642233', 'open');
+                }         
+            })
+        })
+    </script>
+</head>
+
+<body style="padding: 0px 15px 15px 15px;background-color: #f4f4f4; height: auto;">
+    <div class="layout-main">
+        <div class="layout-left {if condition="!empty($treeClicked_1649642233) && 'close' == $treeClicked_1649642233"}close{/if}">
+            <div class="layout-left-box">
+                <div class="title-cate">内容栏目</div>
+                <div class="allshow-wrap">
+                    {if condition="!empty($tree['cookied_treeclicked'])"}
+                    <div class="allshow" onclick="expandAll(this);" data-expand="shrink" title="点击全部收缩"><i class="center_open"></i><span>全部收缩</span></div> 
+                    {else /}
+                    <div class="allshow" onclick="expandAll(this);" data-expand="spread" title="点击全部展开"><i class="center_close"></i><span>全部展开</span></div> 
+                    {/if}
+                </div>
+                <div id="tree" class="ztree"></div>
+            </div>
+            <div class="on-off-btn">
+                {if condition="!empty($treeClicked_1649642233) && 'close' == $treeClicked_1649642233"}
+                <i class="fa fa-angle-right"></i>
+                {else /}
+                <i class="fa fa-angle-left"></i>
+                {/if}
+            </div>
+        </div>
+        <div class="layout-right" {if condition="!empty($treeClicked_1649642233) && 'close' == $treeClicked_1649642233"}style="width: calc(100% - 27px);"{else /}style="width: calc(100% - 189px);"{/if}>
+             <iframe name="content_body" id="content_body" class="iframe_loading" src="//{$Request.host}{$Request.baseFile}?m=admin&c=Archives&a=index_archives&lang={$Request.param.lang}" width="100%" height="100%" frameborder="0"></iframe>
+        </div>
+    </div>
+    <script type="text/javascript">
+        // iframe 框架显示加载图标，提高体验
+        $(".iframe_loading").load(function(){
+            // setTimeout(function(){
+                $('.iframe_loading').removeClass('iframe_loading');
+            // }, 500);
+        })
+    </script>
+</body>
+</html>

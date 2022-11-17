@@ -1,0 +1,30 @@
+{include file="header.htm" /}
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    {include file="bar.htm" /}
+    <form class="form-horizontal" id="post_form" action="{:weapp_url('Pushall/Pushall/baidumap')}" method="post">
+        <div class="ncap-form-default">
+        <dl class="row">
+                <dt class="tit">
+                    <label>傻瓜式一键推送</label>
+                </dt>
+            </dl>
+        <dl class="row">
+        <dt class="tit">
+            <label>全站推送：</label>
+        </dt>
+        <dd class="opt">
+        <p class="red">
+        <a href="{$domin}/index.php?m=plugins&c=Pushall&a=autopush&sxpushzt=2" target="_blank">百度&nbsp;&nbsp;→&nbsp;&nbsp;点击推送</a></p>
+        <p class="red"><a href="{$domin}/index.php?m=plugins&c=Pushall&a=autopush&sxpushzt=4" target="_blank">神马&nbsp;&nbsp;→&nbsp;&nbsp;点击推送</a></p>
+        <p class="red"><a href="{$domin}/index.php?m=plugins&c=Pushall&a=autopush&sxpushzt=6" target="_blank">搜狗&nbsp;&nbsp;→&nbsp;&nbsp;点击推送</a></p>
+        <p class="red"><a href="{$domin}/index.php?m=plugins&c=Pushall&a=autopush&sxpushzt=8" target="_blank">头条&nbsp;&nbsp;→&nbsp;&nbsp;点击推送</a></p>
+        <p class="red"><a href="{$domin}/index.php?m=plugins&c=Pushall&a=autopush&sxpushzt=2&ks=1" target="_blank">百度快速收录&nbsp;&nbsp;→&nbsp;&nbsp;点击推送</a></p>
+        </dd>
+        </dl>
+            
+                    </div>
+{include file="footer.htm" /}

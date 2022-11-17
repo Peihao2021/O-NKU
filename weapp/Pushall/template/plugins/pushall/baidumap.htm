@@ -1,0 +1,151 @@
+{include file="header.htm" /}
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    {include file="bar.htm" /}
+    <form class="form-horizontal" id="post_form" action="{:weapp_url('Pushall/Pushall/baidumap')}" method="post">
+        <div class="ncap-form-default">
+        <dl class="row">
+                <dt class="tit">
+                    <label>动态SiteMap</label>
+                </dt>
+                <dd class="opt">
+                    <div class="onoff">
+                        <label for="tag_weapp1" class="cb-enable {if condition='!isset($rowmap) || $rowmap eq 1'}selected{/if}">开启</label>
+                        <label for="tag_weapp0" class="cb-disable {if condition='isset($rowmap) && $rowmap eq 2'}selected{/if}">关闭</label>
+                        <input id="tag_weapp1" name="tag_weapp" value="1" type="radio" {if condition="!isset($rowmap) || $rowmap eq 1"} checked="checked"{/if}>
+                        <input id="tag_weapp0" name="tag_weapp" value="2" type="radio" {if condition="isset($rowmap) && $rowmap eq 2"} checked="checked"{/if}>
+                    </div>
+                    <p class="notic">开启后请替换伪静态规则。</p>&nbsp;&nbsp;
+                    
+                    <p><span>全站SiteMap地址：</span><a href="{$domin}/sitemap.xml"  target="_blank">{$domin}/sitemap.xml</a></p>
+                    <p><span>聚合关键词SiteMap地址：</span><a href="{$domin}/keywords.xml"  target="_blank">{$domin}/keywords.xml</a></p>
+                    {if condition='!isset($rowmap) || $rowmap eq 1'}
+                    <a href="javascript:void(0);" onclick="click_to_eyou_1575506523('/plugins/Pushall/BaiduPro','百度专用地图-实时 （以下地图直接提交到百度站长平台即可）');">查看百度专用地图（百度请提交这里得地图）</a><br>
+                    
+                    <p class="red">PS:聚合关键词地图需要先购买插件→<a href="https://www.eyoucms.com/mall/plus/11123.html"  target="_blank">聚合关键词（上权神器）</a></p>
+                    <p class="">伪静态规则：</p>
+                    <p class="red">
+                    location / {<br>
+                    if (!-e $request_filename){<br>
+                    rewrite  sitemap.xml  /index.php?m=plugins&c=Pushall&a=sitemap  last;<br>
+                    rewrite  ^\/(\w*)\/([1-9]\d*)\.xml$  /index.php?m=plugins&c=Pushall&a=$1&id=$2  last;<br>
+                    rewrite  ^(.*)$  /index.php?s=$1  last;   break;<br>
+                    }<br>
+                    }</p>
+                    {/if}
+                </dd>
+            </dl>
+            
+            <dl class="row">
+            <dt class="tit">
+                <label for="sitemapnum"><em>*</em>Sitemap单页数量</label>
+            </dt>
+            <dd class="opt">
+                <input id="sitemapnum" name="sitemapnum" value="{$rowadd['sitemapnum']}" type="text" style="width: 50px;">
+                <p class="">建议填写1000，百度专用Sitemap自动乘以4倍。例：填写1000，百度sitemap就是4000条每页！</p>
+            </dd>
+            </dl>
+        
+            <dl class="row">
+            <dt class="tit">
+                <label for="baidutoken"><em>*</em>百度推送Token</label>
+            </dt>
+            <dd class="opt">
+                <input id="baidutoken" name="baidutoken" value="{$rowadd['baidutoken']}" type="text" style="width: 200px;"> 
+                <p class="">填写推送Token即可。结尾标红得那部分: http://data.zz.baidu.com/urls?site=https://www.xxxx.com&token=<em class="red">xxxxxxxx</em></p>
+                <p>百度多域名推送教程：推送额度较少的域名可以通过m.xxxx.com进行访问后台推送m手机端页面地址。这样就可以多推送m二级域名的额度！</p>
+            </dd>
+        </dl>
+        <dl class="row">
+            <dt class="tit">
+                <label for="shenmatoken"><em>*</em>神马推送接口</label>
+            </dt>
+            <dd class="opt">
+                <input id="shenmatoken" name="shenmatoken" value="{$rowadd['shenmatoken']}" type="text" style="width: 800px;">
+                <p class="">填写神马站长平台的推送接口。如: https://data.zhanzhang.sm.cn/push?site=www.xxxx.com&user_name=xxxxxx@qq.com&resource_name=mip_add&token=TI_xxxxx</p>
+            </dd>
+        </dl>
+        <dl class="row">
+            <dt class="tit">
+                <label for="sogoucookie"><em>*</em>搜狗站长平台Cookie</label>
+            </dt>
+            <dd class="opt">
+                <input id="sogoucookie" name="sogoucookie" value="{$rowadd['sogoucookie']}" type="text" style="width: 800px;">
+                <p class="">填写搜狗站长平台抓取的Cookie。示例：<em class="red">PHPSESSID=qbja3h8qfs6563hkuelivs8im2</em> </p>
+            </dd>
+        </dl>
+        <dl class="row">
+            <dt class="tit">
+                <label for="sogoucode"><em>*</em>搜狗站长平台验证码</label>
+            </dt>
+            <dd class="opt">
+                <input id="sogoucode" name="sogoucode" value="{$rowadd['sogoucode']}" type="text" style="width: 50px;">
+                <p class="">填写搜狗站长提交链接页面的验证码。<em class="red">PS：务必填写最新获取的验证码！</em> </p>
+            </dd>
+        </dl>
+        <dl class="row">
+            <dt class="tit">
+                <label for="toutiaoid"><em>*</em>头条站长平台site_id</label>
+            </dt>
+            <dd class="opt">
+                <input id="toutiaoid" name="toutiaoid" value="{$rowadd['toutiaoid']}" type="text" style="width: 100px;">
+                <p class="">填写头条站长平台抓取的站点site_id。示例：<em class="red">1263028</em> </p>
+            
+            </dd>
+        </dl>
+        <dl class="row">
+            <dt class="tit">
+                <label for="toutiaocookie"><em>*</em>头条站长平台Cookie</label>
+            </dt>
+            <dd class="opt">
+                <input id="toutiaocookie" name="toutiaocookie" value="{$rowadd['toutiaocookie']}" type="text" style="width: 800px;">
+                <p class="">填写头条站长平台抓取的Cookie。示例：<em class="red">ttcid=f4e117bd83264de6bbbe9474adae7f3a35</em> </p>
+            </dd>
+        </dl>
+        
+        <dl class="row">
+            <dt class="tit">
+                <label for="onnum"><em>*</em>每页显示数量</label>
+            </dt>
+            <dd class="opt">
+                <input id="onnum" name="onnum" value="{$rowadd['onnum']}" type="text" style="width: 30px;">&nbsp;条
+                <p class="">请勿填写太多，容易造成卡顿！建议20条。</p>
+            </dd>
+        </dl>
+		<!--<dl class="row">
+                <dt class="tit">
+                    <label for="urlms"><em>*</em>URL模式</label>
+                </dt>
+                <dd class="opt">
+                                        <label>
+                        <input type="radio" name="urlms" value="1" {if condition='!isset($urlms) || $urlms eq 1'}checked{/if}>动态URL&nbsp;
+                    </label>
+                                        <label>
+                        <input type="radio" name="urlms" value="2" {if condition='!isset($urlms) || $urlms eq 2'}checked{/if}>伪静态化&nbsp;
+                    </label>
+                                        <label>
+                        <input type="radio" name="urlms" value="3" {if condition='!isset($urlms) || $urlms eq 3'}checked{/if}>静态页面&nbsp;
+                    </label>
+					
+					<p class="">选择网站Url模式！<span class="red">PS：需要和你后台设置的一致！</span></p>
+                </dd>
+            </dl>-->
+		
+            <div class="bot">
+                <input type="hidden" name="code" value="{$row.code}" />
+                <a href="JavaScript:void(0);" onclick="checkForm();" class="ncap-btn-big ncap-btn-green" id="submitBtn">保存</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    // 判断输入框是否为空
+    function checkForm(){
+        layer_loading('正在处理');
+        $('#post_form').submit();
+    }
+</script>
+{include file="footer.htm" /}

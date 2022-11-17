@@ -1,0 +1,15 @@
+
+    <div class="fixed-bar">
+        <div class="item-title"><a class="back" href="{if condition="'Ddos' == $Request.param.sc && 'index' == $Request.param.sa"}{:url("Weapp/index")}{else /}{:weapp_url("Ddos/Ddos/index")}{/if}" title="返回列表"><i class="fa fa-chevron-left"></i></a>
+            
+            <ul class="tab-base nc-row">
+                <li>
+                {eq name="$Request.param.sa" value="index"}
+                    <a href="javascript:void(0);" class="tab current"><span>插件功能</span></a>
+                {else /}
+                    <a href="javascript:void(0);" class="tab"><span>插件功能</span></a>
+                {/eq}
+                </li>
+            </ul>
+        </div>
+    </div>

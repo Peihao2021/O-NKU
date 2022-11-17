@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width" />
+ <title>{$eyou.field.seo_title}</title>
+<meta name="description" content="{$eyou.field.seo_description}" />
+<meta name="keywords" content="{$eyou.field.seo_keywords}" />
+<link href="{eyou:global name='web_ico' /}" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="screen-orientation" content="portrait"><!-- uc强制竖屏 -->
+<meta name="x5-orientation" content="portrait"><!-- QQ强制竖屏 -->
+
+<link href="/template/pc/static/css/pagv2.css" rel="stylesheet" type="text/css" />
+<script src="/template/pc/static/js/jquery-1.8.1.min.js" type="text/javascript"></script>
+<script src="/template/pc/static/js/common.js" type="text/javascript"></script>
+
+
+</head>
+<body>
+    <div id="warp">
+      {eyou:include file="header.htm" /}
+
+        <!--banner begin-->
+        <!-- /header -->
+        <div class="bannerArea wcon">
+           <img src="{eyou:notempty name='$eyou.field.typelitpic' /}{$eyou.field.typelitpic} {eyou:else /}{$eyou.field.typeid|gettoptype=###,'litpic'}{/eyou:notempty}"  />
+            <!--栏目-->
+            <div class="hiArea">
+                <div class="rightArea">当前位置：{eyou:position style=' ' /}</div>
+            </div>
+        </div>
+        <div class="container wcon">
+            <!--左边-->
+            <div class="aboutleft">
+                <div class="left">
+    <!--菜单-->
+   <div class="menuArea">
+  <div class="titleArea">
+    <h3>{$eyou.field.typeid|gettoptype=###,'typename'}</h3> 
+  </div>
+  <div class="conArea ">
+   
+    <ul class="navmenu">
+         {eyou:models  type='sonself' loop='20'  currentclass='cur'}
+         <li class="{$field.currentclass}"><h3><a href="{$field.typeurl}">{$field.typename}</a></h3></li>
+        {/eyou:models}
+             
+        </ul>  
+  </div>
+            
+</div>
+</div>
+            </div>
+            <!--右边-->
+            <div class="padd aboutcon">
+                <!--栏目-->
+                <!--信息详细--复杂-->
+                <div class="pr">
+                    <div class="word fl">
+                        
+                        <div class="qyjycon">
+                            <div class="block">
+                                <h3>品牌承诺</h3>
+                                <p><strong>&#8226; 专业:</strong>完善的一站式服务体系,确保公司产品绝对原装正品;<br /> <strong>&#8226; 优质:</strong>原厂品质,值的信赖;<br /> <strong>&#8226; 高效:</strong>高效整合的上下游资源,让价格一低再低;<br /> <strong>&#8226; 增值:</strong>规模化的采购,营销思路的拓展,成为你的不二之选;<br /> <strong>&#8226; 快速:</strong>良好的库存体系,迅速响应你的需求;</p>
+                            </div>
+                            <div class="block">
+                                <h3>企业理念</h3> <p><strong>&#8226; 创新为本:</strong>谨循创新的营销模式,开拓进取,想法设法提升客户利润;<br /> <strong>&#8226; 诚信为心:</strong>谨守诚信的待人原则,信守承诺,千方百计维护客户利益;<br /> <br /> <strong>&#8226; 和谐为道:</strong>谨记和谐的处事方法,互利互惠,努力打造双赢客户关系;<br /> <strong>&#8226; 速度为先:</strong>谨从快速的办事作风.雷厉风行,及时准确响应客户需求:</p>
+                            </div>
+                            <div class="block">
+                                <h3>企业精神</h3> <p><strong>&#8226; 愚公精神:</strong>坚定不移视客户为衣食父母,是公司长远发展之根本;<br /> <br /> <strong>&#8226; 晋商精神:</strong>坚信诚信经营方可心胸有多大,市场就有多大;<br /> <br /> <strong>&#8226; 长征精神:</strong>坚定信念,让我们去除浮躁,走的更远.</p>
+                            </div>
+
+                    </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!--底部-->
+   {eyou:include file="kefu.htm" /}
+
+{eyou:include file="footer.htm" /}
+
+    </div>
+
+   
+
+</body>
+</html>

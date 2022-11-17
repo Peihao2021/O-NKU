@@ -1,0 +1,334 @@
+{include file="public/layout" /}
+<body class="bodystyle" style="overflow-y: scroll;min-width:auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<style>
+    .span_1 {
+        float: left;
+        margin-left: 0px;
+        height: 130px;
+        line-height: 130px;
+    }
+
+    .span_1 ul {
+        list-style: none;
+        padding: 0px;
+    }
+
+    .span_1 ul li {
+        border: 1px solid #CCC;
+        height: 40px;
+        padding: 0px 10px;
+        margin-left: -1px;
+        margin-top: -1px;
+        line-height: 40px;
+    }
+    #mark_txt_color {
+        /*margin:0;*/
+        /*padding:0;*/
+        border:solid 1px #ccc;
+        width:70px;
+        height:20px;
+        border-right:40px solid green;
+        /*line-height:20px;*/
+    }
+</style>
+<script type="text/javascript" src="__PUBLIC__/plugins/colpick/js/colpick.js"></script>
+<link href="__PUBLIC__/plugins/colpick/css/colpick.css" rel="stylesheet" type="text/css"/>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page" style="min-width:auto;">
+    <div class="fixed-bar">
+        <div class="item-title">
+            {eq name='$Request.param.source' value='archives'}
+            <a class="back_xin" href="javascript:history.back();"  title="返回"><i class="iconfont e-fanhui"></i></a>
+            {else /}
+            <a class="back_xin" href="{:url('Index/switch_map')}" title="返回"><i class="iconfont e-fanhui"></i></a>
+            {/eq}
+            <div class="subject">
+                <h3>图片水印</h3>
+                <h5></h5>
+            </div>
+        </div>
+    </div>
+    <div class="flexigrid">
+        <form method="post" id="handlepost" action="{:url('System/water')}">
+            <div class="ncap-form-default">
+                <dl class="row">
+                    <dt class="tit">水印功能</dt>
+                    <dd class="opt">
+                        <label class="curpoin"><input id="is_mark1" name="is_mark" value="1" {if condition="isset($config.is_mark) && $config.is_mark eq 1"}checked{/if} type="radio">开启</label>
+                        &nbsp;
+                        <label class="curpoin"><input id="is_mark0" name="is_mark" value="0" {if condition="!isset($config.is_mark) || $config.is_mark eq 0"}checked{/if} type="radio">关闭</label>
+                        <p class="notic">全站图片添加水印</p>
+                    </dd>
+                </dl>
+                <dl class="row none">
+                    <dt class="tit">缩略图水印</dt>
+                    <dd class="opt">
+                        <label class="curpoin"><input id="is_thumb_mark1" name="is_thumb_mark" value="1" {if condition="isset($config.is_thumb_mark) && $config.is_thumb_mark eq 1"}checked{/if} type="radio">开启</label>
+                        &nbsp;
+                        <label class="curpoin"><input id="is_thumb_mark0" name="is_thumb_mark" value="0" {if condition="!isset($config.is_thumb_mark) || $config.is_thumb_mark eq 0"}checked{/if} type="radio">关闭</label>
+                        <p class="notic">开启之后，满足水印条件的缩略图会自动打上水印</p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">水印类型</dt>
+                    <dd class="opt">
+                        <label class="curpoin"><input id="mark_type1" onclick="setwarter('text')" name="mark_type" value="text" {if condition="isset($config.mark_type) && $config.mark_type eq 'text'"}checked{/if} type="radio">文字</label>
+                        &nbsp;
+                        <label class="curpoin"><input id="mark_type0" onclick="setwarter('img')" name="mark_type" value="img" {if condition="isset($config.mark_type) && $config.mark_type eq 'img'"}checked{/if} type="radio">图片</label>
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">水印条件</dt>
+                    <dd class="opt">
+                        <ul class="nofloat">
+                            <li>
+                                <input onKeyUp="this.value=this.value.replace(/[^\d]/g,'')" onpaste="this.value=this.value.replace(/[^\d]/g,'')" pattern="^\d{1,}$" value="{$config.mark_width|default=''}" name="mark_width" id="mark_width" checked="checked" type="text">
+                                <span class="err">只能输入整数</span>
+                                <label for="mark_width">图片宽度 单位像素(px)</label>
+                            </li>
+                            <li>
+                                <input onKeyUp="this.value=this.value.replace(/[^\d]/g,'')" onpaste="this.value=this.value.replace(/[^\d]/g,'')" pattern="^\d{1,}$" value="{$config.mark_height|default=''}" name="mark_height" id="mark_height" checked="checked" type="text">
+                                <label for="mark_height">图片高度 单位像素(px)</label>
+                            </li>
+                        </ul>
+                        <p class="">提示：图片宽度和高度至少要达到以上像素才能添加水印</p>
+                    </dd>
+                </dl>
+                <dl class="row texttr" style="display:none;">
+                    <dt class="tit">
+                        <label for="mark_txt">水印文字</label>
+                    </dt>
+                    <dd class="opt">
+                        <input name="mark_txt" id="mark_txt" value="{$config.mark_txt|default=''}" class="input-txt" type="text" />
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+                <dl class="row imgtr">
+                    <dt class="tit">
+                        <label for="mark_img">水印图片</label>
+                    </dt>
+                    <dd class="opt">
+                        <div class="input-file-show div_mark_img_local" {if condition="isset($config.mark_img_is_remote) AND $config.mark_img_is_remote == 1"}style="display: none;"{/if}>
+                            <span class="show">
+                                <a id="img_a" class="nyroModal" rel="gal" href="{$config.mark_img|default='javascript:void(0);'}" target="_blank">
+                                    <i id="img_i" class="fa fa-picture-o" {notempty name="$config.mark_img"}onmouseover="layer_tips=layer.tips('<img src={$config.mark_img|default=''}>',this,{tips: [1, '#fff']});"{/notempty} onmouseout="layer.close(layer_tips);"></i>
+                                </a>
+                            </span>
+                            <span class="type-file-box">
+                                <input type="text"  name="mark_img" id="mark_img" value="{$config.mark_img|default=''}" class="type-file-text" autocomplete="off">
+                                <input type="button" name="button" id="button1" value="选择上传..." class="type-file-button">
+                                <input class="type-file-file" onClick="GetUploadify(1,'','allimg','call_back','water');" size="30" hidefocus="true" nc_type="change_site_logo" title="点击前方预览图可查看大图，点击按钮选择文件并提交表单后上传生效">
+                            </span>
+                        </div>
+                        <input type="text" id="mark_img_remote" name="mark_img_remote" value="{$config.mark_img_remote|default=''}" placeholder="http://" class="input-txt" {if condition="!isset($config.mark_img_is_remote) OR empty($config.mark_img_is_remote)"}style="display: none;"{/if}>
+                        &nbsp;
+                        <label><input type="checkbox" name="mark_img_is_remote" id="mark_img_is_remote" value="1" {if condition="isset($config.mark_img_is_remote) AND $config.mark_img_is_remote == 1"}checked="checked"{/if} onClick="clickMarkImgRemote(this, 'mark_img');">远程图片</label>
+                        <span class="err"></span>
+                        <p class="notic">最佳显示尺寸为240*60像素</p>
+                    </dd>
+                </dl>
+                <script>
+                    function clickMarkImgRemote(obj, id)
+                    {
+                        try {
+                            if ($(obj).is(':checked')) {
+                                $('#'+id+'_remote').show();
+                                $('.div_'+id+'_local').hide();
+//                                if ($("input[name="+id+"_remote]").val().length > 0) {
+//                                    $("input[name=mark_img_is_remote]").attr('checked', true); // 自动勾选属性[图片]
+//                                } else {
+//                                    $("input[name=mark_img_is_remote]").attr('checked', false); // 自动取消属性[图片]
+//                                }
+                            } else {
+                                $('.div_'+id+'_local').show();
+                                $('#'+id+'_remote').hide();
+//                                if ($("input[name="+id+"_local]").val().length > 0) {
+//                                    $("input[name=mark_img_is_remote]").attr('checked', true); // 自动勾选属性[图片]
+//                                } else {
+//                                    $("input[name=mark_img_is_remote]").attr('checked', false); // 自动取消属性[图片]
+//                                }
+                            }
+                        }catch(e){}
+                    }
+                </script>
+                <dl class="row texttr" style="display:none;">
+                    <dt class="tit">
+                        <label for="mark_txt_size">字体大小</label>
+                    </dt>
+                    <dd class="opt">
+                        <input name="mark_txt_size" id="mark_txt_size" value="{$config.mark_txt_size|default=30}" class="input-txt" type="text" />
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+                <dl class="row texttr" style="display:none;">
+                    <dt class="tit">
+                        <label for="mark_txt_color">文字颜色</label>
+                    </dt>
+                    <dd class="opt">
+                        <input type="text" name="mark_txt_color" value="{$config.mark_txt_color|default='#000000'}" id="mark_txt_color" style="border-color: {$config.mark_txt_color|default='#000000'};" />
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">
+                        <label for="mark_degree">水印透明度</label>
+                    </dt>
+                    <dd class="opt">
+                        <input pattern="^\d{1,}$" onblur="$('#mark_degree2').empty().html(this.value);" name="mark_degree" id="mark_degree" value="{$config.mark_degree|default=''}" class="input-txt" type="range" min="0" step="2" max="100">
+                        <span class="err" id="mark_degree2">{$config.mark_degree|default=''}</span>
+                        <p class="notic">0代表完全透明，100代表不透明</p>
+                    </dd>
+                </dl>
+                <dl class="row imgtr">
+                    <dt class="tit">
+                        <label for="mark_degree">JPEG 水印质量</label>
+                    </dt>
+                    <dd class="opt">
+                        <input pattern="^\d{1,}$" onblur="$('#mark_quality2').empty().html(this.value);" name="mark_quality" id="mark_quality" value="{$config.mark_quality|default=''}" class="input-txt" type="range" min="0" step="2" max="100">
+                        <span class="err" id="mark_quality2">{$config.mark_quality|default=''}</span>
+                        <p class="notic">水印质量请设置为0-100之间的数字,决定 jpg 格式图片的质量</p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">
+                        <label for="mark_degree">水印位置</label>
+                    </dt>
+                    <dd class="opt">
+                        <div style="height:124px; background:#fff">
+                                <span class="span_1">
+                                    <ul>
+                                        <li><input type="radio" name="mark_sel" value="1"
+                                            {if condition="isset($config.mark_sel) && $config.mark_sel eq '1'"}checked{/if}
+                                            >&nbsp;顶部居左
+                                        </li>
+                                        <li><input type="radio" name="mark_sel" value="4"
+                                            {if condition="isset($config.mark_sel) && $config.mark_sel eq '4'"}checked{/if}
+                                            >&nbsp;中部居左
+                                        </li>
+                                        <li><input type="radio" name="mark_sel" value="7"
+                                            {if condition="isset($config.mark_sel) && $config.mark_sel eq '7'"}checked{/if}
+                                            >&nbsp;底部居左
+                                        </li>
+                                    </ul>
+                                </span>
+                                <span class="span_1">
+                                    <ul>
+                                        <li><input type="radio" name="mark_sel" value="2"
+                                            {if condition="isset($config.mark_sel) && $config.mark_sel eq '2'"}checked{/if}
+                                            >&nbsp;顶部居中
+                                        </li>
+                                        <li><input type="radio" name="mark_sel" value="5"
+                                            {if condition="isset($config.mark_sel) && $config.mark_sel eq '5'"}checked{/if}
+                                            >&nbsp;中部居中
+                                        </li>
+                                        <li><input type="radio" name="mark_sel" value="8"
+                                            {if condition="isset($config.mark_sel) && $config.mark_sel eq '8'"}checked{/if}
+                                            >&nbsp;底部居中
+                                        </li>
+                                    </ul>
+                                </span>
+                                <span class="span_1">
+                                    <ul>
+                                        <li><input type="radio" name="mark_sel" value="3"
+                                            {if condition="isset($config.mark_sel) && $config.mark_sel eq '3'"}checked{/if}
+                                            >&nbsp;顶部居右
+                                        </li>
+                                        <li><input type="radio" name="mark_sel" value="6"
+                                            {if condition="isset($config.mark_sel) && $config.mark_sel eq '6'"}checked{/if}
+                                            >&nbsp;中部居右
+                                        </li>
+                                        <li><input type="radio" name="mark_sel" value="9"
+                                            {if condition="isset($config.mark_sel) && $config.mark_sel eq '9'"}checked{/if}
+                                            >&nbsp;底部居右
+                                        </li>
+                                    </ul>
+                                </span>
+                            <div style="clear:both;"></div>
+                        </div>
+                    </dd>
+                </dl>
+                <div class="bot">
+                    <input type="hidden" name="tabase" value="{$Request.param.tabase}">
+                    <a href="JavaScript:void(0);" class="ncap-btn-big ncap-btn-green" onclick="adsubmit();">确认提交</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        // 点击刷新数据
+        $('.fa-refresh').click(function(){
+            location.href = location.href;
+        });
+        
+        var marktype = "{$config.mark_type|default=''}";
+        setwarter(marktype);
+
+        // 颜色选择
+        $('#mark_txt_color').colpick({
+            flat:false,
+            layout:'rgbhex',
+            submit:0,
+            colorScheme:'light',
+            color:$('#mark_txt_color').val(),
+            onChange:function(hsb,hex,rgb,el,bySetColor) {
+                $(el).css('border-color','#'+hex);
+                // Fill the text box just if the color was set using the picker, and not the colpickSetColor function.
+                if(!bySetColor) $(el).val('#'+hex);
+            }
+        }).keyup(function(){
+            $(this).colpickSetColor('#'+this.value);
+        });
+    });
+
+    var parentObj = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+    function adsubmit(){
+        layer_loading('正在处理');
+        $.ajax({
+            type : 'post',
+            url : "{:url('System/water', ['_ajax'=>1])}",
+            data : $('#handlepost').serialize(),
+            dataType : 'json',
+            success : function(res){
+                layer.closeAll();
+                if(res.code == 1){
+                    var _parent = parent;
+                    _parent.layer.close(parentObj);
+                    _parent.layer.msg(res.msg, {shade: 0.1, time: 1000}, function(){
+                        // _parent.window.location.reload();
+                    });
+                }else{
+                    showErrorMsg(res.msg);
+                }
+            },
+            error: function(e){
+                layer.closeAll();
+                layer.alert(e.responseText, {icon: 5, title:false});
+            }
+        });
+    }
+
+    // 上传水印图片成功回调函数
+    function call_back(fileurl_tmp){
+        $("#mark_img").val(fileurl_tmp);
+        $("#img_a").attr('href', fileurl_tmp);
+        $("#img_i").attr('onmouseover', "layer_tips=layer.tips('<img src="+fileurl_tmp+">',this,{tips: [1, '#fff']});");
+    }
+
+    function setwarter(marktype){
+        if(marktype == 'text'){
+            $('.texttr').show();
+            $('.imgtr').hide();
+        }else{
+            $('.texttr').hide();
+            $('.imgtr').show();
+        }
+    }
+</script>
+
+{include file="public/footer" /}

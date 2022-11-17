@@ -1,0 +1,65 @@
+{include file="header.htm" /}
+<body class="bodystyle" style="cursor: default; -moz-user-select: inherit; min-width:400px;">
+<div class="page" style="min-width: 400px;">
+    <div class="ncap-form-default">
+        <div id="explanation" class="explanation" style="color: rgb(44, 188, 163); background-color: rgb(237, 251, 248); width: 99%; height: 100%;">
+            <div id="checkZoom" class="title"><i class="fa fa-lightbulb-o"></i>
+                <h4 title="提示相关设置操作时应注意的要点">提示</h4>
+                <span title="收起提示" id="explanationZoom" style="display: block;"></span>
+            </div>
+            <ul>
+                <li>1、数据表为空时，重置表id从1开始累加；</li>
+                <li>2、数据表不为空时，重置表id将从最后一条记录的id开始累加；</li>
+            </ul>
+        </div>
+        <br/>
+        <dl class="row">
+            <dt class="tit">
+                <label>数据表列表</label>
+            </dt>
+            <dd class="opt">
+                <select name="table[]" id="table" style="width: 300px;" size="15" multiple="true">
+                    {volist name="data" id="vo"}
+                    <option value="{$vo.Name}">{$vo.Name}({$vo.count})</option>
+                    {/volist}
+                </select>
+                <span class="err"></span>
+                <p class="red">(按 Ctrl 可以进行多选)</p>
+            </dd>
+        </dl>
+        <div class="bot">
+            <a class="ncap-btn-big ncap-btn-green" type="button" id="submitBtn" onclick="choose_table();">重置ID</a>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function choose_table() {
+        var table = [];
+        $("#table option:selected").each(function () {
+            table.push($(this).val());
+        })
+        if (table.length == 0){
+            layer.msg('请指定表', {icon: 5, title:false});
+            return false;
+        }
+        layer_loading('正在处理');
+        table  = JSON.stringify(table);
+        $.ajax({
+            url: "{:weapp_url('Systemdoctor/Systemdoctor/sql_reset')}",
+            data: {table:table,_ajax:1},
+            type: 'post',
+            dataType: 'json',
+            success: function (res) {
+                layer.closeAll();
+                layer.msg('重置成功');
+                location.reload();
+                // if ('1' == res.code) {
+                //     $("#return_info").html(res.data);
+                // } else {
+                //     layer.msg(res.msg);
+                // }
+            }
+        });
+    }
+</script>
+{include file="footer.htm" /}

@@ -1,0 +1,5 @@
+application/common/model/Cp.php
+application/home/controller/Cp.php
+application/home/model/Cp.php
+template/pc/lists_cp.htm
+template/pc/view_cp.htm

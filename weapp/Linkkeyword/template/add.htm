@@ -1,0 +1,86 @@
+{include file="header.htm" /}
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    {include file="bar.htm" /}
+    <form class="form-horizontal" id="post_form" action="{:weapp_url('Linkkeyword/Linkkeyword/add')}" method="post">
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit">
+                    <label for="title"><em>*</em>关键词</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="title" placeholder="" id="title" class="input-txt">
+                    <span class="err"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="url"><em>*</em>超链接URL</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="url" placeholder="http://" id="url" class="input-txt">
+                    <span class="err"></span>
+                    <p class="red">请输入包含http://或https://等协议名称的超链接</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>新窗口打开</label>
+                </dt>
+                <dd class="opt">
+                    <div class="onoff">
+                        <label for="target1" class="cb-enable selected">是</label>
+                        <label for="target0" class="cb-disable ">否</label>
+                        <input id="target1" name="target" value="1" type="radio" checked="checked">
+                        <input id="target0" name="target" value="0" type="radio">
+                    </div>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>启用</label>
+                </dt>
+                <dd class="opt">
+                    <div class="onoff">
+                        <label for="status1" class="cb-enable selected">是</label>
+                        <label for="status0" class="cb-disable ">否</label>
+                        <input id="status1" name="status" value="1" type="radio" checked="checked">
+                        <input id="status0" name="status" value="0" type="radio">
+                    </div>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <div class="bot"><a href="JavaScript:void(0);" onclick="checkForm();" class="ncap-btn-big ncap-btn-green" id="submitBtn">确认提交</a></div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    // 判断输入框是否为空
+    function checkForm(){
+        if($('input[name=title]').val() == ''){
+            showErrorMsg('关键字不能为空！');
+            $('input[name=title]').focus();
+            return false;
+        }
+        if($('input[name=url]').val() == ''){
+            showErrorMsg('链接URL不能为空！');
+            $('input[name=url]').focus();
+            return false;
+        } else {
+            var reg =/^(http:|https:)?\/\//;
+            if(reg.test($('input[name=url]').val()) != true){
+                showErrorMsg('您输入的超链接中不包含http://或https://或//等协议名称');
+                return false;
+            }
+        }
+
+        layer_loading('正在处理');
+        $('#post_form').submit();
+    }
+</script>
+{include file="footer.htm" /}

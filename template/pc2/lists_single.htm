@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width" />
+<title>{$eyou.field.seo_title}</title>
+<meta name="description" content="{$eyou.field.seo_description}" />
+<meta name="keywords" content="{$eyou.field.seo_keywords}" />
+<link href="{eyou:global name='web_ico' /}" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="screen-orientation" content="portrait"><!-- uc强制竖屏 -->
+<meta name="x5-orientation" content="portrait"><!-- QQ强制竖屏 -->
+
+<link href="/template/pc/static/css/pagv2.css" rel="stylesheet" type="text/css" />
+<script src="/template/pc/static/js/jquery-1.8.1.min.js" type="text/javascript"></script>
+<script src="/template/pc/static/js/common.js" type="text/javascript"></script>
+<style>#allmap {width: 100%;height: 400px;overflow: hidden;margin:0;font-family:"微软雅黑";}</style>
+
+</head>
+<body><div id="warp">
+    <!--heardBox begin-->
+    
+
+
+{eyou:include file="header.htm" /}
+    <!--banner begin-->
+    <!-- /header -->
+    <div class="bannerArea wcon">
+        <img src='{eyou:notempty name='$eyou.field.typelitpic' /}{$eyou.field.typelitpic} {eyou:else /}{$eyou.field.typeid|gettoptype=###,'litpic'}{/eyou:notempty}' >
+        <!--栏目-->
+        <div class="hiArea">
+            <div class="rightArea">当前位置：{eyou:position style=' ' /}</div>
+        </div>
+    </div>
+    <div class="container wcon">
+        <!--左边-->
+        <div class="contactleft">
+            <div class="left">
+    <!--菜单-->
+   <div class="menuArea">
+  <div class="titleArea">
+    <h3>{$eyou.field.typeid|gettoptype=###,'typename'}</h3> 
+  </div>
+  <div class="conArea ">
+   
+    <ul class="navmenu">
+        {eyou:models  type='sonself' loop='20'}
+         <li class="{eyou:eq name='$i' value='1'}cur{/eyou:eq}"><h3><a href="{$field.typeurl}">{$field.typename}</a></h3></li>
+        {/eyou:models}
+       
+             
+        </ul>  
+  </div>
+            
+</div>
+</div>
+        </div>
+        <!--右边-->
+        <div class="padd contactcon">
+            <!--信息详细--复杂-->
+            {$eyou.field.content}
+			<script type="text/javascript" src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=FgKPtmFfLkES3NDeZ5VPPgaGMsC6yQGd"></script>
+				<div id="allmap"></div>
+			<script type="text/javascript">
+	// 百度地图API功能
+	var map = new BMapGL.Map("allmap");
+	var point = new BMapGL.Point(113.87165,22.592606);
+	map.centerAndZoom(point, 18);
+	var scaleCtrl = new BMapGL.ScaleControl();  // 添加比例尺控件
+map.addControl(scaleCtrl);
+var zoomCtrl = new BMapGL.ZoomControl();  // 添加缩放控件
+map.addControl(zoomCtrl);
+map.enableScrollWheelZoom(true);
+	var marker = new BMapGL.Marker(point);  // 创建标注
+	map.addOverlay(marker);              // 将标注添加到地图中
+	var opts = {
+	    width : 200,     // 信息窗口宽度
+	    height: 100,     // 信息窗口高度
+	    title : "新鸿芯科技" // 信息窗口标题
+	   
+	}
+	var infoWindow = new BMapGL.InfoWindow("地址：深圳市宝安区西乡街道铁仔路凤凰智谷A座907", opts);  // 创建信息窗口对象 
+	marker.addEventListener("click", function(){          
+		map.openInfoWindow(infoWindow, point); //开启信息窗口
+	}); 
+</script>
+        </div>
+    </div>
+
+    <!--底部-->
+    <!--footPage begin-->
+{eyou:include file="kefu.htm" /}
+  <!--联系我们-->
+{eyou:include file="footer.htm" /}
+
+
+    <!--footPage end-->
+    <!-- /footer -->
+
+  
+</div></body>
+</html>

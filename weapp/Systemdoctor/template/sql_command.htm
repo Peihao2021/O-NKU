@@ -1,0 +1,91 @@
+{include file="header.htm" /}
+<link href="__WEAPP_TEMPLATE__/skin/css/codemirror.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__WEAPP_TEMPLATE__/skin/js/codemirror.js"></script>
+<body class="bodystyle" style="cursor: default; -moz-user-select: inherit; min-width:400px;">
+<div class="page" style="min-width: 400px;">
+    <div class="ncap-form-default">
+        <dl class="row">
+            <dt class="tit">
+                <label>系统表信息</label>
+            </dt>
+            <dd class="opt">
+                <select class="guest-input form-control w300" name="table" id="table" size="8" onchange="choose_table();">
+                    {volist name="data" id="vo"}
+                    <option value="{$vo.Name}">{$vo.Name}({$vo.count})</option>
+                    {/volist}
+                </select>
+            </dd>
+        </dl>
+        <dl class="row">
+            <dt class="tit">
+                <label>返回信息</label>
+            </dt>
+            <dd class="opt">
+                <div id="return_info" style="height: 200px;overflow:auto;color: #0C0C0C"></div>
+            </dd>
+        </dl>
+    </div>
+    <div style="display: flex;margin:8px 0; ">运行SQL命令行：
+        <button type="button" style="padding:2px 10px;background-color: #4fc0e8;border: none;color: #fff;border-radius:3px;" onclick="run_sql()">运行</button>
+        <p style="margin-left: 20px;">[ 更新/插入操作允许同时输入多个命令，以“;”分隔; ]</p>
+    </div>
+    <textarea class="form-control" id="mirror_code" name="code"></textarea>
+    <br/>
+</div>
+<script>
+    //根据DOM元素的id构造出一个编辑器
+    var editor = CodeMirror.fromTextArea(document.getElementById("mirror_code"), {
+        lineNumbers: true
+
+    });
+</script>
+<script type="text/javascript">
+    function run_sql() {
+        var command = editor.getValue();
+        layer_loading('正在处理');
+        $.ajax({
+            url: "{:weapp_url('Systemdoctor/Systemdoctor/run_sql')}",
+            data: {command:command,_ajax:1},
+            type: 'post',
+            dataType: 'json',
+            success: function (res) {
+                layer.closeAll();
+                if ('1' == res.code) {
+                    $("#return_info").html(res.data.msg);
+                } else if ('0' == res.code) {
+                    $("#return_info").html(res.msg);
+                }
+                // else {
+                //     $("#return_info").html(res);
+                // }
+            },
+            error:function ($r) {
+                layer.closeAll();
+                $("#return_info").html($r.responseText);
+            }
+        });
+    }
+    function choose_table() {
+        var table = $('#table option:selected').val();
+        if (!table){
+            layer.msg('没有指定表名', {icon: 5, title:false});
+            return false;
+        }
+        layer_loading('正在处理');
+        $.ajax({
+            url: "{:weapp_url('Systemdoctor/Systemdoctor/sql_details')}",
+            data: {table:table,_ajax:1},
+            type: 'post',
+            dataType: 'json',
+            success: function (res) {
+                layer.closeAll();
+                if ('1' == res.code) {
+                    $("#return_info").html(res.data);
+                } else {
+                    layer.msg(res.msg);
+                }
+            }
+        });
+    }
+</script>
+{include file="footer.htm" /}

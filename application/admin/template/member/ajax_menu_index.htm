@@ -1,0 +1,109 @@
+{include file="public/layout" /}
+<body class="bodystyle" style="cursor: default; -moz-user-select: inherit;min-width:auto;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page" style="min-width:auto;">
+    <div class="flexigrid">
+        
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th class="sign w20" axis="col0">
+                            <div class="tc"></div>
+                        </th>
+                        <th abbr="ac_id" axis="col4">
+                            <div class="text-l10">菜单名称</div>
+                        </th>
+                        <th abbr="article_time" axis="col4" class="w60">
+                            <div class="tc">显示</div>
+                        </th>
+                        <th abbr="article_time" axis="col4" class="w100">
+                            <div class="tc">默认会员首页</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w60">
+                            <div class="tc">排序</div>
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="bDiv" style="height: auto; min-height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table style="width: 100%">
+                    <tbody>
+                    {empty name="list"}
+                        <tr>
+                            <div class="no_row">
+                                <div class="no_pic"><img src="__SKIN__/images/null-data.png"></div>
+                            </div>
+                        </tr>
+                    {else/}
+                        {foreach name="list" item="vo" key="k" }
+                        <tr>
+                            <td class="sign">
+                                <div class="w20 tc">
+                                </div>
+                            </td>
+                            <td style="width: 100%">
+                                <div style="">
+                                    <input type="text" name="title" value="{$vo.title}" onchange="changeTableVal('users_menu','id','{$vo.id}','title',this);">
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w60 tc">
+                                    {eq name="$vo['status']" value='1'}
+                                        <span class="yes" onClick="changeTableVal('users_menu','id','{$vo.id}','status',this);"><i class="fa fa-check-circle"></i>是</span>
+                                    {else /}
+                                        <span class="no" onClick="changeTableVal('users_menu','id','{$vo.id}','status',this);"><i class="fa fa-ban"></i>否</span>
+                                    {/eq}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w100 tc">
+                                    {eq name="$vo['is_userpage']" value='1'}
+                                        <span class="yes" onClick="changeTableVal('users_menu','id','{$vo.id}','is_userpage',this);"><i class="fa fa-check-circle"></i>是</span>
+                                    {else /}
+                                        <span class="no" onClick="changeTableVal('users_menu','id','{$vo.id}','is_userpage',this);"><i class="fa fa-ban"></i>否</span>
+                                    {/eq}
+                                </div>
+                            </td>
+                            <td class="sort">
+                                <div class="w60 tc">
+                                    <input type="text" onchange="changeTableVal('users_menu','id','{$vo.id}','sort_order',this);" size="4"  value="{$vo.sort_order}" class="tc" />
+                                </div>
+                            </td>
+                        </tr>
+                        {/foreach}
+                    {/empty}
+                    </tbody>
+                </table>
+                
+            </div>
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+        <div class="tDiv">
+            <div class="tDiv2">
+                {include file="public/page" /}
+            </div>
+            <div style="clear:both"></div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        // 表格行点击选中切换
+        $('#flexigrid > table>tbody >tr').click(function(){
+            $(this).toggleClass('trSelected');
+        });
+
+        // 点击刷新数据
+        $('.fa-refresh').click(function(){
+            location.href = location.href;
+        });
+    });
+</script>
+
+{include file="public/footer" /}

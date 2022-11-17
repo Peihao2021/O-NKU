@@ -1,0 +1,99 @@
+{include file="header.htm" /}
+<body style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit;">
+<div class="page">
+    {include file="bar.htm" /}
+    <div class="flexigrid">
+        <div class="mDiv" style="margin-left: 30px;">
+            <p style="font-size: 15px;line-height: 2em;">【标签调用方法-请仔细阅读，谢谢！】</p>
+            <ol style="font-size: 15px;line-height: 2em;">
+                <li>如果开启手动调用，请手工复制以下代码到模板对应位置： </li>
+                <li>{literal}{:hookexec('Census/Census/show')}{/literal}</li>
+            </ol>
+			
+			<p style="font-size: 15px;line-height: 2em;">【注意事项-请仔细阅读，谢谢！】</p>
+			<ol style="font-size: 15px;line-height: 2em;">
+			    <li>由于官方后台模板管理里面添加以上代码首页主站会出现报错，请在本地添加修改后上传至服务器或者在宝塔等在线编辑即可！</li>
+				<li>插件里面的显示和隐藏只针对不修改show.htm文件情况下正常使用！</li>
+				<li>不会修改代码的新手用户最好选择4项统计显示，最好不要将【完成交易产品列表】显示，此项为单独调用，适合对前端和易优标签熟悉的人使用！</li>
+				<li>如果对前端代码以及易优标签特别熟悉的，请在网站根目录/weapp/Census/template/show.htm文件修改代码和样式并和插件里面的标签配合使用！具体不懂的可以添加QQ：408256272</li>
+				<li>本插件提供了字体大全，调用字体&lt;link type="text/css" href="__WEAPP_TEMPLATE__/skin/css/font-awesome.min.css?v={$weappInfo.version|default='v1.0.0'}" rel="stylesheet" /></li>
+				<li>字体代码规范&lt;i class="fa fa-beer">&lt;/i>，【fa-beer】即为字体的名称，其他的功能请在show.htm文件摸索！</li>
+				<li>问答统计需要安装问答插件才能正常显示以及正常使用！</li>
+			</ol>
+			<p style="font-size: 15px;line-height: 2em;">【单独使用方法-请仔细阅读，谢谢！】</p>
+            <ol style="font-size: 15px;line-height: 2em;">
+                <li>单独使用时需要自己添加样式，注：id后面的样式不能缺少</li>
+                <li><textarea id="jtbar" style="margin-top: 0px;margin-bottom: 0px;height: 255px;width: 1000px;">
+文章数量统计 &lt;span id="arccount">&lt;/span>
+今日文章数量统计 &lt;span id="todayarccount">&lt;/span>
+本周文章数量统计 &lt;span id="weekarccount">&lt;/span>
+本月文章数量统计 &lt;span id="montharccount">&lt;/span>
+未审核文章统计 &lt;span id="noarccount">&lt;/span>
+会员数量统计 &lt;span id="userscount">&lt;/span>
+开通收费会员统计 &lt;span id="onuserscount">&lt;/span>
+产品数量统计 &lt;span id="procount">&lt;/span>
+交易金额统计 &lt;span id="moncount">&lt;/span>
+完成订单数量统计 &lt;span id="onmoncount">&lt;/span>
+留言数量统计 &lt;span id="bookcounts">&lt;/span>
+友情链接数量统计 &lt;span id="linkcounts">&lt;/span>
+问答提问数量统计 &lt;span id="questioncounts">&lt;/span>
+问答今日提问数量统计 &lt;span id="tquestioncounts">&lt;/span>
+问答本周提问数量统计 &lt;span id="wquestioncounts">&lt;/span>
+问答本月提问数量统计 &lt;span id="mquestioncounts">&lt;/span>
+问答回答数量统计 &lt;span id="askcounts">&lt;/span>
+					</textarea><button class="btn" data-clipboard-target="#jtbar" aria-label="已复制" style="display: block;">点击复制html代码</button><br>
+				</li>
+				<li>JQ代码如下：</li><li><textarea id="dtbar" style="margin-top: 0px;margin-bottom: 0px;height: 255px;width: 1000px;">
+&lt;script type="text/javascript">
+function ey_tongji_408256272()
+{
+	var url = "__ROOT_DIR__/index.php?m=plugins&c=Census&a=ajaxpost&_ajax=1";
+    $.ajax({
+        type:'post',
+        url: url,
+        dataType: 'json',
+        success: function(res){
+			layer.closeAll();
+            if(res.data.code == 1){
+				document.getElementById("arccount").innerHTML = res.data.arccount;//文章数量统计
+				document.getElementById("todayarccount").innerHTML = res.data.todayarccount;//今日文章数量统计
+				document.getElementById("weekarccount").innerHTML = res.data.weekarccount;//本周文章数量统计
+				document.getElementById("montharccount").innerHTML = res.data.montharccount;//本月文章数量统计
+				document.getElementById("noarccount").innerHTML = res.data.noarccount;//未审核文章统计
+				document.getElementById("userscount").innerHTML = res.data.userscount;//会员数量统计
+				document.getElementById("onuserscount").innerHTML = res.data.onuserscount;//开通收费会员统计
+				document.getElementById("procount").innerHTML = res.data.procount;//产品数量统计
+				document.getElementById("moncount").innerHTML = res.data.moncount;//交易金额统计
+				document.getElementById("onmoncount").innerHTML = res.data.onmoncount;//完成订单数量统计
+				document.getElementById("bookcounts").innerHTML = res.data.bookcounts;//留言数量统计
+				document.getElementById("linkcounts").innerHTML = res.data.linkcounts;//友情链接数量统计
+				document.getElementById("questioncounts").innerHTML = res.data.questioncounts;//问答提问数量统计
+				document.getElementById("tquestioncounts").innerHTML = res.data.tquestioncounts;//问答今日提问数量统计
+				document.getElementById("wquestioncounts").innerHTML = res.data.wquestioncounts;//问答本周提问数量统计
+				document.getElementById("mquestioncounts").innerHTML = res.data.mquestioncounts;//问答本月提问数量统计
+				document.getElementById("askcounts").innerHTML = res.data.askcounts;//问答回答数量统计
+            }
+        }
+    }); 
+}
+ey_tongji_408256272();
+&lt;/script></textarea><button class="btn" data-clipboard-target="#dtbar" aria-label="已复制" style="display: block;">点击复制JQ代码</button><br></li>
+            </ol>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="__SKIN__/js/clipboard.min.js"></script>
+<script type="text/javascript">
+var clipboard = new Clipboard('.btn');
+
+clipboard.on('success', function(e) {
+	var msg = e.trigger.getAttribute('aria-label');
+	layer.msg(msg);
+    console.info('Action:', e.action);
+    console.info('Text:', e.text);
+    console.info('Trigger:', e.trigger);
+
+    e.clearSelection();
+});
+ </script>
+{include file="footer.htm" /}

@@ -1,0 +1,238 @@
+{include file="header.htm" /}
+<body style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    {include file="bar.htm" /}
+    <div class="flexigrid">
+        <div class="mDiv">
+            <div class="ftitle">
+                <h3>文档列表<!--{php}var_dump($list);{/php}--></h3>
+                <h5>(共{$pageObj->totalRows}条数据)</h5>
+            </div>
+            <div title="刷新数据" class="pReload"><i class="fa fa-refresh"></i></div>
+            <form id="searchForm" class="navbar-form form-inline" action="{:weapp_url('Pushall/Pushall/index')}" method="get" onsubmit="layer_loading('正在处理');">
+                {$searchform.hidden|default=''}
+                <div class="sDiv">
+                    {include file="tags_btn" /}
+                    <div class="sDiv2">
+                        <input type="text" size="30" name="keywords" class="qsbox" value="{$Request.param.keywords}" placeholder="搜索相关数据...">
+                        <input type="submit" class="btn" value="搜索">
+                    </div>
+                    <div class="sDiv2">
+                        <input type="button" class="btn" value="重置" onClick="window.location.href='{:weapp_url('Pushall/Pushall/index')}';">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="tDiv">
+            <div class="tDiv2">
+                <div class="fbutton checkboxall">
+                    <input type="checkbox" onclick="javascript:$('input[name*=ids]').prop('checked',this.checked);">
+                </div>
+                <div class="fbutton">
+                    <a onclick="checkbdurl(2, 'Keywords');">
+                        <div class="add" title="百度推送">
+                            <span class="red"><i class="fa fa-plus"></i>百度推送</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="fbutton">
+                    <a onclick="checkbdurl(4, 'Keywords');">
+                        <div class="add" title="神马推送">
+                            <span class="red"><i class="fa fa-plus"></i>神马推送</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="fbutton">
+                    <a onclick="checkbdurl(6, 'Keywords');">
+                        <div class="add" title="搜狗推送">
+                            <span class="red"><i class="fa fa-plus"></i>搜狗推送</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="fbutton">
+                    <a onclick="checkbdurl(8, 'Keywords');">
+                        <div class="add" title="头条推送">
+                            <span class="red"><i class="fa fa-plus"></i>头条推送</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="fbutton">
+                    <a onclick="checkbdurl(10, 'Keywords');">
+                        <div class="add" title="百度快速收录推送">
+                            <span class="red"><i class="fa fa-plus"></i>百度快速收录推送</span>
+                        </div>
+                    </a>
+                </div>
+                <!--<div class="fbutton">
+                    <a href="{:weapp_url('Pushall/Pushall/add')}">
+                        <div class="add" title="新增">
+                            <span class="red"><i class="fa fa-plus"></i>新增</span>
+                        </div>
+                    </a>
+                </div>-->
+            </div>
+        <!--分页位置-->
+        {$pageStr}
+            <div style="clear:both"></div>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th class="sign w40" axis="col0">
+                            <div class="tc">选择</div>
+                        </th>
+                        <th abbr="article_show" axis="col5" class="w40">
+                            <div class="tc">ID</div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="w250">
+                            <div class="tc">标题</div>
+                        </th>
+                        <th abbr="ac_id" axis="col4">
+                            <div class="">链接地址</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w400">
+                            <div class="tc">推送状态</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w160">
+                            <div class="tc">更新时间</div>
+                        </th>
+                        <!--<th axis="col1" class="w120">
+                            <div class="tc">操作</div>
+                        </th>
+                        <th abbr="article_show" axis="col5" class="w60">
+                            <div class="tc">排序</div>
+                        </th>-->
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table style="width: 100%">
+                    <tbody>
+                    {empty name="list"}
+                        <tr>
+                            <td class="no-data" align="center" axis="col0" colspan="50">
+                                <i class="fa fa-exclamation-circle"></i>没有符合条件的记录
+                            </td>
+                        </tr>
+                    {else/}
+                        {foreach name="list" item="vo" key="k" }
+                        <tr>
+                            <td class="sign">
+                                <div class="w40 tc"><input type="checkbox" name="ids[]" value="__SITE_URL____ROOT_DIR__/keywords/{$vo[url]}.html"></div>
+                            </td>
+                            <td class="sort">
+                                <div class="w40 tc">
+                                    {$vo.id}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w250 tc">
+                                    <a href="__SITE_URL____ROOT_DIR__/keywords/{$vo.url}.html" target="_blank">{$vo.keywords}</a>
+                                </div>
+                            </td>
+                            <td style="width: 100%">
+                                <div style="">
+                                    <a href="__SITE_URL____ROOT_DIR__/keywords/{$vo.url}.html" target="_blank">__SITE_URL____ROOT_DIR__/keywords/{$vo.url}.html</a>
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w400 tc">
+                                    {eq name="$vo['baidupushzt']" value='1'}
+                                        <span class="yes" onClick="changeTableVal('WeappKeywords','id','{$vo.id}','baidupushzt',this);">百度：已推送&nbsp;||&nbsp;</span>
+                                    {else /}
+                                        <span class="no" onClick="changeTableVal('WeappKeywords','id','{$vo.id}','baidupushzt',this);">百度：未推送&nbsp;||&nbsp;</span>
+                                    {/eq}
+                                    
+                                    {eq name="$vo['shenmapushzt']" value='1'}
+                                        <span class="yes" onClick="changeTableVal('WeappKeywords','id','{$vo.id}','shenmapushzt',this);">神马：已推送&nbsp;||&nbsp;</span>
+                                    {else /}
+                                        <span class="no" onClick="changeTableVal('WeappKeywords','id','{$vo.id}','shenmapushzt',this);">神马：未推送&nbsp;||&nbsp;</span>
+                                    {/eq}
+                                    
+                                    {eq name="$vo['sogoupushzt']" value='1'}
+                                        <span class="yes" onClick="changeTableVal('WeappKeywords','id','{$vo.id}','sogoupushzt',this);">搜狗：已推送&nbsp;||&nbsp;</span>
+                                    {else /}
+                                        <span class="no" onClick="changeTableVal('WeappKeywords','id','{$vo.id}','sogoupushzt',this);">搜狗：未推送&nbsp;||&nbsp;</span>
+                                    {/eq}
+                                    {eq name="$vo['toutiaopushzt']" value='1'}
+                                        <span class="yes" onClick="changeTableVal('WeappKeywords','id','{$vo.id}','toutiaopushzt',this);">头条：已推送</span>
+                                    {else /}
+                                        <span class="no" onClick="changeTableVal('WeappKeywords','id','{$vo.id}','toutiaopushzt',this);">头条：未推送</span>
+                                    {/eq}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w160 tc">
+                                    {$vo.update_time|MyDate='Y-m-d H:i:s',###}
+                                </div>
+                            </td>
+                            <!-- <td>
+                                <div class="w120 tc">
+                                    <a href="{:weapp_url('Pushall/Pushall/bdUrls',array('url'=>$vo.arcurl,'aid'=>$vo.aid))}" class="btn blue"><i class="fa fa-pencil-square-o"></i>推送</a>
+                                   <a class="btn red"  href="javascript:void(0)" data-url="{:weapp_url('Pushall/Pushall/del')}" data-id="{$vo.id}" onClick="delfun(this);"><i class="fa fa-trash-o"></i>删除</a>
+                                </div>
+                            </td>-->
+                            <!--<td class="sort">
+                                <div class="w60 tc">
+                                    <input style="text-align: left;" type="text" onkeyup="this.value=this.value.replace(/[^\d]/g,'');" onpaste="this.value=this.value.replace(/[^\d]/g,'');" onchange="changeTableVal('weapp_Pushall','id','{$vo.id}','sort_order',this);" size="4"  value="{$vo.sort_order}" />
+                                </div>
+                            </td>-->
+                        </tr>
+                        {/foreach}
+                    {/empty}
+                    </tbody>
+                </table>
+            </div>
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+//post 跳转扩展方法
+    $.extend({
+        StandardPost: function (url, args) {
+            var form = $("<form method='post'></form>"),
+                input;
+            form.attr({ "action": url });
+            $.each(args, function (key, value) {
+                input = $("<input type='hidden'>");
+                input.attr({"name": key });
+                input.val(value);
+                form.append(input);//参考文章中没有此句，提交会被拒绝--表单提交已取消，因为该表单未连接
+            });
+            $("body").append(form);
+            form.submit();
+        }
+    });
+    
+function checkbdurl(x,y){
+ var c=document.getElementsByName("ids[]");
+ str="";
+ for(i=0;i<c.length;i++){
+  if(c[i].checked){
+  if(str==""){
+  str=c[i].value;
+  }else{
+  str=str+","+c[i].value;
+  }
+  }
+}
+if(str==""){alert("请至少选择一条数据");return false;}
+
+ if(confirm("确定执行该项操作吗?")){
+ layer.msg('正在处理数据', {icon: 16  ,time: 0,shade :0.25});
+ $.StandardPost("{:weapp_url('Pushall/Pushall/push')}&push=" + x +"&pushtype="+ y, { url: str });
+ /*$(location).attr('href',"{:weapp_url('Pushall/Pushall/push')}&push=" + x +"&pushtype="+ y + "&url=" + str);*/
+ }else{return false;}
+
+}
+</script>
+{include file="footer.htm" /}

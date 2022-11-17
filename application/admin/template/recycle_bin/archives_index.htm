@@ -1,0 +1,371 @@
+{include file="public/layout" /}
+
+<body class="bodystyle" id="bodystyle" style="cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    {include file="recycle_bin/bar" /}
+    <div class="flexigrid">
+        <div class="mDiv">
+            <form id="search_form" class="navbar-form form-inline" action="{:url('RecycleBin/archives_index')}" method="get" onsubmit="layer_loading('正在处理');">
+                {$searchform.hidden|default=''}
+                <div class="sDiv">
+                    <div class="sDiv2">
+                        <input type="text" size="30" name="keywords" value="{$Request.param.keywords}" class="qsbox" placeholder="名称搜索...">
+                        <input type="submit" class="btn" value="搜索">
+                        <i class="iconfont e-sousuo"></i>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th class="sign w40" axis="col0">
+                            <div class="tc"><input type="checkbox" autocomplete="off" class="checkAll"></div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="w70">
+                            <div class="tc">ID</div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="">
+                            <div class="text-l10">标题</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w150">
+                            <div class="tc">所属栏目</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w100">
+                            <div class="tc">删除时间</div>
+                        </th>
+                        <th axis="col1" class="w150">
+                            <div class="tc">操作</div>
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table style="width: 100%;">
+                    <tbody>
+                    {empty name="list"}
+                        <tr>
+                            <td class="no-data" align="center" axis="col0" colspan="50">
+                                <div class="no_row">
+                                    <div class="no_pic"><img src="__SKIN__/images/null-data.png"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    {else/}
+                        {foreach name="list" item="vo" key="k" }
+                        <tr>
+                            <td class="sign">
+                                <div class="tc w40"><input type="checkbox" autocomplete="off" name="ids[]" value="{$vo.aid}"></div>
+                            </td>
+                           
+                            <td class="sort">
+                                <div class="tc w70">
+                                    {$vo.aid}
+                                </div>
+                            </td>
+                            <td class="" style="width: 100%;">
+                                <div class="tl pl10" >
+                                    {notempty name="vo.litpic"}
+                                        <i class="fa fa-picture-o color_z" onmouseover="layer_tips=layer.tips('<img src={$vo.litpic} class=\'layer_tips_img\'>',this,{tips: [1, '#fff']});" onmouseout="layer.close(layer_tips);"></i>
+                                    {/notempty}
+                                    {$vo.title}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w150 tc ellipsis"><a href="{:url('RecycleBin/archives_index', array('typeid'=>$vo['typeid']))}" title="{$vo.typename}">{$vo.typename|default='<i class="red">数据出错！</i>'}</a></div>
+                            </td>
+                            <td>
+                                <div class="w100 tc">
+                                    {$vo.update_time|date='Y-m-d',###}
+                                </div>
+                            </td>
+                            <td class="operation">
+                                <div class="w150 tc">
+                                    {eq name="'RecycleBin@archives_recovery'|is_check_access" value="1"}
+                                    <a class="btn blue" href="javascript:void(0);" data-url="{:url('RecycleBin/archives_recovery')}" data-id="{$vo.aid}" data-title="{$vo.title}" onClick="recovery(this);">还原</a>
+                                    {/eq}
+                                    
+                                    {eq name="'RecycleBin@archives_del'|is_check_access" value="1"}
+                                    <i></i>
+                                    <a class="btn red" href="javascript:void(0);" data-url="{:url('RecycleBin/archives_del')}" data-id="{$vo.aid}" data-title="{$vo.title}" onClick="delfun(this);">彻底删除</a>
+                                    {/eq}
+                                </div>
+                            </td>
+                        </tr>
+                        {/foreach}
+                    {/empty}
+                    </tbody>
+                </table>
+            </div>
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+        <div class="tDiv">
+            <div class="tDiv2">
+                <div class="fbutton checkboxall">
+                    <input type="checkbox" autocomplete="off" class="checkAll">
+                </div>
+                {eq name="'RecycleBin@archives_recovery'|is_check_access" value="1"}
+                <div class="fbutton">
+                    <a onclick="batch_recovery(this, 'ids');" data-url="{:url('RecycleBin/archives_recovery')}" class="layui-btn layui-btn-primary">
+                            <span>批量还原</span>
+                    </a>
+                </div>
+                {/eq}
+                {eq name="'RecycleBin@archives_del'|is_check_access" value="1"}
+                <div class="fbutton">
+                    <a onclick="batch_del(this, 'ids');" data-url="{:url('RecycleBin/archives_del')}" class="layui-btn layui-btn-primary">
+                        <span>批量彻底删除</span>
+                    </a>
+                </div>
+                {/eq}
+                {include file="public/page" /}
+            </div>
+            <div style="clear:both"></div>
+        </div>
+        <!--分页位置-->
+        
+    </div>
+</div>
+<script>
+    try{
+        var mt20_1649209614 = sessionStorage.getItem("mt20_1649209614");
+        if (mt20_1649209614 != 1){
+            console.log("recycle_bin",mt20_1649209614);
+//            $("#bodystyle").css("padding"," 15px 0px");
+        }
+    }catch(e){}
+</script>
+<script type="text/javascript">
+    $(function(){
+        $('input[name*=ids]').click(function(){
+            if ($('input[name*=ids]').length == $('input[name*=ids]:checked').length) {
+                $('.checkAll').prop('checked','checked');
+            } else {
+                $('.checkAll').prop('checked', false);
+            }
+        });
+        $('input[type=checkbox].checkAll').click(function(){
+            $('input[type=checkbox]').prop('checked',this.checked);
+        });
+    });
+    
+    $(document).ready(function(){
+
+        // 表格行点击选中切换
+        $('#flexigrid > table>tbody >tr').click(function(){
+            $(this).toggleClass('trSelected');
+        });
+
+        // 点击刷新数据
+        $('.fa-refresh').click(function(){
+            location.href = location.href;
+        });
+    });
+
+    // 还原
+    function recovery(obj){
+        layer.confirm('确认还原？该文档与关联栏目将一起还原。', {
+            shade: layer_shade,
+            area: ['480px', '190px'],
+            move: false,
+            title: '提示',
+            btnAlign:'r',
+            closeBtn: 3,
+            btn: ['确定', '取消'] ,//按钮
+            success: function () {
+                  $(".layui-layer-content").css('text-align', 'left');
+              }
+        }, function(){
+            layer_loading('正在处理');
+            // 确定
+            $.ajax({
+                type : 'post',
+                url : $(obj).attr('data-url'),
+                data : {del_id:$(obj).attr('data-id'), _ajax:1},
+                dataType : 'json',
+                success : function(data){
+                    layer.closeAll();
+                    if(data.code == 1){
+                        layer.msg(data.msg, {icon: 6});
+                        window.location.reload();
+                    }else{
+                        layer.alert(data.msg, {icon: 5, title:false});
+                    }
+                }
+            })
+        }, function(index){
+            layer.close(index);
+        });
+        return false;
+    }
+
+    /**
+     * 批量还原提交
+     */
+    function batch_recovery(obj, name) {
+        var a = [];
+        $('input[name^='+name+']').each(function(i,o){
+            if($(o).is(':checked')){
+                a.push($(o).val());
+            }
+        })
+        if(a.length == 0){
+            layer.alert('请至少选择一项', {
+                shade: layer_shade,
+                area: ['480px', '190px'],
+                move: false,
+                title: '提示',
+                btnAlign:'r',
+                closeBtn: 3,
+                success: function () {
+                      $(".layui-layer-content").css('text-align', 'left');
+                  }
+            });
+            return;
+        }
+        // 还原按钮
+        layer.confirm('确认批量还原？选定文档与关联栏目将一起还原。', {
+            shade: layer_shade,
+            area: ['480px', '190px'],
+            move: false,
+            title: '提示',
+            btnAlign:'r',
+            closeBtn: 3,
+            btn: ['确定', '取消'] ,//按钮
+            success: function () {
+                  $(".layui-layer-content").css('text-align', 'left');
+              }
+        }, function () {
+            layer_loading('正在处理');
+            $.ajax({
+                type: "POST",
+                url: $(obj).attr('data-url'),
+                data: {del_id:a, _ajax:1},
+                dataType: 'json',
+                success: function (data) {
+                    layer.closeAll();
+                    if(data.code == 1){
+                        layer.msg(data.msg, {icon: 6});
+                        window.location.reload();
+                    }else{
+                        layer.alert(data.msg, {icon: 5, title:false});
+                    }
+                },
+                error:function(e){
+                    layer.closeAll();
+                    layer.alert(e.responseText, {icon: 5, title:false});
+                }
+            });
+        }, function (index) {
+            layer.closeAll(index);
+        });
+    }
+
+    // 删除
+    function delfun(obj){
+        layer.confirm('确认彻底删除？', {
+            shade: layer_shade,
+            area: ['480px', '190px'],
+            move: false,
+            title: '提示',
+            btnAlign:'r',
+            closeBtn: 3,
+            btn: ['确定', '取消'] ,//按钮
+            success: function () {
+                  $(".layui-layer-content").css('text-align', 'left');
+              }
+        }, function(){
+            layer_loading('正在处理');
+            // 确定
+            $.ajax({
+                type : 'post',
+                url : $(obj).attr('data-url'),
+                data : {del_id:$(obj).attr('data-id'), _ajax:1},
+                dataType : 'json',
+                success : function(data){
+                    layer.closeAll();
+                    if(data.code == 1){
+                        layer.msg(data.msg, {icon: 6});
+                        window.location.reload();
+                    }else{
+                        layer.alert(data.msg, {icon: 5, title:false});
+                    }
+                }
+            })
+        }, function(index){
+            layer.close(index);
+        });
+        return false;
+    }
+
+    /**
+     * 批量删除提交
+     */
+    function batch_del(obj, name) {
+        var a = [];
+        $('input[name^='+name+']').each(function(i,o){
+            if($(o).is(':checked')){
+                a.push($(o).val());
+            }
+        })
+        if(a.length == 0){
+            layer.alert('请至少选择一项', {
+                shade: layer_shade,
+                area: ['480px', '190px'],
+                move: false,
+                title: '提示',
+                btnAlign:'r',
+                closeBtn: 3,
+                success: function () {
+                      $(".layui-layer-content").css('text-align', 'left');
+                  }
+            });
+            return;
+        }
+        // 删除按钮
+        layer.confirm('确认批量彻底删除？', {
+            shade: layer_shade,
+            area: ['480px', '190px'],
+            move: false,
+            title: '提示',
+            btnAlign:'r',
+            closeBtn: 3,
+            btn: ['确定', '取消'] ,//按钮
+            success: function () {
+                  $(".layui-layer-content").css('text-align', 'left');
+              }
+        }, function () {
+            layer_loading('正在处理');
+            $.ajax({
+                type: "POST",
+                url: $(obj).attr('data-url'),
+                data: {del_id:a, _ajax:1},
+                dataType: 'json',
+                success: function (data) {
+                    layer.closeAll();
+                    if(data.code == 1){
+                        layer.msg(data.msg, {icon: 6});
+                        window.location.reload();
+                    }else{
+                        layer.alert(data.msg, {icon: 5, title:false});
+                    }
+                },
+                error:function(e){
+                    layer.closeAll();
+                    layer.alert(e.responseText, {icon: 5, title:false});
+                }
+            });
+        }, function (index) {
+            layer.closeAll(index);
+        });
+    }
+</script>
+
+{include file="public/footer" /}

@@ -1,0 +1,25 @@
+
+    <div class="fixed-bar">
+        <div class="item-title">
+            <ul class="tab-base nc-row">
+                <!--<li>
+                    <a href="{:weapp_url('Systemdoctor/Systemdoctor/index')}" class="tab {eq name='$inc_type' value='default'}current{/eq}"><span>全局设置</span></a>
+                </li>-->
+                <li>
+                    <a href="{:weapp_url('Systemdoctor/Systemdoctor/vertify', ['inc_type'=>'admin_login'])}" class="tab {eq name='$inc_type' value='admin_login'}current{/eq}"><span>后台登录</span></a>
+                </li>
+                <li>
+                    <a href="{:weapp_url('Systemdoctor/Systemdoctor/vertify', ['inc_type'=>'users_reg'])}" class="tab {eq name='$inc_type' value='users_reg'}current{/eq}"><span>会员注册</span></a>
+                </li>
+                <li>
+                    <a href="{:weapp_url('Systemdoctor/Systemdoctor/vertify', ['inc_type'=>'users_login'])}" class="tab {eq name='$inc_type' value='users_login'}current{/eq}"><span>会员登录</span></a>
+                </li>
+                <li>
+                    <a href="{:weapp_url('Systemdoctor/Systemdoctor/vertify', ['inc_type'=>'users_retrieve_password'])}" class="tab {eq name='$inc_type' value='users_retrieve_password'}current{/eq}"><span>找回密码</span></a>
+                </li>
+                <li>
+                    <a href="{:weapp_url('Systemdoctor/Systemdoctor/vertify', ['inc_type'=>'guestbook'])}" class="tab {eq name='$inc_type' value='guestbook'}current{/eq}"><span>留言模型</span></a>
+                </li>
+            </ul>
+        </div>
+    </div>

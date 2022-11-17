@@ -1,0 +1,245 @@
+{include file="public/layout" /}
+
+<body class="bodystyle" style="overflow-y: scroll; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    <div class="flexigrid">
+        <div class="mDiv">
+            <form class="navbar-form form-inline" id="searchForm" action="{:url('Form/index')}" method="get" onsubmit="layer_loading('正在处理');">
+                {$searchform.hidden|default=''}
+                <div class="sDiv">
+                    <div class="sDiv2">
+                        <input type="text" name="add_time_begin" id="add_time_begin" value="{$Request.param.add_time_begin}" class="qsbox" placeholder="起始日期" autocomplete="off">
+                    </div>
+                    &nbsp;至&nbsp;
+                    <div class="sDiv2">
+                        <input type="text" name="add_time_end" id="add_time_end" value="{$Request.param.add_time_end}" class="qsbox" placeholder="结束日期" autocomplete="off">
+                    </div>
+                    <div class="sDiv2">
+                        <select name="form_id" class="select" style="margin:0px 5px;">
+                            <option value="">--全部表单--</option>
+                            {volist name='$formList' id='vo'}
+                            <option value="{$vo.form_id}" {if condition="$Request.param.form_id == $vo['form_id']"} selected {/if}>{$vo.form_name}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                    <div class="sDiv2" style="margin-right: 6px;">
+                        <input type="submit" class="btn" value="搜索"  style="position: unset;font-size: 14px;opacity: 1;width: 50px;">
+                    </div>
+                </div>
+            </form>
+            <div class="ftitle">
+                <div class="fbutton" style="float: none;">
+                    <a href="javascript:void(0);" onclick="excel_export(this);" data-url="{:url('Form/export', ['form_id'=>$Request.param.form_id,'add_time_begin'=>$Request.param.add_time_begin,'add_time_end'=>$Request.param.add_time_end,'keywords'=>$Request.param.keywords])}">
+                        <div class="add">
+                            <span><i class="fa fa-reply"></i>导出excel</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%;">
+                    <thead>
+                    <tr>
+                        <th class="sign w40" axis="col0">
+                            <div class="tc"><input type="checkbox" autocomplete="off" class="checkAll"></div>
+                        </th>
+                        <th abbr="ac_id" axis="col4">
+                            <div class="tc">表单名称</div>
+                        </th>
+
+                        {volist name="$form_field" id="f_f"}
+                        {elt name="$i" value="4"}
+                        <th abbr="ac_id" axis="col4" class="w180">
+                            <div class="tc">{$f_f.field_name}</div>
+                        </th>
+                        {/elt}
+                        {/volist}
+                        <th abbr="article_time" axis="col6" class="w50">
+                            <div class="tc">查阅</div>
+                        </th>
+                        <th abbr="ac_id" axis="col4" class="w150">
+                            <div class="tc">创建时间</div>
+                        </th>
+                        <th axis="col1" class="w160">
+                            <div class="tc">操作</div>
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table style="width: 100%">
+                    <tbody>
+                    {empty name="list"}
+                    <tr>
+                        <td class="no-data" align="center" axis="col0" colspan="50">
+                            <div class="no_row">
+                                <div class="no_pic"><img src="__SKIN__/images/null-data.png"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    {else/}
+                    {foreach name="list" item="vo" key="list_k"}
+                    <tr>
+                        <td class="sign ">
+                            <div class="tc w40"><input type="checkbox" autocomplete="off" name="ids[]" value="{$vo.list_id}"></div>
+                        </td>
+                        <td style="width: 100%">
+                            <div class="tc">
+                                {$vo.form_name}
+                            </div>
+                        </td>
+                        {volist name="$form_field" id="f_f"}
+                        {elt name="$i" value="4"}
+                        <td>
+                            <div class="w180 tc">
+                               {$form_value[$vo['list_id']][$f_f['field_id']]['field_value']|get_form_read_value=###,$f_f.field_type}
+                            </div>
+                        </td>
+                        {/elt}
+                        {/volist}
+                        <td class="">
+                            <div class="w50 tc" id="td_is_read_{$vo.aid}">
+                                {eq name='$vo.is_read' value='1'}
+                                已读
+                                {else /}
+                                <font color="red">未读</font>
+                                {/eq}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="w150 tc">
+                                {$vo.add_time|MyDate='Y-m-d H:i:s',###}
+                            </div>
+                        </td>
+                        <td class="">
+                            <div class="w160 tc">
+                                <a class="btn blue" href="javascript:void(0);" data-url="{:url('Form/view_form_data', ['list_id'=>$vo.list_id,'form_id'=>$vo.form_id])}" onclick="ViewData(this)">查看详情</a>
+                                {eq name="'Form@index_del'|is_check_access" value="1"}
+                                <!--<a class="btn red" href="javascript:void(0);" data-url="{:url('Form/index_del', ['_ajax'=>1])}" data-id="{$vo.list_id}" form_id="{$vo.form_id}" form_name="{$vo.form_name}" onclick="FieldDel(this);">删除</a>-->
+                                <a class="btn red" href="javascript:void(0);" data-url="{:url('Form/list_del')}" data-id="{$vo.list_id}" onClick="delfun(this);">删除</a>
+                                {/eq}
+                            </div>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    {/empty}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tDiv">
+            <div class="tDiv2">
+                {eq name='$main_lang' value='$admin_lang'}
+                <div class="fbutton checkboxall">
+                    <input type="checkbox" autocomplete="off" class="checkAll">
+                </div>
+                {eq name="$Think.const.CONTROLLER_NAME.'@list_del'|is_check_access" value="1"}
+                <div class="fbutton">
+                    <a onclick="batch_del(this, 'ids');" data-url="{:url('Form/list_del')}" data-deltype="del"  class="layui-btn layui-btn-primary">
+                        <span>批量删除</span>
+                    </a>
+                </div>
+                {/eq}
+                {/eq}
+                {include file="public/page" /}
+            </div>
+            <div style="clear:both"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function(){
+        $('input[name*=ids]').click(function(){
+            if ($('input[name*=ids]').length == $('input[name*=ids]:checked').length) {
+                $('.checkAll').prop('checked','checked');
+            } else {
+                $('.checkAll').prop('checked', false);
+            }
+        });
+        $('input[type=checkbox].checkAll').click(function(){
+            $('input[type=checkbox]').prop('checked',this.checked);
+        });
+    });
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#add_time_begin' //指定元素
+        });
+        laydate.render({
+            elem: '#add_time_end' //指定元素
+        });
+    });
+
+    $(document).ready(function(){
+        $('#searchForm select[name=form_id]').change(function(){
+            $('#searchForm').submit();
+        });
+    });
+
+    function ViewData(obj) {
+        var url = $(obj).attr('data-url');
+        //iframe窗
+        layer.open({
+            type: 2,
+            title: false,
+            fixed: true, //不固定
+            shadeClose: false,
+            shade: layer_shade,
+            area: ['60%', '80%'],
+            content: url,
+            end:function () {
+                location.reload();
+            }
+        });
+    }
+
+    function FieldDel(obj) {
+        // 要删除表单名称
+        var form_name = $(obj).attr('form_name');
+
+        layer.confirm('不可恢复，确认彻底删除<span style="color: red;">'+form_name+'</span>表单数据？', {
+            shade: layer_shade,
+            area: ['480px', '190px'],
+            move: false,
+            title: '提示',
+            btnAlign:'r',
+            closeBtn: 3,
+            btn: ['确定', '取消'] ,//按钮
+            success: function () {
+                  $(".layui-layer-content").css('text-align', 'left');
+              }
+        }, function(){
+            layer_loading('正在处理');
+            $.ajax({
+                url : $(obj).attr('data-url'),
+                data: {list_id: $(obj).attr('data-id'), form_id: $(obj).attr('form_id')},
+                type: 'post',
+                dataType: 'json',
+                success: function(res){
+                    layer.closeAll();
+                    if (1 == res.code) {
+                        layer.msg(res.msg);
+                        window.location.reload();
+                    } else {
+                        layer.alert(res.msg, {icon: 2, title: false, closeBtn: 0});
+                    }
+                }
+            })
+        }, function(index){
+            layer.close(index);
+        });
+    }
+    function excel_export(obj) {
+        window.location.href = $(obj).attr('data-url');
+    }
+</script>
+
+{include file="public/footer" /}

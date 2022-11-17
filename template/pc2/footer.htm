@@ -1,0 +1,103 @@
+  <div class="clear"></div>
+  <div class="footcontact">
+    <div class="wcon">
+      <ul>
+        <li><b class="logobottom">{eyou:global name='web_attr_4' /}</b></li>
+        <li> <b>业务热线:</b> <span>{eyou:global name='web_attr_6' /}/ <a href="http://wpa.qq.com/msgrd?v=3&uin={eyou:global name='web_attr_1' /}&site=qq&menu=yes">QQ:{eyou:global name='web_attr_1' /}</a></span> <span>传真：{eyou:global name='web_attr_10' /}</span> <span>邮箱：<a href="mailto:{eyou:global name='web_attr_3' /}">{eyou:global name='web_attr_3' /}</a></span> </li>
+        <li style="text-align:right;"> <b>战略合作及采购热线:</b> <span>{eyou:global name='web_attr_7' /}/ <a href="http://wpa.qq.com/msgrd?v=3&uin={eyou:global name='web_attr_5' /}&site=qq&menu=yes">QQ:{eyou:global name='web_attr_5' /}</a></span> <span class="pic"> <img src="{eyou:global name='web_attr_8' /}" /> 业务微信 </span> <span class="pic"> <img src="{eyou:global name='web_attr_9' /}" /> 战略合作微信 </span> </li>
+      </ul>
+    </div>
+  </div>
+  <div id="footer">
+    <div class="foottop">
+      <div class="wcon">
+        <div class="padd">
+			{eyou:models type='top' loop='5' id='field1' currentclass='active'}
+          <ul>
+            <li class="first"><strong>{$field1.typename}</strong></li>
+           {eyou:models name='$field1.children' id='field2' loop='10'}
+            <li><a href="{$field2.typeurl}" class="dropdown-item ">{$field2.typename}</a></li>
+			  {/eyou:models}
+          </ul>
+{/eyou:models}
+          <ul>
+            <li class="first"><strong>友情链接</strong></li>
+			  {eyou:links type='text' loop='30' titlelen='15'}
+     <li><a href='{$field.url}'>{$field.title}</a></li>
+{/eyou:links}
+      
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="clear"></div>
+    <div class="footbottom">
+      <div class="wcon">
+        <p class="fl"> <a href="{eyou:type typeid='5'}{$field.typeurl}{/eyou:type}">关于{eyou:global name='web_name' /}</a>|<a href="{eyou:type typeid='6'}{$field.typeurl}{/eyou:type}">联系{eyou:global name='web_name' /}</a>|<a href="{eyou:type typeid='26'}{$field.typeurl}{/eyou:type}">产品询价</a><a href="/sitemap.html" style="display:none;">|网站地图</a></p>
+        <p class="fr">{eyou:global name='web_copyright' /} | {eyou:global name='web_recordnum' /}</p>
+      </div>
+    </div>
+  </div>
+  <div id="impbox">
+    <div class="impboxinfo">
+      <div class="info">
+        <h2>搜索</h2>
+        <div class="word">
+          <div class="searchBox2">
+           {eyou:searchform type='sonself'}
+    <form method="get" action="{$field.action}">
+             
+              <INPUT class="searchInput" value="请输入产品型号" name="keywords" onblur="if(value=='')value='请输入产品型号';" onfocus="if(value == '请输入产品型号')value = ''">
+              <span class="searchBtn">
+              <INPUT class="searchBtn" type="submit" value="">
+              </span>
+                {$field.hidden}
+    </form>
+{/eyou:searchform}
+          </div>
+        </div>
+        <a href="javascript:;" class="btn">CLOSE</a> </div>
+    </div>
+  </div>
+  <div id="bottomnav"> <a class="a1" href="{eyou:global name='web_basehost' /}">首页</a> <a class="a2" href="tencent://message/?uin={eyou:global name='web_attr_1' /}&Menu=yes">QQ</a> <a class="floatblock_ss a3" href="javascript:;">搜索</a> <a class="a4" href="{eyou:type typeid='1'}{$field.typeurl}{/eyou:type}">产品</a> </div>
+		 <script>
+        var url, index;
+        url = window.location.href;
+        index = url.substring(url.lastIndexOf('?') + 1, url.lastIndexOf('?') + 4);
+ 
+        if (index == 113) {
+            $(".navmenu li").eq(0).addClass("cur").siblings("li").removeClass("cur");
+        }
+        else if (index == 114) {
+            $(".navmenu li").eq(1).addClass("cur").siblings("li").removeClass("cur");
+            
+        }
+        else if (index == 115) {
+            $(".navmenu li").eq(2).addClass("cur").siblings("li").removeClass("cur");
+        }
+        else if (index == 116) {
+            $(".navmenu li").eq(3).addClass("cur").siblings("li").removeClass("cur");
+        }
+
+    </script>
+
+<!--
+		    <script>
+
+        var url, index;
+        url = window.location.href;
+        index = url.substring(url.lastIndexOf('?') + 1, url.lastIndexOf('?') + 4);
+
+        if (index == '2_1') {
+            $(".navmenu li").eq(0).addClass("cur").siblings("li").removeClass("cur");
+        }
+        else if (index == '3_1') {
+            $(".navmenu li").eq(1).addClass("cur").siblings("li").removeClass("cur");
+
+        }
+        else if (index == '4_1') {
+            $(".navmenu li").eq(2).addClass("cur").siblings("li").removeClass("cur");
+        }
+
+          </script>
+-->

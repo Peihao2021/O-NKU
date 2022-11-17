@@ -1,0 +1,118 @@
+{include file="header.htm" /}
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    {include file="bar.htm" /}
+    <form class="form-horizontal" id="post_form" action="{:weapp_url('Wordfilter/Wordfilter/add')}" method="post">
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit">
+                    <label for="title">批量导入</label>
+                </dt>
+                <dd class="opt">
+                    <button type="button" class="layui-btn" id="wordfile" style="background-color: #4fc0e8; border-color: #3aa8cf;">
+                      <i class="layui-icon">&#xe67c;</i>上传文件
+                    </button>
+                    <span class="err"></span>
+                    <p class="red">只支持上传txt文件</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="title"><em>*</em>敏感词列表</label>
+                </dt>
+                <dd class="opt">
+                    <textarea style="width:300px; height:350px;" name="content" id="content" placeholder="一行代表一个敏感词"></textarea>
+                    <span class="err"></span>
+                    <p class="">提示：不允许为空，文档内容的敏感词将以***号代替</p>
+                </dd>
+            </dl>
+            <div class="bot" style="margin-top:10px;">
+                <input type="hidden" name="filename" id="filename" value="" />
+                <a href="JavaScript:void(0);" onclick="checkForm();" class="ncap-btn-big ncap-btn-green" id="submitBtn">确认提交</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+
+    var upload = layui.upload;
+
+    //执行实例
+    var uploadInst = upload.render({
+        elem: '#wordfile' //绑定元素
+        ,url: '{:weapp_url("Wordfilter/Wordfilter/upload")}' //上传接口
+        ,accept: 'file' //允许上传的文件类型
+        ,exts: 'txt'
+        ,acceptMime: 'text/plain'
+        ,field: 'wordfile'
+        // ,bindAction: '#wordajax'
+        ,auto: true
+        ,before: function(obj){
+            layer.load(); //上传loading
+        }
+        ,done: function(res, index, upload){
+            layer.closeAll('loading'); //关闭loading
+            //上传完毕回调
+            if(res.code==1)
+            {
+                layer.msg(res.msg,{icon:1, time:1500});
+                var content = $("#content").val();
+                if(content !== '')
+                {
+                    $("#content").val(content+res.data.words);
+                }else{
+                    $("#content").val(res.data.words);
+                }
+                $('#filename').val(res.data.filename);
+            } else {
+                layer.alert(res.msg, {icon: 2});
+            }
+        }
+        ,error: function(index, upload){
+            layer.closeAll('loading'); //关闭loading
+            layer.alert('网络失败，请刷新页面后重试', {icon: 2});
+        }
+    });
+
+    // 判断输入框是否为空
+    function checkForm(){
+        if ($("#content").val() == '') {
+            showErrorMsg('敏感词列表不能为空！');
+            $('#content').focus();
+            return false;
+        }
+
+        layer_loading('正在处理');
+        $('#post_form').submit();
+
+        // $.ajax({
+        //     url: "{:weapp_url('Wordfilter/Wordfilter/add')}",
+        //     type: 'POST',
+        //     dataType: 'JSON',
+        //     data: $('#post_form').serialize(),
+        //     success: function(res){
+        //         layer.closeAll();
+        //         if (1 == res.code) {
+        //             layer.msg(res.msg,{icon:1, time:1500}, function(){
+        //                 window.location.href="{:weapp_url('Wordfilter/Wordfilter/index')}";
+        //             });
+        //             return false;
+        //         } else {
+        //             layer.alert(res.msg, {icon: 2});
+        //             return false;
+        //         }
+        //     },
+        //     error: function(e){
+        //         layer.closeAll();
+        //         showErrorMsg('网络失败，请刷新页面后重试');
+        //         return false;
+        //     }
+        // });
+    }
+</script>
+
+{include file="footer.htm" /}

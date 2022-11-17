@@ -1,0 +1,183 @@
+#kefu_pannel  {
+	LINE-HEIGHT: normal; FONT-FAMILY: Arial
+}
+#kefu_Online_showdlg  {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; FONT: 12px Arial; PADDING-TOP: 0px
+}
+.txtCut {
+	OVERFLOW: hidden; WHITE-SPACE: nowrap; TEXT-OVERFLOW: ellipsis
+}
+#kefu_pannel {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+#kefu_pannel SPAN {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+#kefu_pannel TH {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+#kefu_pannel IMG {
+	BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BORDER-BOTTOM-STYLE: none
+}
+#kefu_pannel {
+	WIDTH: 130px
+}
+#kefu_pannel TABLE {
+	WIDTH: 130px
+}
+#kefu_pannel_mid TH {
+	BACKGROUND: url(../images/cslist_mid_bg.gif) repeat-y 0px 0px
+}
+#kefu_pannel_mid TD {
+	BACKGROUND: url(../images/cslist_mid_bg.gif) repeat-y 0px 0px
+}
+#kefu_pannel .kefu_Title {
+	BACKGROUND: url(../images/cslist_top_bg.gif) no-repeat 0px top; CURSOR: default; HEIGHT: 26px
+}
+#kefu_pannel .kefu_Title H2 {
+	PADDING-RIGHT: 0px; DISPLAY: block; PADDING-LEFT: 0px; FONT-WEIGHT: bold; FONT-SIZE: 12px; PADDING-BOTTOM: 0px; MARGIN: 8px 0px 0px 28px; WIDTH: 80px; COLOR: #fff; PADDING-TOP: 0px; HEIGHT: 18px; TEXT-ALIGN: left
+}
+#kefu_pannel .kefu_shut {
+	DISPLAY: inline-block; FONT-SIZE: 0px; BACKGROUND: url(../images/cslist_top_shut.gif) no-repeat 0px 0px; FLOAT: right; MARGIN: 9px 7px 0px 0px; WIDTH: 10px; CURSOR: pointer; HEIGHT: 10px
+}
+#kefu_pannel .kefu_listTitle H3 {
+	PADDING-RIGHT: 0px; DISPLAY: block; PADDING-LEFT: 0px; BACKGROUND: url(../images/cslist_mid_tbg.gif) no-repeat 0px 0px; PADDING-BOTTOM: 0px; MARGIN: 4px auto 3px; FONT: 12px "simsun"; WIDTH: 118px; CURSOR: pointer; COLOR: #1e3e93; PADDING-TOP: 2px; HEIGHT: 28px; TEXT-ALIGN: center
+}
+#kefu_pannel .kefu_listTitle H3 IMG {
+	MARGIN-LEFT: 3px; VERTICAL-ALIGN: top
+}
+#kefu_pannel .kefu_box {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 2px; MARGIN: 0px 3px; WIDTH: 124px; CURSOR: pointer; PADDING-TOP: 4px; HEIGHT: 20px
+}
+#kefu_pannel .kefu_boxOver {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 2px; MARGIN: 0px 3px; WIDTH: 124px; CURSOR: pointer; PADDING-TOP: 4px; HEIGHT: 20px
+}
+#kefu_pannel .kefu_box {
+	BORDER-TOP: #fff 1px solid; BACKGROUND: #fff; BORDER-BOTTOM: #fff 1px solid
+}
+#kefu_pannel .kefu_boxOver {
+	BORDER-TOP: #a3e7fc 1px solid; BACKGROUND: #e1f7fd; BORDER-BOTTOM: #a3e7fc 1px solid
+}
+#kefu_pannel .kefu_image {
+	MARGIN-TOP: 2px; FLOAT: left
+}
+#kefu_pannel .kefu_person {
+	MARGIN-TOP: 2px; FLOAT: left
+}
+#kefu_pannel .kefu_image IMG {
+	MARGIN: 0px 3px
+}
+#kefu_pannel .kefu_person {
+	OVERFLOW: hidden; WIDTH: 45px; COLOR: #666; MARGIN-RIGHT: 3px; WHITE-SPACE: nowrap; TEXT-OVERFLOW: ellipsis; TEXT-ALIGN: left
+}
+.kefu_person A:link {
+	FONT-SIZE: 12px; COLOR: #666; TEXT-DECORATION: none
+}
+.kefu_person A:visited {
+	FONT-SIZE: 12px; COLOR: #666; TEXT-DECORATION: none
+}
+.kefu_person A:hover {
+	FONT-SIZE: 12px; COLOR: #666; TEXT-DECORATION: none
+}
+A.kefu_Type_msn {
+	FONT-SIZE: 0px; FLOAT: left; WIDTH: 18px
+}
+A.kefu_Type_qq {
+	FONT-SIZE: 0px; FLOAT: left; WIDTH: 18px
+}
+A.kefu_Type_skype {
+	FONT-SIZE: 0px; FLOAT: left; WIDTH: 18px
+}
+A.kefu_Type_yahoo {
+	FONT-SIZE: 0px; FLOAT: left; WIDTH: 18px
+}
+A.kefu_Type_msn IMG {
+	BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+A.kefu_Type_qq IMG {
+	BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+A.kefu_Type_skype IMG {
+	BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+A.kefu_Type_yahoo IMG {
+	BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+A.kefu_Type_msn:hover IMG {
+	BORDER-TOP-WIDTH: 0px; MARGIN-TOP: 1px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+A.kefu_Type_qq:hover IMG {
+	BORDER-TOP-WIDTH: 0px; MARGIN-TOP: 1px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+A.kefu_Type_skype:hover IMG {
+	BORDER-TOP-WIDTH: 0px; MARGIN-TOP: 1px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+A.kefu_Type_yahoo:hover IMG {
+	BORDER-TOP-WIDTH: 0px; MARGIN-TOP: 1px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+.kefu_other {
+	BACKGROUND: url(../images/cslist_btm_bg.gif) no-repeat 0px bottom; HEIGHT: 42px
+}
+.kefu_Type_en {
+	BACKGROUND: url(../images/cslist_btm_bg_en.gif) no-repeat 0px bottom; HEIGHT: 42px
+}
+.kefu_Type_tw {
+	BACKGROUND: url(../images/cslist_btm_bg_tw.gif) no-repeat 0px bottom; HEIGHT: 42px
+}
+.kefu_other A {
+	DISPLAY: block; MARGIN-LEFT: 14px; WIDTH: 101px; HEIGHT: 26px
+}
+.kefu_Type_en A {
+	DISPLAY: block; MARGIN-LEFT: 14px; WIDTH: 101px; HEIGHT: 26px
+}
+.kefu_Type_tw A {
+	DISPLAY: block; MARGIN-LEFT: 14px; WIDTH: 101px; HEIGHT: 26px
+}
+#kefu_Online_showdlg {
+	BACKGROUND: url(../images/invite_bg.gif) no-repeat 0px 0px; LEFT: 40%; WIDTH: 322px; POSITION: absolute; TOP: 40%; HEIGHT: 139px
+}
+#kefu_Online_showdlg DIV {
+	TEXT-ALIGN: left
+}
+#kefu_Online_showdlg H5 {
+	TEXT-ALIGN: left
+}
+#kefu_Online_showdlg H6 {
+	TEXT-ALIGN: left
+}
+#kefu_Online_showdlg TABLE TD {
+	VERTICAL-ALIGN: top; TEXT-ALIGN: left
+}
+#kefu_Online_showdlg .title {
+	PADDING-LEFT: 25px; FONT-WEIGHT: bold; WIDTH: 200px; COLOR: #fff; PADDING-TOP: 6px; TEXT-ALIGN: left
+}
+#kefu_Online_showdlg .shutbtn {
+	DISPLAY: inline-block; BACKGROUND: url(../images/invite_shutbtn.gif) no-repeat 0px 0px; FLOAT: right; MARGIN: 6px 8px 0px 0px; WIDTH: 10px; HEIGHT: 10px
+}
+#kefu_Online_showdlg .tx_pic {
+	MARGIN-TOP: 14px; BACKGROUND: url(../images/invite_pic_bg.gif) no-repeat 11px 0px; WIDTH: 90px; HEIGHT: 66px; TEXT-ALIGN: center
+}
+#kefu_Online_showdlg .tx_pic IMG {
+	MARGIN-TOP: 3px; WIDTH: 50px; HEIGHT: 50px
+}
+#kefu_Online_showdlg .inconbox {
+	PADDING-TOP: 13px
+}
+#kefu_Online_showdlg .intitle {
+	FONT-WEIGHT: bold; MARGIN-BOTTOM: 4px; WIDTH: 227px
+}
+#kefu_Online_showdlg P.incontent {
+	WIDTH: 227px; COLOR: #333; WORD-BREAK: break-all; LINE-HEIGHT: 130%; TEXT-ALIGN: left; WORD-WRAP: break-word
+}
+#kefu_Online_showdlg .toolbtn A {
+	MARGIN-TOP: 8px; DISPLAY: inline-block; BACKGROUND: url(../images/invite_btn.gif) no-repeat 0px 0px; FLOAT: right; WIDTH: 61px; LINE-HEIGHT: 22px; MARGIN-RIGHT: 20px; HEIGHT: 20px; TEXT-ALIGN: center
+}
+#kefu_Online_showdlg .toolbtn A:link {
+	COLOR: #333; TEXT-DECORATION: none
+}
+#kefu_Online_showdlg .toolbtn A:visited {
+	COLOR: #333; TEXT-DECORATION: none
+}
+#kefu_Online_showdlg .toolbtn A:hover {
+	COLOR: #333; TEXT-DECORATION: none
+}

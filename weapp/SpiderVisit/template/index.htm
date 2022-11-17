@@ -1,0 +1,222 @@
+{include file="header.htm" /}
+<body class="bodystyle" style="overflow-y: scroll; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page" style="min-width: auto;">
+    {include file="bar.htm" /}
+    <div class="flexigrid">
+        <!-- 操作说明 -->
+        <div id="explanation" class="explanation" style="color: rgb(44, 188, 163); background-color: rgb(237, 251, 248); width: 99%; height: 100%;">
+            <div id="checkZoom" class="title"><i class="fa fa-lightbulb-o"></i>
+                <h4 title="提示相关设置操作时应注意的要点">提示</h4>
+                <span title="收起提示" id="explanationZoom" style="display: block;"></span>
+            </div>
+            <ul>
+                <li>完全支持URL模式（动态、伪静态）</li>
+                <li>如果是静态模式，只会记录非静态页面的URL，静态页面是否被蜘蛛爬取可以查看空间\服务器日志。</li>
+            </ul>
+        </div>
+        <div class="mDiv">
+            <div class="ftitle">
+                <h3>蜘蛛访问列表</h3>
+                <h5>(共{$pageObj->totalRows}条数据，仅保存最近30天内，且最多不超过指定的抓取记录数)</h5>
+            </div>
+            <div title="刷新数据" class="pReload"><i class="fa fa-refresh"></i></div>
+            <form id="searchForm" class="navbar-form form-inline" action="{:weapp_url('SpiderVisit/SpiderVisit/index')}" method="get" onsubmit="layer_loading('正在处理');">
+                {$searchform.hidden|default=''}
+                <div class="fbutton ml10">
+                    <a href="javascript:void(0);" data-href="{:weapp_url('SpiderVisit/SpiderVisit/conf')}" onclick="conf(this);">
+                        <div class="add" title="配置">
+                            <span>配置</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="sDiv">
+                    <div class="sDiv2">  
+                        <select name="spider" class="select" style="margin:0px 5px;">
+                            <option value="">--全部蜘蛛--</option>
+                            {volist name='$spiderTypes' id='vo1'}
+                            <option value="{$key}" {eq name="$Request.param.spider" value="$key"}selected{/eq}>{$vo1}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                    <div class="sDiv2">
+                        <input type="text" size="30" name="keywords" class="qsbox" placeholder="搜索相关数据...">
+                        <input type="submit" class="btn" value="搜索">
+                        <i class="fa fa-search"></i>
+                    </div>
+                    <div class="fbutton m0">
+                        <a href="{:weapp_url('SpiderVisit/SpiderVisit/index')}">
+                            <div class="add" title="重置">
+                                <span>重置</span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="fbutton m0">
+                        <a href="{:weapp_url('SpiderVisit/SpiderVisit/clearall')}">
+                            <div class="add" title="一键清空">
+                                <span>一键清空</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th class="sign w40" axis="col0">
+                            <div class="tc"><input type="checkbox" class="checkAll"></div>
+                        </th>
+                        <th abbr="article_show" axis="col5" class="w60">
+                            <div class="tc">ID</div>
+                        </th>
+                        <th abbr="ac_id" axis="col4">
+                            <div style="text-align: left; padding-left: 10px;" class="">抓取网页URL</div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="w120">
+                            <div class="tc">蜘蛛引擎</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w120">
+                            <div class="tc">蜘蛛IP</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w160">
+                            <div class="tc">访问日期</div>
+                        </th>
+                        <th axis="col1" class="w60">
+                            <div class="tc">操作</div>
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table style="width: 100%">
+                    <tbody>
+                    {empty name="list"}
+                        <tr>
+                            <td class="no-data" align="center" axis="col0" colspan="50">
+                                <i class="fa fa-exclamation-circle"></i>没有符合条件的记录
+                            </td>
+                        </tr>
+                    {else/}
+                        {volist name="list" id="vo"}
+                        <tr>
+                            <td class="sign">
+                                <div class="w40 tc"><input type="checkbox" name="ids[]" value="{$vo.id}"></div>
+                            </td>
+                            <td class="sort">
+                                <div class="w60 tc">
+                                    {$vo.id}
+                                </div>
+                            </td>
+                            <td class="" style="width: 100%;">
+                                <div class="tl" style="padding-left: 10px;">
+                                    <a href="{$vo.url}" target="_blank">{$vo.url}</a>
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w120 tc">
+                                    {$spiderTypes[$vo['spider']]|default='未知'}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w120 tc">
+                                    {$vo.ip}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w160 tc">
+                                    {$vo.add_time|MyDate='Y-m-d H:i:s',###}
+                                </div>
+                            </td>
+                            <td class="operation">
+                                <div class="w60 tc">
+                                    <a class="btn red" href="javascript:void(0)" data-url="{:weapp_url('SpiderVisit/SpiderVisit/del')}" data-id="{$vo.id}" onClick="delfun(this);">删除</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {/volist}
+                    {/empty}
+                    </tbody>
+                </table>
+            </div>
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+        <div class="tDiv">
+            <div class="tDiv2">
+                <div class="fbutton checkboxall">
+                    <input type="checkbox" class="checkAll">
+                </div>
+                <div class="fbutton">
+                    <a onclick="batch_del(this, 'ids');" data-url="{:weapp_url('SpiderVisit/SpiderVisit/del')}">
+                        <div class="add" title="批量删除">
+                            <span>批量删除</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="fbutton">
+                    <a href="{:weapp_url('SpiderVisit/SpiderVisit/clearall')}">
+                        <div class="add" title="一键清空">
+                            <span class="red">一键清空</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div style="clear:both"></div>
+        </div>
+        <!--分页位置-->
+        {$pageStr}
+    </div>
+</div>
+<script>
+    $(function(){
+        $('input[name*=ids]').click(function(){
+            if ($('input[name*=ids]').length == $('input[name*=ids]:checked').length) {
+                $('.checkAll').prop('checked','checked');
+            } else {
+                $('.checkAll').prop('checked', false);
+            }
+        });
+        $('input[type=checkbox].checkAll').click(function(){
+            $('input[type=checkbox]').prop('checked',this.checked);
+        });
+    });
+
+    $(document).ready(function(){
+        // 表格行点击选中切换
+        $('#flexigrid > table>tbody >tr').click(function(){
+            $(this).toggleClass('trSelected');
+        });
+
+        // 点击刷新数据
+        $('.fa-refresh').click(function(){
+            location.href = location.href;
+        });
+
+        $('#searchForm select[name=spider]').change(function(){
+            $('#searchForm').submit();
+        });
+    });
+
+    function conf(obj)
+    {
+        var url = $(obj).attr('data-href');
+        //iframe窗
+        layer.open({
+            type: 2,
+            title: '配置信息',
+            fixed: true, //不固定
+            shadeClose: false,
+            shade: 0.3,
+            maxmin: false, //开启最大化最小化按钮
+            area: ['650px', '300px'],
+            content: url
+        });
+    }
+</script>
+{include file="footer.htm" /}

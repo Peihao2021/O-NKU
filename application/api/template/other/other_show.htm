@@ -1,0 +1,9 @@
+{volist name="ad" id="vo"}
+    {if condition="$vo.media_type == 1"}
+        document.write('<a href="{$vo.links}" title="{$vo.title}" {$vo.target}><img border="0" src="{$vo.litpic}" alt="{$vo.title}"/></a>');
+    {elseif condition="$vo.media_type == 2"}
+    	document.write('<video src="{$vo.litpic}" controls preload="auto" oncontextmenu="return fase"></video>');
+    {elseif condition="$vo.media_type == 3"}
+        document.write('{$vo.intro}');
+    {/if}
+{/volist}

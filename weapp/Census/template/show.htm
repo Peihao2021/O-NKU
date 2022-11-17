@@ -1,0 +1,333 @@
+<link type="text/css" href="__WEAPP_TEMPLATE__/skin/css/font-awesome.min.css?v={$weappInfo.version|default='v1.0.0'}" rel="stylesheet" />
+<!-- 下面2个JS只针对完成交易产品列表功能起作用 -->
+{eyou:if condition='($info.data.jq == 1)'}
+<script type="text/javascript" src="__WEAPP_TEMPLATE__/skin/js/jquery.min.js?v={$weappInfo.version|default='v1.0.0'}"></script>
+{/eyou:if}
+<script type="text/javascript" src="__WEAPP_TEMPLATE__/skin/js/jquery.vticker.min.js?v={$weappInfo.version|default='v1.0.0'}"></script>
+<!-- 完成交易产品列表JS结束 -->
+<!-- 下面代码以及样式为默认，如果需要修改请全部删除，根据后台插件的标签进行添加 -->
+<style>
+.cards_count{width: {$info.data.width|default='1200'}px;margin: 0 auto;}
+.card--oil {width: 23%;height: 270px;color: #5a6c7a;box-shadow: 0 1rem 2rem #aac1c7;display: inline-block;margin: 20px 10px;}
+.card__svg-container {height: 50%;display: flex;justify-content: center;align-items: flex-end;font-size: 76px;}
+.card__svg-wrapper {text-align: center;}
+.card__count-text--big {font-size: 5rem;font-weight: 300;}
+.card__count-container {text-align: center;}
+.card__stuff-container {margin: 0 auto;width: 90%;height: 15%;border-top: 1px solid #e7edef;text-align: center;padding-top: 10px;}
+.card__stuff-container i {margin-right: 5px;}
+.scrollitit {height: 28px;float: left;line-height: 28px;font-size: 14px;color: #333;}
+.scrollbox_cout {overflow: hidden;width: 100%;color: #666;display: inline-block;}
+#scrollDiv {overflow: hidden;height: 18px;width: 81%;position: relative;margin: 5px 0;}
+#scrollDiv ul {line-height: 18px;width: 100%;height: 18px;overflow: hidden}
+#scrollDiv li {font-size: 12px;height: 18px;position: relative;width: 100%}
+#scrollDiv li a {height: 18px;white-space: nowrap;overflow: hidden;-o-text-overflow: ellipsis;text-overflow: ellipsis;margin: 0 65px 0 22px}
+#scrollDiv li img {position: absolute;top: 0;border-radius: 100%;height: 18px;width: 18px}
+#scrollDiv li span {color: #f60;padding-left: 5px}
+#scrollDiv li span:hover {color: #f60;text-decoration: none;}
+#scrollDiv li em {font-family: DINMEDIUM, sans-serif;color: #f60;padding: 0 5px;font-size: 15px;vertical-align: -1px}
+#scrollDiv li i {top: 0;color: #999;margin-left: 10px;}
+.scrollac {float: right;width: 17px;font-size: 8px;line-height: 0;}
+.scrollac a {height: 10px;width: 15px;display: inline-block;text-decoration: none;}
+#scrollDiv strong {font-weight: 400;}
+</style>
+{eyou:if condition='($onmoncountson == 1)'}
+<div class="cards_count">
+    <div class="scrollbox_cout">
+	    <div class="scrollico icons"></div>
+	    <div class="scrollitit"> <i class="fa fa-bell"></i>完成交易产品列表：</div>
+	    <div id="scrollDiv" class="scroll-box" times='3000' items='1'>
+		    <ul>
+			    {empty name="onmoncounts"}
+				<li><a>没有符合条件的记录</a></li>	
+				{else/}
+				{volist name="onmoncounts" id="vo"}
+			    <li>
+				    {eyou:notempty name='$vo.head_pic' /}
+				    <img src="{$vo.head_pic}" />
+					{eyou:else /}
+					<img src="/public/static/common/images/dfboy.png" />
+					{/eyou:notempty}
+					<a href="{$vo.arcurl}" target=_blank>
+					    <strong>{$vo.username}</strong>
+						<em>￥{$vo.order_amount}</em>于<span>{$vo.add_time|MyDate='Y-m-d H:i:s',###}</span>购买了<span>{$vo.title}</span><i>[交易完成]</i>
+					</a>
+				</li>
+				{/volist}
+				{/empty}
+		    </ul>
+	    </div>
+    </div>
+</div>
+<script>
+$(function(){
+	$('.scroll-box').vTicker({
+		showItems: 1,
+		pause: 3000,
+		direction:'down',
+	});
+});
+</script>
+{/eyou:if}
+<div class="cards_count">
+    <ul class="cards">
+	    {eyou:if condition='($arccounton == 1)'}
+	    <li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$arccount}</span>篇
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-beer"></i><span>文章数量统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($todayarccounton == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$todayarccount}</span>篇
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-asterisk"></i><span>今日文章数量统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($weekarccounton == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$weekarccount}</span>篇
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-gittip"></i><span>本周文章数量统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($montharccounton == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$montharccount}</span>篇
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-info-circle"></i><span>本月文章数量统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($noarccounton == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$noarccount}</span>篇
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-map"></i><span>未审核文章统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($userscounton == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$userscount}</span>位
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-users"></i><span>会员数量统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($onuserscounton == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$onuserscount}</span>位
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-user"></i><span>开通收费会员统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($procounton == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$procount}</span>个
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-video-camera"></i><span>产品数量统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($moncounton == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$moncount}</span>元
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-yen"></i><span>交易金额统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($onmoncounton == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$onmoncount}</span>个
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-send"></i><span>完成订单数量统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($bookcountson == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$bookcounts}</span>个
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-reddit"></i><span>留言数量统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($linkcountson == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$linkcounts}</span>个
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-male"></i><span>友情链接数量统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:notempty name='$isask' /}
+		{eyou:if condition='($questioncountson == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$questioncounts}</span>篇
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-paypal"></i><span>问答提问数量统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($tquestioncountson == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$tquestioncounts}</span>篇
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-pied-piper-pp"></i><span>问答今日提问数量统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($wquestioncountson == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$wquestioncounts}</span>篇
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-plus-circle"></i><span>问答本周提问数量统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($mquestioncountson == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$mquestioncounts}</span>篇
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-product-hunt"></i><span>问答本月提问数量统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{eyou:if condition='($askcountson == 1)'}
+		<li class="card--oil">
+		    <div class="card__svg-container">
+			    <div class="card__svg-wrapper">
+				    <i class="fa fa-pie-chart"></i>
+				</div>
+			</div>
+			<div class="card__count-container">
+				<span class="card__count-text--big">{$askcounts}</span>个
+			</div>
+			<div class="card__stuff-container">
+			    <i class="fa fa-question-circle"></i><span>问答回答数量统计</span>
+			</div>
+		</li>
+		{/eyou:if}
+		{/eyou:notempty}
+	</ul>
+</div>
+
+

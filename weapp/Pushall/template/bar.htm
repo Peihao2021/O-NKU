@@ -1,0 +1,59 @@
+
+    <div class="fixed-bar">
+        <div class="item-title"><a class="back" href="{if condition="'Pushall' == $Request.param.sc && 'index' == $Request.param.sa"}{:url("Weapp/index")}{else /}{:weapp_url("Pushall/Pushall/index")}{/if}" title="返回列表"><i class="fa fa-chevron-left"></i></a>
+            <div class="subject">
+                <h3>{$weappInfo['name']}</h3>
+                <h5></h5>
+            </div>
+            <ul class="tab-base nc-row">
+                <li>
+                {eq name="$Request.param.sa" value="index"}
+                    <a href="javascript:void(0);" class="tab current"><span>主动推送</span></a>
+                {else /}
+                    <a href="{:weapp_url("Pushall/Pushall/index")}" class="tab"><span>主动推送</span></a>
+                {/eq}
+                </li>
+                
+                <!--<li>
+                {eq name="$Request.param.sa" value="tagpush"}
+                    <a href="javascript:void(0);" class="tab current"><span>TAG推送</span></a>
+                {else /}
+                    <a href="{:weapp_url("Pushall/Pushall/tagpush")}" class="tab"><span>TAG推送</span></a>
+                {/eq}
+                </li>-->
+                
+                
+                <li>
+                {eq name="$Request.param.sa" value="autopush"}
+                    <a href="javascript:void(0);" class="tab current"><span>自动推送</span></a>
+                {else /}
+                    <a href="{:weapp_url("Pushall/Pushall/autopush")}" class="tab"><span>自动推送</span></a>
+                {/eq}
+                </li>
+                
+                <li>
+                {eq name="$Request.param.sa" value="baidumap"}
+                    <a href="javascript:void(0);" class="tab current"><span>配置参数</span></a>
+                {else /}
+                    <a href="{:weapp_url("Pushall/Pushall/baidumap")}" class="tab"><span>配置参数</span></a>
+                {/eq}
+                </li>
+                
+                <!--<li>
+                {range name="$Request.param.sa" value="conf" type='in'}
+                    <a href="javascript:void(0);" class="tab current"><span>插件配置</span></a>
+                {else /}
+                    <a href="{:weapp_url("Pushall/Pushall/conf")}" class="tab"><span>插件配置</span></a>
+                {/range}
+                </li>-->
+
+                <!--<li>
+                {range name="$Request.param.sa" value="doc" type='in'}
+                    <a href="javascript:void(0);" class="tab current"><span>使用指南</span></a>
+                {else /}
+                    <a href="{:weapp_url("Pushall/Pushall/doc")}" class="tab"><span>使用指南</span></a>
+                {/range}
+                </li>-->
+            </ul>
+        </div>
+    </div>

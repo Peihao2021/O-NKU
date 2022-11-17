@@ -1,0 +1,20 @@
+
+<script>
+function GetQueryString(name)
+{
+     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+     var r = window.location.search.substr(1).match(reg);//search,查询？后面的参数，并匹配正则
+     if(r!=null)return  unescape(r[2]); return null;
+}
+var s =GetQueryString("sxpushzt");
+    window.setTimeout(function(){location.href= 'index.php?m=plugins&c=Pushall&a=keywordspush&sxpushzt=' + s}, 3000);
+</script>
+{empty name="listzt"}
+当页没有符合条件的记录 ，所以
+{else/}
+{foreach name="listzt" item="vo" key="k" }
+{$vo.id}、{$vo.keywords}------>{$domain}/keywords/{$vo.url}.html<br>
+
+{/foreach}
+{/empty}
+{$pushfankuijg}<br>正在跳转推送下一页--------->

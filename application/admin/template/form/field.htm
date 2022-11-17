@@ -1,0 +1,240 @@
+{include file="public/layout" /}
+
+<body class="bodystyle" style="overflow-y: scroll; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    <div class="flexigrid">
+        <div class="mDiv">
+            <div class="ftitle">
+                {eq name="$Think.const.CONTROLLER_NAME.'@add'|is_check_access" value="1"}
+                <div class="fbutton" style="float: none;">
+                    <a href="javascript:void(0);" onclick="FieldAdd(this);" data-url="{:url('Form/field_add')}">
+                        <div class="add">
+                            <span><i class="fa fa-plus"></i>新增表单</span>
+                        </div>
+                    </a>
+                </div>
+                {/eq}
+            </div>
+            <form class="navbar-form form-inline" id="searchForm" action="{:url('Form/field')}" method="get" onsubmit="layer_loading('正在处理');">
+                {$searchform.hidden|default=''}
+                <div class="sDiv">
+                    <div class="sDiv2" style="margin-right: 6px;">
+                        <input type="text" size="30" name="keywords" value="{$Request.param.keywords}" class="qsbox" placeholder="请输入表单名称...">
+                        <input type="submit" class="btn" value="搜索"><i class="iconfont e-sousuo"></i>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%;">
+                    <thead>
+                    <tr>
+                        <th class="sign w40" axis="col0">
+                            <div class="tc"><input type="checkbox" autocomplete="off" class="checkAll"></div>
+                        </th>
+                        <th abbr="ac_id" axis="col4">
+                            <div class="text-l10">表单名称</div>
+                        </th>
+                        <th abbr="ac_id" axis="col4" class="w60">
+                            <div class="tc">填写数量</div>
+                        </th>
+                        <th abbr="ac_id" axis="col4" class="w150">
+                            <div class="tc">创建时间</div>
+                        </th>
+                        <th axis="col1" class="w220">
+                            <div class="tc">操作</div>
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table style="width: 100%">
+                    <tbody>
+                    {empty name="list"}
+                    <tr>
+                        <td class="no-data" align="center" axis="col0" colspan="50">
+                            <div class="no_row">
+                                <div class="no_pic"><img src="__SKIN__/images/null-data.png"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    {else/}
+                    {foreach name="list" item="vo" key="k"}
+                    <tr>
+                        <td class="sign ">
+                            <div class="tc w40"><input type="checkbox" autocomplete="off" name="ids[]" value="{$vo.form_id}"></div>
+                        </td>
+                        <td style="width: 100%">
+                            <div class="text-l10">
+                                {eq name="'Form@field_edit'|is_check_access" value="1"}
+                                <a href="javascript:void(0);" data-url="{:url('Form/index', ['form_id'=>$vo['form_id']])}" onclick="ViewFormList(this);">{$vo.form_name}</a>
+                                {else /}
+                                {$vo.form_name}
+                                {/eq}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="w60 tc">
+                                {$form_list_count[$vo['form_id']]['count']|default='0'}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="w150 tc">
+                                {$vo.add_time|MyDate='Y-m-d H:i:s',###}
+                            </div>
+                        </td>
+                        <td class="">
+                            <div class="w220 tc">
+                                <a href="javascript:void(0);" data-url="{:url('Form/index', ['form_id'=>$vo['form_id']])}" onclick="ViewFormList(this);" class="btn blue">查看数据</a>
+                                <a href="javascript:void(0);" data-url="{:url('Form/label_call', ['form_id'=>$vo['form_id']])}" onclick="LabelCall(this);" class="btn blue">标签调用</a>
+                                {eq name="'Form@field_edit'|is_check_access" value="1"}
+                                <a href="javascript:void(0);" data-url="{:url('Form/field_edit', ['form_id'=>$vo['form_id']])}" onclick="FieldDeit(this);" class="btn blue">编辑</a>
+                                {/eq}
+
+                                {eq name="'Form@field_del'|is_check_access" value="1"}
+                                <a class="btn red" href="javascript:void(0);" data-url="{:url('Form/field_del', ['_ajax'=>1])}" data-id="{$vo.form_id}" onclick="FieldDel(this);">删除</a>
+                                {/eq}
+                            </div>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    {/empty}
+                    </tbody>
+                </table>
+                
+            </div>
+            
+        </div>
+        <div class="tDiv">
+            <div class="tDiv2">
+                {eq name='$main_lang' value='$admin_lang'}
+                <div class="fbutton checkboxall">
+                    <input type="checkbox" autocomplete="off" class="checkAll">
+                </div>
+                {eq name="$Think.const.CONTROLLER_NAME.'@form_del'|is_check_access" value="1"}
+                <div class="fbutton">
+                    <a onclick="batch_del(this, 'ids');" data-url="{:url('Form/form_del')}" data-deltype="del" class="layui-btn layui-btn-primary">
+                        <span>批量删除</span>
+                    </a>
+                </div>
+                {/eq}
+                {/eq}
+                {include file="public/page" /}
+            </div>
+            <div style="clear:both"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        $('input[name*=ids]').click(function(){
+            if ($('input[name*=ids]').length == $('input[name*=ids]:checked').length) {
+                $('.checkAll').prop('checked','checked');
+            } else {
+                $('.checkAll').prop('checked', false);
+            }
+        });
+        $('input[type=checkbox].checkAll').click(function(){
+            $('input[type=checkbox]').prop('checked',this.checked);
+        });
+    });
+    // 查看提交内容
+    function ViewFormList(obj) {
+        //iframe窗
+        layer.open({
+            type: 2,
+            title: '查看表单数据',
+            fixed: true, //不固定
+            shadeClose: false,
+            shade: layer_shade,
+            content: $(obj).data('url'),
+            area: ['90%', '90%']
+        });
+    }
+    //标签调用
+    function LabelCall(obj) {
+        //iframe窗
+        layer.open({
+            type: 2,
+            title: '查看调用标签',
+            fixed: true, //不固定
+            shadeClose: false,
+            shade: layer_shade,
+            content: $(obj).data('url'),
+            area: ['1010px', '530px']
+        });
+    }
+    // 添加表单
+    function FieldAdd(obj) {
+        layer.open({
+            type: 2,
+            title: '新增表单',
+            fixed: true,
+            shadeClose: false,
+            shade: layer_shade,
+            content: $(obj).data('url'),
+            area: ['1100px', '90%']
+        });
+    }
+
+    // 编辑表单
+    function FieldDeit(obj) {
+        layer.open({
+            type: 2,
+            title: '编辑表单',
+            fixed: true,
+            shadeClose: false,
+            shade: layer_shade,
+            content: $(obj).data('url'),
+            area: ['1100px', '90%']
+        });
+    }
+
+    // 删除表单
+    function FieldDel(obj) {
+        layer.confirm('此操作不可恢复，确认删除？', {
+            shade: layer_shade,
+            area: ['480px', '190px'],
+            move: false,
+            title: '提示',
+            btnAlign:'r',
+            closeBtn: 3,
+            btn: ['确定', '取消'] ,//按钮
+            success: function () {
+                  $(".layui-layer-content").css('text-align', 'left');
+              }
+        }, function(){
+            layer_loading('正在处理');
+            $.ajax({
+                url : $(obj).attr('data-url'),
+                data: {form_id: $(obj).attr('data-id')},
+                type: 'post',
+                dataType: 'json',
+                success: function(res){
+                    layer.closeAll();
+                    if (1 == res.code) {
+                        layer.msg(res.msg);
+                        window.location.reload();
+                    } else {
+                        layer.alert(res.msg, {icon: 2, title: false, closeBtn: 0});
+                    }
+                }
+            })
+        }, function(index){
+            layer.close(index);
+        });
+    }
+
+    function reloadas()
+    {
+        console.log(333)
+    }
+</script>
+{include file="public/footer" /}

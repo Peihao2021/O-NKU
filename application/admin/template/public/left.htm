@@ -1,0 +1,23 @@
+<div class="eycms_cont_left hidden-xs">
+    <dl class="eylogo">
+        {notempty name="$is_eyou_authortoken"}
+        <a href="{$Request.url}"><img id="web_adminlogo" src="{$web_adminlogo|default='__SKIN__/images/logo_ey.png'}?v={php}echo time();{/php}" alt="点击刷新" title="点击刷新"></a>
+        {else /}
+        <a href="{$Request.url}"><img id="web_adminlogo" src="{$web_adminlogo|default='__SKIN__/images/logo.png'}?v={php}echo time();{/php}" alt="点击刷新" title="点击刷新"></a>
+        {/notempty}
+    </dl>
+
+    <dl>
+        <dd class="sub-menu" id="sub-menu">
+            {volist name="menu_list" id="vo"}
+                <a data-child="0" class="left_menu_{$vo.menu_id} {$vo.controller_name}_{$vo.action_name}_{$vo.menu_id}"
+                   id="{$vo.controller_name}_{$vo.action_name}"
+                   {empty name="$all_menu_list[$vo['menu_id']]['url']"} data-menu_id="{$vo.menu_id}" data-param="{$vo.controller_name}|{$vo.action_name|left_menu_id=###}{$vo.param|default=''}" href="javascript:void(0);"{else /}href="{$all_menu_list[$vo['menu_id']]['url']|default='javascript:void(0);'}" {/empty}
+                    {notempty name="$all_menu_list[$vo['menu_id']]['target']"}target="{$all_menu_list[$vo['menu_id']]['target']|default='workspace'}" {/notempty}
+                    {if condition="in_array($vo.menu_id,$not_role_menu_id_arr)"}style="display:none"{/if} >
+                    <i class="{$vo.icon|default='fa fa-minus'}"></i>{$vo.title}
+                </a>
+            {/volist}
+        </dd>
+    </dl>
+</div>

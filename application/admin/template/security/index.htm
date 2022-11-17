@@ -1,0 +1,534 @@
+{include file="public/layout"/}
+<body class="bodystyle" style=" overflow-y: scroll;min-width:auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<style type="text/css">
+    #layerid_1645756024 textarea
+    {
+        height: 220px;
+    }
+</style>
+<div class="page" style="min-width:auto; ">
+    <!-- 操作说明 -->
+    <div id="explanation" class="explanation" style="color: rgb(44, 188, 163); background-color: rgb(237, 251, 248); width: 99%; height: 100%;margin-bottom: 15px;">
+        <div id="checkZoom" class="title"><i class="fa fa-lightbulb-o"></i>
+            <h4 title="提示相关设置操作时应注意的要点">提示</h4>
+            <span title="收起提示" id="explanationZoom" style="display: block;"></span>
+        </div>
+        <ul>
+            <li>1、网站及时升级到最新版本，定时备份网站习惯。</li>
+            <li>2、不要使用系统破解版或盗版插件，大概率有预留后门，已有不少用户中招。</li>
+            <li>3、网站目录权限设置建议<a href="JavaScript:void(0);" class="red" data-href="https://www.eyoucms.com/plus/view.php?aid=28298" onclick="openFullframe(this,'易优CMS目录权限设置教程，仅供参考');">【查看】</a></li>
+        </ul>
+    </div>
+    <div class="flexigrid htitx">
+        <form class="form-horizontal" id="handlepost" method="post" enctype="multipart/form-data" action="{:url('Security/index')}">
+            <div class="hDiv">
+                <div class="hDivBox">
+                    <table cellspacing="0" cellpadding="0" style="width: 100%">
+                        <thead>
+                            <tr>
+                                <th class="sign w10" axis="col0">
+                                    <div class="tc"></div>
+                                </th>
+                                <th abbr="article_title" axis="col3" class="w10">
+                                    <div class="tc">后台安全中心</div>
+                                </th>
+                                <th abbr="ac_id" axis="col4">
+                                    <div class=""></div>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="ncap-form-default">
+                <dl class="row">
+                    <dt class="tit">
+                        <label for="web_sqldatapath">数据备份路径</label>
+                    </dt>
+                    <dd class="opt">
+                        __ROOT_DIR__<input id="web_sqldatapath" name="web_sqldatapath" value="{$global.web_sqldatapath|default=config('DATA_BACKUP_PATH')}" class="input-txt" type="text" autocomplete="off" />
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">
+                        <label for="adminbasefile">后台登录路径</label>
+                    </dt>
+                    <dd class="opt">
+                        __SITE_URL____ROOT_DIR__/<input type="hidden" name="adminbasefile_old" value="{$adminbasefile|default='login'}"><input id="adminbasefile" name="adminbasefile" value="{$adminbasefile|default='login'}" type="text" data-site_url="__SITE_URL__" onKeyUp="this.value=this.value.replace(/[^\w\_\-]/g,'');" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\w\_\-]/g,''));" style="width: 120px;" autocomplete="off" />.php
+                        <p class="notic">为了提高后台的安全性，请及时更改后台入口文件。</p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">
+                        <label for="web_login_expiretime">后台登录超时</label>
+                    </dt>
+                    <dd class="opt">
+                        <input id="web_login_expiretime" name="web_login_expiretime" value="{$global.web_login_expiretime|default=config('login_expire')}" autocomplete="off" type="text" class="input-txt" />&nbsp;秒
+                        <input type="hidden" name="login_expiretime_old" value="{$global.web_login_expiretime|default=0}">
+                        <p class="notic">默认3600秒等于1小时，最多不超过1个月（2592000秒）</p>
+                        <p class="notic2 none red" id="tips_web_login_expiretime"></p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">
+                        <label for="web_login_lockopen">登录失败锁定</label>
+                    </dt>
+                    <dd class="opt">
+                        <label class="curpoin"><input id="web_login_lockopen1" name="web_login_lockopen" onclick="login_lockopen(this);" value="1" type="radio" {if condition="!isset($global.web_login_lockopen) || $global.web_login_lockopen == 1"} checked="checked"{/if}>开启</label>
+                        &nbsp;
+                        <label class="curpoin"><input id="web_login_lockopen0" name="web_login_lockopen" onclick="login_lockopen(this);" value="0" type="radio" {if condition="isset($global.web_login_lockopen) && $global.web_login_lockopen == 0"} checked="checked"{/if}>关闭</label>
+                        <span class="err"></span>
+                        <p class="notic">登录多次失败后，账号将被锁定一定时长</p>
+                    </dd>
+                </dl>
+                <div id="div_login_lock" class="{if condition='isset($global.web_login_lockopen) && $global.web_login_lockopen == 0'}none{/if}">
+                    <dl class="row">
+                        <dt class="tit">
+                            <label for="web_login_errtotal">登录错误次数</label>
+                        </dt>
+                        <dd class="opt">
+                            <input id="web_login_errtotal" name="web_login_errtotal" value="{$global.web_login_errtotal|default=config('login_errtotal')}" class="input-txt" type="text" placeholder="不启用默认留空" autocomplete="off" onkeyup="this.value=this.value.replace(/[^\d]/g,'');" onpaste="this.value=this.value.replace(/[^\d]/g,'')" />&nbsp;次
+                            <p class="notic"></p>
+                        </dd>
+                    </dl>
+                    <dl class="row">
+                        <dt class="tit">
+                            <label for="web_login_errexpire">登录锁定时间</label>
+                        </dt>
+                        <dd class="opt">
+                            <input id="web_login_errexpire" name="web_login_errexpire" value="{$global.web_login_errexpire|default=config('login_errexpire')}" class="input-txt" type="text" autocomplete="off" onkeyup="this.value=this.value.replace(/[^\d]/g,'');" onpaste="this.value=this.value.replace(/[^\d]/g,'')" />&nbsp;秒
+                            <p class="notic">默认600秒等于10分钟</p>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="hDiv">
+                <div class="hDivBox">
+                    <table cellspacing="0" cellpadding="0" style="width: 100%">
+                        <thead>
+                            <tr>
+                                <th class="sign w10" axis="col0">
+                                    <div class="tc"></div>
+                                </th>
+                                <th abbr="article_title" axis="col3" class="w10">
+                                    <div class="tc">安全验证中心</div>
+                                </th>
+                                <th abbr="ac_id" axis="col4">
+                                    <div style=""></div>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="ncap-form-default">
+                <dl class="row">
+                    <dt class="tit">
+                        <label for="security_ask_open">二次验证密码</label>
+                    </dt>
+                    <dd class="opt">
+                        <label class="curpoin"><input id="security_ask_open1" name="security_ask_open" value="1" type="radio" onclick="security_verify_open(this);" {if condition="!empty($security.security_ask_open)"} checked="checked"{/if}>开启</label>
+                        &nbsp;
+                        <label class="curpoin"><input id="security_ask_open0" name="security_ask_open" value="0" type="radio" onclick="security_verify_open(this);" {if condition="empty($security.security_ask_open)"} checked="checked"{/if}>关闭</label>
+                        <span class="err"></span>
+                        <p class="notic">开启后，部分功能使用前，将进行二次问答验证</p>
+                    </dd>
+                </dl>
+                <div id="div_security_verify" class="{if condition='empty($security.security_ask_open)'}none{/if}">
+                    <dl class="row">
+                        <dt class="tit">
+                            <label for="second_verify">问题与答案</label>
+                        </dt>
+                        <dd class="opt">
+                            <a href="javascript:void(0);" id="second_verify_add" onclick="second_verify_add(this);" class="ncap-btn ncap-btn-green" {notempty name='$security.security_ask'} style="display: none;" {/notempty}>设置</a>
+                            <a href="javascript:void(0);" id="second_verify_edit" onclick="second_verify_edit(this);" class="ncap-btn ncap-btn-green" {empty name='$security.security_ask'} style="display: none;" {/empty}>修改</a>
+                            &nbsp;<a href="javascript:void(0);" onclick="get_ask_list(this);" style="font-size: 12px;padding-top: 6px;position: absolute;">问题列表</a>
+                            <input type="hidden" id="is_ask_add_edit" value="{empty name='$security.security_ask'}add{else /}edit{/empty}">
+                            <textarea id="security_askanswer_content" style="display: none;">{$security_askanswer_content|default=''}</textarea>
+                            <textarea id="security_ask_content" style="display: none;">{$security['security_ask']|default=''}</textarea>
+                            <p class="notic"></p>
+                        </dd>
+                    </dl>
+                    <dl class="row">
+                        <dt class="tit">
+                            <label for="security_verifyfunc">二次验证范围</label>
+                        </dt>
+                        <dd class="opt">
+                            <!-- <label title="强制勾选"><input type="checkbox" name="security_verifyfunc[]" value="Security@*" checked="checked" disabled="true">安全中心</label>&nbsp;&nbsp; -->
+                            <label title="强制勾选"><input type="checkbox" name="security_verifyfunc[]" value="Filemanager@*" checked="checked" disabled="true">模板管理</label>&nbsp;&nbsp;
+                            <label class="curpoin"><input type="checkbox" name="security_verifyfunc[]" value="Weapp@*" {if condition="!empty($security['security_verifyfunc']) && in_array('Weapp@*', $security['security_verifyfunc'])"}checked="checked"{/if}>插件应用</label>&nbsp;&nbsp;
+                            <p class="notic2 red">(建议勾选，避免存在被注入木马的安全漏洞隐患)</p>
+                        </dd>
+                    </dl>
+                    <dl class="row">
+                        <dt class="tit">
+                            <label for="security_ask_ip_open">IP白名单</label>
+                        </dt>
+                        <dd class="opt">
+                            <label class="curpoin"><input id="security_ask_ip_open1" name="security_ask_ip_open" value="1" type="radio" {if condition="!isset($security.security_ask_ip_open) || $security.security_ask_ip_open == 1"} checked="checked"{/if}>开启</label>
+                            &nbsp;
+                            <label class="curpoin"><input id="security_ask_ip_open0" name="security_ask_ip_open" value="0" type="radio" {if condition="isset($security.security_ask_ip_open) && $security.security_ask_ip_open == 0"} checked="checked"{/if}>关闭</label>
+                            <span class="err"></span>
+                            <p class="notic">如果开启该功能，在相同IP下登录后，任意一个管理员二次验证成功，其他人不再弹出验证</p>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="hDiv">
+                <div class="hDivBox">
+                    <table cellspacing="0" cellpadding="0" style="width: 100%">
+                        <thead>
+                            <tr>
+                                <th class="sign w10" axis="col0">
+                                    <div class="tc"></div>
+                                </th>
+                                <th abbr="article_title" axis="col3" class="w10">
+                                    <div class="tc">病毒查杀中心</div>
+                                </th>
+                                <th abbr="ac_id" axis="col4">
+                                    <div style=""></div>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="ncap-form-default">
+                <dl class="row">
+                    <dt class="tit">
+                        <label>病毒木马查杀</label>
+                    </dt>
+                    <dd class="opt">
+                        <a href="javascript:void(0);" data-href="https://www.eyoucms.com/plus/view.php?aid=28327" onclick="openFullframe(this, '快速彻底根治网站源码里的木马代码与多余可疑文件');" class="ncap-btn ncap-btn-green">查看教程</a>
+                        <span class="err"></span>
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">
+                        <label>可疑恶意文件</label>
+                    </dt>
+                    <dd class="opt">
+                        <a href="javascript:void(0);" data-href="{:url('Security/ddos_kill')}" onclick="openFullframe(this, '可疑恶意文件');" class="ncap-btn ncap-btn-green">在线扫描</a>
+                        <span class="err"></span>
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+            </div>
+            <div class="ncap-form-default">
+                <dl class="row">
+                    <div class="bot" style="padding-bottom:0px;">
+                        <a href="JavaScript:void(0);" onclick="checkForm();" class="ncap-btn-big ncap-btn-green">确认提交</a>
+                    </div>
+                </dl>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#web_login_expiretime').keyup(function(){
+            var web_login_expiretime = $(this).val();
+            if (web_login_expiretime > 2592000) {
+                $(this).val(2592000);
+                $('#tips_web_login_expiretime').html('最多不能设置超过一个月（2592000秒）').show();
+            } else if (web_login_expiretime < 60) {
+                $('#tips_web_login_expiretime').html('最少不能设置低于60秒').show();
+            } else {
+                $('#tips_web_login_expiretime').hide();
+            }
+        });
+    });
+
+    function login_lockopen(obj)
+    {
+        var is_open = $(obj).val();
+        if (1 == is_open) {
+            $('#div_login_lock').show();
+        } else {
+            $('#div_login_lock').hide();
+        }
+    }
+
+    function get_ask_list(obj)
+    {
+        layer.prompt({
+            title: '修改问题列表',
+            id: 'layerid_1645756024',
+            formType: 2,
+            btn: ['保存','取消'],
+            shade: layer_shade,
+            closeBtn: 0,
+            value: $('#security_askanswer_content').val(),
+            success: function(layero, index) {
+                if ('edit' == $('#is_ask_add_edit').val()) {
+                    var security_ask_content = "{$security.security_ask}";
+                    if (security_ask_content == '') {
+                        security_ask_content = $('#security_ask_content').val();
+                    }
+                    var before_str = "<div style='margin: -8px 0px 10px 0px;'>当前问题名称：<font style='color: red;'>"+security_ask_content+"</font></div>";
+                    $("#layerid_1645756024").prepend(before_str);
+
+                    var after_str = "<div style='margin-top: 5px;font-size: 12px; color: #999999;'>保存后，已设置的问题名称会默认存入问题列表</div>";
+                    $("#layerid_1645756024").append(after_str);
+                }
+                $("#layerid_1645756024").find('textarea').attr('placeholder', '一行代表一个问题');
+            },
+            btn2: function(index, layero){
+                layer.close(index);
+                return false;
+            }
+        }, function(value, index) {
+            save_ask_list(value);
+        });
+    }
+
+    function save_ask_list(value)
+    {
+        //loading层
+        var loading = layer.load(3, {
+            shade: [0.1,'#fff'] //0.1透明度的白色背景
+        });
+        $.ajax({
+            type : 'post',
+            url : "{:url('Security/save_ask_list', ['_ajax'=>1])}",
+            data : {value:value},
+            dataType : 'json',
+            success : function(res){
+                if (res.code == 1) {
+                    layer.closeAll();
+                    $('#security_askanswer_content').val(res.data.value);
+                    layer.msg(res.msg, {shade: 0.1, time: 1000});
+                }else{
+                    layer.close(loading);
+                    $('#layerid_1645756024').find('input[type=textarea]').focus();
+                    layer.msg(res.msg, {time: 1000});
+                }
+            },
+            error: function(e) {
+                layer.close(loading);
+                showErrorAlert(e.responseText);
+            }
+        });
+    }
+
+    function security_verify_open(obj)
+    {
+        var is_open = $(obj).val();
+        if (1 == is_open) {
+            $('#div_security_verify').show();
+        } else {
+            $('#div_security_verify').hide();
+        }
+    }
+
+    /**
+     * 设置二次安全验证
+     * @param  {[type]} obj [description]
+     * @return {[type]}     [description]
+     */
+    function second_verify_add(obj)
+    {
+        //iframe窗
+        var iframes = layer.open({
+            type: 2,
+            title: '二次安全验证',
+            fixed: true, //不固定
+            shadeClose: false,
+            shade: layer_shade,
+            area: ['500px', '350px'],
+            content: "{:url('Security/second_verify_add')}"
+        });
+    }
+
+    /**
+     * 修改二次安全验证
+     * @param  {[type]} obj [description]
+     * @return {[type]}     [description]
+     */
+    function second_verify_edit(obj)
+    {
+        //iframe窗
+        var iframes = layer.open({
+            type: 2,
+            title: '修改二次安全验证',
+            fixed: true, //不固定
+            shadeClose: false,
+            shade: layer_shade,
+            area: ['500px', '450px'],
+            content: "{:url('Security/second_verify_edit')}"
+        });
+    }
+
+    function checkForm(){
+        var is_founder = {$admin_info['is_founder']|default=0};
+
+        // 后台登录超时
+        var web_login_expiretime_obj = $('input[name=web_login_expiretime]');
+        if (web_login_expiretime_obj.val() < 60) {
+            showErrorMsg('后台登录超时不能少于60秒！');
+            web_login_expiretime_obj.focus();
+            return false;
+        }
+
+        var adminbasefileObj = $('input[name=adminbasefile]');
+        var adminbasefile_oldObj = $('input[name=adminbasefile_old]');
+        if($.trim(adminbasefileObj.val()) == ''){
+            showErrorMsg('后台路径不能为空！');
+            adminbasefileObj.focus();
+            return false;
+        }
+
+        if (1 == $('input[name=web_login_lockopen]:checked').val()) {
+            var web_login_errtotal_obj = $('input[name=web_login_errtotal]');
+            if (web_login_errtotal_obj.val() < 2) {
+                showErrorMsg('登录错误次数不能少于2次！');
+                web_login_errtotal_obj.focus();
+                return false;
+            }
+            var web_login_errexpire_obj = $('input[name=web_login_errexpire]');
+            if (web_login_errexpire_obj.val() < 60) {
+                showErrorMsg('登录错误次数不能少于60秒！');
+                web_login_errexpire_obj.focus();
+                return false;
+            }
+        }
+
+        if ($('input[name=security_ask_open]:checked').val() == 1) {
+            if ('add' == $('#is_ask_add_edit').val()) {
+                showErrorMsg('请先设置问题与答案！');
+                return false;
+            }
+        } else {
+            var security_ask_open = {$security['security_ask_open']|default=0};
+            if (0 == is_founder && 1 == security_ask_open) {
+                showErrorAlert('创始人才能关闭安全验证功能！');
+                return false;
+            }
+        }
+        
+        if(!ajax_isverify_answer())
+        {
+            autoload_security();
+            return false;
+        }
+
+        submitForm();
+    }
+
+    function submitForm()
+    {
+        var adminbasefileObj = $('input[name=adminbasefile]');
+        var adminbasefile_oldObj = $('input[name=adminbasefile_old]');
+        if(adminbasefile_oldObj.val() != adminbasefileObj.val()){
+            var flag = false;
+            var site_url = adminbasefileObj.data('site_url');
+            layer.confirm('后台路径：<font color="red">'+site_url+'__ROOT_DIR__/'+adminbasefileObj.val()+'.php</font>，确认更改？', {
+                    title: false,
+                    btn: ['继续更改','取消'] //按钮
+                }, function(){
+                    layer_loading('正在处理');
+                    setTimeout(function (){
+                        $('#handlepost').submit();
+                    }, 1);
+                }, function(index){
+                    flag = false;
+                }
+            );
+            return flag;
+        }
+        layer_loading('正在处理');
+        setTimeout(function (){
+            $('#handlepost').submit();
+        }, 1);
+    }
+
+    /**
+     * 是否已验证了答案
+     * @return {[type]} [description]
+     */
+    function ajax_isverify_answer()
+    {
+        var flag = false;
+        var ask_open_old = {$security['security_ask_open']|default=0};
+        var ask_open = $('input[name=security_ask_open]:checked').val();
+        if (1 == ask_open_old && ask_open_old != ask_open) {
+            
+        } else {
+            return true;
+        }
+
+        $.ajax({
+            url : "{:url('Security/ajax_isverify_answer')}",
+            type: 'POST',
+            async: false,
+            dataType: 'JSON',
+            data: {_ajax:1},
+            success: function(res){
+                if(res.code == 1){
+                    flag = true;
+                }
+            },
+            error: function(e){
+                showErrorAlert(e.responseText);
+            }
+        });
+
+        return flag;
+    }
+
+    function autoload_security()
+    {
+        layer.prompt({
+            title: '二次安全验证',
+            id: 'layerid_1645598368',
+            btn: ['确定'],
+            shade: layer_shade,
+            closeBtn: 0,
+            success: function(layero, index) {
+                var before_str = "<div style='margin: -8px 0px 10px 0px;color: red;font-weight: bold;'>{$security.security_ask}</div>";
+                $("#layerid_1645598368").prepend(before_str);
+                $("#layerid_1645598368").find('input').attr('placeholder', '请录入问题的答案内容！');
+                $("#layerid_1645598368").find('input').bind('keydown', function(event) {
+                    if (event.keyCode == 13) {
+                        security_answer_verify($(this).val());
+                    }
+                });
+            },
+            btn2: function(index, layero){
+                return false;
+            }
+        }, function(value, index) {
+            security_answer_verify(value);
+        });
+    }
+
+    function security_answer_verify(answer)
+    {
+        $.ajax({
+            type : 'post',
+            url : "{:url('Security/ajax_answer_verify', ['_ajax'=>1])}",
+            data : {answer:answer},
+            dataType : 'json',
+            success : function(res){
+                if (res.code == 1) {
+                    layer.closeAll();
+                    submitForm();
+                }else{
+                    $('#layerid_1645598368').find('input[type=text]').focus();
+                    layer.msg(res.msg, {time: 1000});
+                }
+            },
+            error: function(e) {
+                showErrorAlert(e.responseText);
+            }
+        });
+    }
+</script>
+
+{include file="public/footer" /}

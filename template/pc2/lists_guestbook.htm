@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width" />
+ <title>{$eyou.field.seo_title}</title>
+<meta name="description" content="{$eyou.field.seo_description}" />
+<meta name="keywords" content="{$eyou.field.seo_keywords}" />
+<link href="{eyou:global name='web_ico' /}" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="screen-orientation" content="portrait"><!-- uc强制竖屏 -->
+<meta name="x5-orientation" content="portrait"><!-- QQ强制竖屏 -->
+
+<link href="/template/pc/static/css/pagv2.css" rel="stylesheet" type="text/css" />
+<script src="/template/pc/static/js/jquery-1.8.1.min.js" type="text/javascript"></script>
+<script src="/template/pc/static/js/common.js" type="text/javascript"></script>
+
+
+</head>
+<body>
+    <div id="warp">
+{eyou:include file="header.htm" /}
+
+        <!--banner begin-->
+        <!-- /header -->
+        <div class="bannerArea wcon">
+             <img src="{eyou:notempty name='$eyou.field.typelitpic' /}{$eyou.field.typelitpic} {eyou:else /}{$eyou.field.typeid|gettoptype=###,'litpic'}{/eyou:notempty}"  />
+          
+            <div class="hiArea">
+                <div class="rightArea">当前位置：{eyou:position style=' ' /}</div>
+            </div>
+        </div>
+        <div class="container wcon">
+        <!--左边-->
+        <div class="serviceleft">
+              <div class="left">
+      <!--菜单-->
+      <div class="menuArea">
+          <div class="titleArea">
+              <h3>{$eyou.field.typeid|gettoptype=###,'typename'}</h3> 
+          </div>
+          <div class="conArea ">
+          
+
+              <ul class="navmenu">
+
+
+                   {eyou:models typeid='1'  type='sonself' loop='20'  currentclass='cur'}
+         <li class="{$field.currentclass}"><h3><a href="{$field.typeurl}">{$field.typename}</a></h3></li>
+        {/eyou:models}
+
+
+
+              </ul>
+          </div>
+
+      </div>
+
+
+</div>
+        </div>
+        <!--右边-->
+        <div class="padd cpxjcon">
+            <!--信息详细--中等-->
+            
+            <div id="gbooklist">
+                 无任何记录
+
+                <DIV class=pageNavi><DIV class=wp-pagenavi></DIV></DIV>
+
+            </div>
+
+            <div id="faqbox" class="cpxjconblock ypsqconblock">
+             {eyou:guestbookform type='default' typeid='25'}
+<form method="POST" action="{$field.action}"  {$field.formhidden} onsubmit="{$field.submit}" >
+                    <h3 class="titleline">样品申请</h3>
+                    <div class="faqline">
+                        <span class="faqtit">申请标题：</span>
+                        <input type="text"  id='attr_1' name='{$field.attr_1}' /><font color="#FF0000">*</font>
+                    </div>
+                    <div class="faqline">
+                        <span class="faqtit">样品申请意向描述：</span>
+                        <textarea  id='attr_2' name='{$field.attr_2}' cols="60" rows="5"></textarea><em><font color="#FF0000">*</font>请填写样品申请的产品数量和产品描述，方便我们进行统一备货。</em>
+                    </div>
+                    <div class="faqline">
+                        <span class="faqtit">联系人：</span>
+                        <input  id='attr_3' name='{$field.attr_3}' type="text" /><font color="#FF0000">*</font>
+                    </div>
+                    <div class="faqline">
+                        <span class="faqtit">联系方式：</span>
+                        <input id='attr_4' name='{$field.attr_4}' type="text" /> <em><font color="#FF0000">*</font> 请注明是手机、电话、QQ、Email,方便我们和您联系</em>
+                    </div>
+					    {eyou:notempty name='$field.IsVertify'}
+                    <div class="faqline">
+                        <span class="faqtit">验证码：</span>
+                         <input type="text" name="vertify" autocomplete="off" placeholder="图片验证码"/>
+                <img {$field.VertifyData} title="看不清？点击更换验证码" style="margin-left: 2px;width: 80px;" />
+                看不清？<a href="javascript:void(0);" id="a_vertify" {$field.VertifyData}>点击更换</a>
+                    </div>
+					 {/eyou:notempty}
+                    <div class="faqline">
+                        <span class="faqtit">&nbsp;</span>
+                        <input type="submit" value="提交" class="button" style="display: block;margin:0 auto;" />
+                    </div>
+              {$field.hidden}
+</form>
+{/eyou:guestbookform}
+            </div>
+        </div>
+    </div>
+        <!--底部-->
+        <!--footPage begin-->
+       	  {eyou:include file="kefu.htm" /}
+
+{eyou:include file="footer.htm" /}
+
+
+       
+
+    </div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width" />
+   <title>{$eyou.field.seo_title}</title>
+<meta name="description" content="{$eyou.field.seo_description}" />
+<meta name="keywords" content="{$eyou.field.seo_keywords}" />
+<link href="{eyou:global name='web_ico' /}" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="screen-orientation" content="portrait"><!-- uc强制竖屏 -->
+<meta name="x5-orientation" content="portrait"><!-- QQ强制竖屏 -->
+
+<link href="/template/pc/static/css/pagv2.css" rel="stylesheet" type="text/css" />
+<script src="/template/pc/static/js/jquery-1.8.1.min.js" type="text/javascript"></script>
+<script src="/template/pc/static/js/common.js" type="text/javascript"></script>
+<link rel="stylesheet" href="/template/pc/static/css/owl.carousel.css">
+    <style>
+	    @media (min-width: 790px){
+			.imgnobor img{float:left!important;}
+			}
+    	.imgnobor img{ border:none!important;}
+		.Owlhome2 .item p{ overflow:hidden;}
+    </style>
+</head>
+<body>
+    <div id="warp">
+{eyou:include file="header.htm" /}
+
+        <!--banner begin-->
+        <div class="bannerArea wcon">
+                 <img src="{eyou:notempty name='$eyou.field.typelitpic' /}{$eyou.field.typelitpic} {eyou:else /}{$eyou.field.typeid|gettoptype=###,'litpic'}{/eyou:notempty}"  />
+            <!--栏目-->
+            <div class="hiArea">
+                <div class="rightArea">当前位置：{eyou:position style=' ' /}</div>
+            </div>
+        </div>
+        <div class="container wcon">
+            <!--左边-->
+            <div class="proleft">
+                <div class="left">
+    <!--菜单-->
+   <div class="menuArea">
+  <div class="titleArea">
+  <h3>{$eyou.field.typeid|gettoptype=###,'typename'}</h3>  
+  </div>
+  <div class="conArea ">
+   
+    <ul class="navmenu">
+        
+              {eyou:models  type='sonself' loop='20'  currentclass='cur'}
+         <li class="{$field.currentclass}"><h3><a href="{$field.typeurl}">{$field.typename}</a></h3></li>
+        {/eyou:models}
+             
+        </ul>  
+  </div>
+            
+</div>
+</div>
+            </div>
+            <!--右边-->
+            <div class="padd procon">
+                <!--信息详细-->
+                <div class="proconpic" id=post-724>
+                    <div class="tit newstitle">
+                        <h2>{$eyou.field.title}</h2>
+                        <span>{$eyou.field.jj}</span>
+                    </div>
+
+                    <div class="propreview">
+                        <img src="{$eyou.field.litpic}" >
+                    </div>
+                    <div class="proinfo">
+                        <div class="propalist">
+                            <table class="table02" style="width:100%;">
+                                <tr><th>型号:</th><td>{$eyou.field.title}</td></tr>
+                                <tr><th>品牌:</th><td>{$eyou.field.pinpai}</td></tr>
+                                <tr><th>封装:</th><td>{$eyou.field.fz}</td></tr>
+                                <tr><th>批号:</th><td>{$eyou.field.ph}</td></tr>
+                                <tr><th>库存:</th><td>{$eyou.field.kucun}</td></tr>
+                            </table>
+                        </div>
+                        <div class="proprice"><p><a href="http://wpa.qq.com/msgrd?v=3&uin={eyou:global name='web_attr_1' /}&site=qq&menu=yes">点击询价</a></p>
+                        </div>
+                        <div class="probook">
+                            <h3><strong>规格书（Datesheet）：</strong><img src="/template/pc/static/picture/pdf.gif" />A20.PDF <i class="fa loadicon"><a href="{$eyou.field.guige}"  target="_blank">点击下载</a></i></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div class="proconinfo">
+                    
+					<div class="pronav"><a href="javascript:;" class="cur">商品信息</a><a href="javascript:;">如何购买</a><a href="javascript:;">样品及询价</a><a href="javascript:;">售后服务</a><a href="javascript:;">相关产品</a></div>
+					
+                    <div class="problockword">
+			 <div class="block" style="display: block;">
+                                <h4 class="proproperty"><span>商品信息</span></h4>
+                                <div class="procontent">
+								
+								{$eyou.field.spxx}
+								
+								
+								
+								
+                            </div>
+						</div>
+                        <div class="block">
+                            <h4 class="proproperty"><span>如何购买</span></h4>
+                            <div class="procontent">
+                            
+                                    <h2 class="line">在线咨询</h2>
+                                    <p><p><span style="white-space: normal; word-spacing: 0px; text-transform: none; float: none; color: rgb(51,51,51); text-align: justify; font: 14px/22px Verdana; display: inline !important; letter-spacing: normal; background-color: rgb(255,255,255); text-indent: 0px; -webkit-text-stroke-width: 0px">建议零售价格仅用于预算，以元为单位，并且价格是浮动的。&nbsp;若要查询有关批量价格、本地货币价格或交付报价的信息，请与公司联系。（<a style="text-decoration: underline; color: #0067bb" href="http://wpa.qq.com/msgrd?v=3&amp;uin={eyou:global name='web_attr_1' /}&amp;site=qq&amp;menu=yes">点击咨询</a>）</span></p></p>
+                                    <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={eyou:global name='web_attr_1' /}&site=qq&menu=yes" class="qqkf">点击这里给我发消息</a>
+                                   <br>
+                                    <div class="innercon-contactcon homecont">
+                                        <h2 class="line">联系方式</h2><br />
+                                        <div class="word">
+                                            <p><span class="ssyw">业务电话：{eyou:global name='web_attr_11' /} &nbsp;&nbsp;&nbsp;&nbsp;{eyou:global name='web_attr_6' /}</span></p>
+                                            <p><span class="ssqq">业务QQ：{eyou:global name='web_attr_1' /}</span><span class="sscz">传真：{eyou:global name='web_attr_10' /}</span></p>
+                                            <p><span class="ssqq2">QQ：{eyou:global name='web_attr_13' /}（方案） &nbsp;&nbsp;&nbsp;{eyou:global name='web_attr_12' /}（IC）</span></p>
+                                            <p><span class="ssyx">邮箱：{eyou:global name='web_attr_3' /}</span></p>
+                                            <p><span class="ssdz">地址：{eyou:global name='web_attr_2' /}</span></p>
+                                            <p class="f14 lh26">公司官网：{eyou:global name='web_basehost' /} </p>
+                                        </div>
+                                        
+
+                                        <div class="del_float"></div>
+
+                                </div>
+                                                        </div>
+								
+								
+								
+								
+                        </div>
+                        <div class="block">
+
+                            <h4 class="proproperty"><span>样品及询价</span></h4>
+                            <div class="procontent">
+								{$eyou.field.yxxj}
+							</div>
+							
+							
+							
+							
+                        </div>
+                        <div class="block">
+                            <h4 class="proproperty"><span>售后服务</span></h4>
+                            <div class="procontent">
+							{$eyou.field.shouhou}
+							</div>
+                        </div>
+                        <div class="block">
+                                <h4 class="proproperty"><span>相关产品</span></h4>
+                                <div class="procontent imgnobor">
+                                <div class="Owlhome2">
+                            {eyou:artlist typeid='1' limit='0,20'  titlelen='30' infolen='160' orderby='click' addfields='pinpai,fz,ph'}
+								
+                            <div class="item">
+                                
+                                    <p><a href="{$field.arcurl}" target="_blank"><img alt="{$field.title}" class="lazyOwl" data-src="{$field.litpic}">   </a></p>
+                                <strong><a href="{$field.arcurl}" target="_blank">{$field.title}</a><br />{$field.pinpai}<br>{$field.fz}<br>{$field.ph}</strong>
+
+</div>
+                           {/eyou:artlist}
+                      
+                            
+          
+                        </div>
+                                </div>
+                            </div>
+                   </div>
+                           
+                        </div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+                    </div>
+       </div>
+	
+        <!--底部-->
+       {eyou:include file="kefu.htm" /}
+ 
+
+{eyou:include file="footer.htm" /}
+
+
+       
+ <script src="/template/pc/static/js/owl.carousel.js"></script>
+        <script>
+
+            $(function () {
+                //proinfo
+                $(".pronav a").eq(0).addClass("cur");
+                $(".problockword>.block").eq(0).show();
+                $(".pronav a").click(function () {
+                    var _this = $(this).index();
+                    $(this).addClass("cur").siblings("a").removeClass("cur");
+                    $(".problockword>.block").hide();
+                    $(".problockword>.block").eq(_this).show();
+                });
+				//相关产品
+				$('.Owlhome2').owlCarousel({
+					items: 6,
+					loop: true,
+					center:true,
+					margin: 10,
+					lazyLoad: true,
+					merge: true,
+					autoPlay: 2000,
+					slideSpeed: 200,
+					itemsCustom: [
+			[0, 3],
+			[600, 4],
+			[1000, 5],
+			[1200, 6]
+					]
+				});
+    			$('.Owlhome2').css("opacity", "1");
+
+            });
+
+        </script>
+        
+      
+  </div>
+</body>
+</html>

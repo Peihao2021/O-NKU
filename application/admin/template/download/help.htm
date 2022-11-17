@@ -1,0 +1,315 @@
+{include file="public/layout" /}
+<body class="help-page" style="min-width:auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page" style="min-width: auto;box-shadow:none;">
+    <form class="form-horizontal" id="post_form" action="{:U('Links/add')}" method="post">
+        <div class="help-form-default">
+            <div  class="help_tab_index" id="help_tab_index_1" {neq name="$Request.param.tab_index" value="1"}style="display:none"{/neq}>
+                <div class="help-title"><i class="iconfont e-shezhi1"></i>功能向导</div>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <a href="javascript:void(0);" data-href="{:url('System/web2')}" onclick="toTopFame(this);" class=""><em>副栏目</em></a>如何开启？&nbsp;<a href="javascript:void(0);" data-href="{:url('System/web2')}" onclick="toTopFame(this);" class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <a href="javascript:void(0);" data-href="{:url('ArchivesFlag/index',array('source'=>'archives'))}" onclick="toTopFame(this);"  class=""><em>文档属性</em></a>如何自定义？&nbsp;<a href="javascript:void(0);" data-href="{:url('ArchivesFlag/index',array('source'=>'archives'))}" onclick="toTopFame(this);"  class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <a href="javascript:void(0);" data-href="{:url('Tags/index',array('source'=>'archives'))}" onclick="toTopFame(this);"  class=""><em>文档标签</em></a>？&nbsp;<a href="javascript:void(0);" data-href="{:url('Tags/index',array('source'=>'archives'))}" onclick="toTopFame(this);"  class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <a href="javascript:void(0);" data-href="{:url('System/thumb',array('source'=>'archives'))}"  onclick="toTopFame(this);" class=""><em>封面图片</em></a>生成方式如何设置？&nbsp;<a href="javascript:void(0);" data-href="{:url('System/thumb',array('source'=>'archives'))}"  onclick="toTopFame(this);" class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <a href="javascript:void(0);" data-href="{:url('System/water',array('source'=>'archives'))}"  onclick="toTopFame(this);"  class=""><em>图片水印</em></a>如何添加？&nbsp;<a href="javascript:void(0);" data-href="{:url('System/water',array('source'=>'archives'))}"  onclick="toTopFame(this);"  class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <dl class="help-row {empty name='$global.web_citysite_open'} none {/empty}">
+                    <dd class="help-opt">
+                        <a href="javascript:void(0);" data-href="{:url('Citysite/index',array('source'=>'archives'))}" onclick="toTopFame(this);" class=""><em>城市分站</em></a>如何设置？&nbsp;<a href="javascript:void(0);" data-href="{:url('Citysite/index',array('source'=>'archives'))}" onclick="toTopFame(this);" class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <a href="javascript:void(0);" data-href="{:url('Channeltype/edit',array('id'=>4,'source'=>'archives'))}"  onclick="toTopFame(this);"><em>下载付费</em></a>如何开启？&nbsp;<a href="javascript:void(0);" data-href="{:url('Channeltype/edit',array('id'=>4,'source'=>'archives'))}"  onclick="toTopFame(this);"><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <a href="javascript:void(0);" data-href="{:url('System/basic')}" onclick="toTopFame(this);" class=""><em>附件上传</em></a>大小如何设置？&nbsp;<a href="javascript:void(0);" data-href="{:url('System/basic')}" onclick="toTopFame(this);" class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                    <!-- <dd class="help-opt">
+                        附件上传大小&nbsp;<a href="javascript:void(0);" data-href="{:url('System/basic')}" onclick="openTopframe(this,'附件设置','80%','80%');" class="">修改</a>
+                    </dd> -->
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <a href="javascript:void(0);" data-href="{:url('Field/channel_index',array('channel_id'=>4,'source'=>'archives'))}" onclick="toTopFame(this);" class=""><em>自定义字段</em></a>如何添加？&nbsp;<a href="javascript:void(0);" data-href="{:url('Field/channel_index',array('channel_id'=>4,'source'=>'archives'))}" onclick="toTopFame(this);" class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <a href="javascript:void(0);" data-href="{:url('System/basic')}" onclick="toTopFame(this);" class=""><em>编辑器功能</em></a>如何更改？&nbsp;<a href="javascript:void(0);" data-href="{:url('System/basic')}" onclick="toTopFame(this);" class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <a href="javascript:void(0);" data-href="{:url('System/basic')}" onclick="toTopFame(this);" class=""><em>内容图片附加功能</em></a>如何修改？&nbsp;<a href="javascript:void(0);" data-href="{:url('System/basic')}" onclick="toTopFame(this);" class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <div class="help-title"><i class="iconfont e-bangzhu"></i>注意事项</div>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        栏目分类：<span>谨慎切换，自定义字段的内容会随着栏目切换而清空，在保存之前不受影响！</span>
+                    </dd>
+                </dl>
+                {notempty name='$global.web_stypeid_open'}
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        副栏目分类：<span>只支持同频道模型的栏目。</span>
+                    </dd>
+                </dl>
+                {/notempty}
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        跳转网址：<span>当文档属性选择跳转时，会显示跳转网址输入框，请输入完整的URL网址（包含http或https），设置后访问该条信息将直接跳转到设置的网址。</span>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        封面图片：<span>当没有手动上传图片时候，会自动提取正文的第一张图片作为封面图片。</span>
+                    </dd>
+                </dl>
+                <dl class="help-row {neq name='$field.restric_type' value='2'} none {/neq}">
+                    <dd class="help-opt">
+                        指定会员：<span>包括等于或高于指定的会员等级。</span>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        内容详情：<span>当手机端详情为空时，默认获取PC端详情。</span>
+                    </dd>
+                </dl>
+            </div>
+            <div  class="help_tab_index" id="help_tab_index_2" {neq name="$Request.param.tab_index" value="2"}style="display:none"{/neq}>
+                <div class="help-title"><i class="iconfont e-shezhi1"></i>功能向导</div>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <a href="javascript:void(0);" data-href="{:url('Seo/seo')}" onclick="toTopFame(this);" class=""><em>SEO标题</em></a>如何配置构成规则？&nbsp;<a href="javascript:void(0);" data-href="{:url('Seo/seo')}" onclick="toTopFame(this);" class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <div class="help-title"><i class="iconfont e-bangzhu"></i>注意事项</div>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        SEO标题：<span>一般不超过80个字符，为空时系统自动构成。</span>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                       SEO关键词：<span>一般不超过100个字符，多个关键词请用英文逗号（,）隔开，建议3到5个关键词。</span>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        SEO描述：<span>一般不超过200个字符，不填写时系统自动提取正文的前200个字符。</span>
+                    </dd>
+                </dl>
+            </div>
+            <div class="help_tab_index" id="help_tab_index_3" {neq name="$Request.param.tab_index" value="3"}style="display:none"{/neq}>
+                <div class="help-title"><i class="iconfont e-shezhi1"></i>功能向导</div>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <input type="hidden" id="pen_name" name="pen_name" value="{$Think.session.admin_info.pen_name|default='小编'}" />
+                        <a href="javascript:void(0);" onclick="set_top_author();" class=""><em>作者</em></a>设置默认值（将同步至管理员笔名）&nbsp;<a href="javascript:void(0);" onclick="set_top_author();" class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <textarea id="system_originlist_str" style="display: none;">{$system_originlist_str}</textarea>
+                        <a href="javascript:void(0);" onclick="set_top_originlist();" class=""><em>来源</em></a>设置默认值&nbsp;<a href="javascript:void(0);" onclick="set_top_originlist();" class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <a href="javascript:void(0);" data-href="{:url('System/basic')}" onclick="toTopFame(this);" class=""><em>点击数</em></a>设置默认值&nbsp;<a href="javascript:void(0);" data-href="{:url('System/basic')}" onclick="toTopFame(this);" class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        <a href="javascript:void(0);" data-href="{:url('System/basic')}" onclick="toTopFame(this);" class=""><em>下载数</em></a>设置默认值&nbsp;<a href="javascript:void(0);" data-href="{:url('System/basic')}" onclick="toTopFame(this);" class=""><i class="iconfont e-fenxiang_2" title="传送门"></i></a>
+                    </dd>
+                </dl>
+                <div class="help-title"><i class="iconfont e-bangzhu"></i>注意事项</div>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        作者：<span>为空时默认“小编”。</span>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        来源：<span>为空时默认“网络”。</span>
+                    </dd>
+                </dl>
+                <dl class="help-row">
+                    <dd class="help-opt">
+                        自定义文件名：<span>当URL模式设置为静态时，方可使用此功能。自定义文件名可由字母、数字、下划线(_)、连接符(-)等符号组成，除此之外其他字符将自动转为连接符(-)。</span>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="f_jxw"></div>
+<script>
+    function set_top_originlist(){
+        var value = $('#system_originlist_str').val();
+        top.layer.prompt({
+                title:'来源管理',
+                shade: layer_shade,
+                formType: 2,
+                btnAlign:'r',
+                closeBtn: 3,
+                placeholder: '一行代表一个来源值',
+                value: value,
+            },
+            function(val, index){
+                $.ajax({
+                    url: eyou_basefile + "?m=admin&c=Archives&a=ajax_set_originlist&_ajax=1",
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {origin:val},
+                    success: function(res){
+                        if (res.code == 1) {
+                            $('#system_originlist_str').val(res.data.originlist_str);
+                            top.layer.msg(res.msg, {icon: 1, time:1000});
+                        } else {
+                            showErrorMsg(res.msg);
+                            return false;
+                        }
+                    },
+                    error: function(e){
+                        showErrorMsg(e.responseText);
+                        return false;
+                    }
+                });
+                top.layer.close(index);
+            }
+        );
+    }
+    function set_top_author(){
+        var value = $("#pen_name").val();
+        top.layer.prompt({
+                title:'设置作者默认名称',
+                shade: layer_shade,
+                btnAlign:'r',
+                closeBtn: 3,
+                value: value
+            },
+            function(val, index){
+                $.ajax({
+                    url: eyou_basefile + "?m=admin&c=Admin&a=ajax_setfield&_ajax=1",
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {field:'pen_name',value:val},
+                    success: function(res){
+                        if (res.code == 1) {
+                            $('#pen_name').val(val);
+                            top.layer.msg(res.msg, {icon: 1, time:1000});
+                        } else {
+                            showErrorMsg(res.msg);
+                            return false;
+                        }
+                    },
+                    error: function(e){
+                        showErrorMsg(e.responseText);
+                        return false;
+                    }
+                });
+                top.layer.close(index);
+            }
+        );
+    }
+    function openTopframe(obj,title,width,height,offset){
+        //iframe窗
+        var url = '';
+        if (typeof(obj) == 'string' && obj.indexOf("?m=admin&c=") != -1) {
+            url = obj;
+        } else {
+            url = $(obj).data('href');
+        }
+        if (!width) width = '100%';
+        if (!height) height = '100%';
+        if (!offset) offset = 'auto';
+
+        var anim = 0;
+        var shade = layer_shade;
+        if ('r' == offset) {
+            shade = [0.05];
+            anim = 5;
+        }
+        var iframes = top.layer.open({
+            type: 2,
+            title: title,
+            fixed: true, //不固定
+            shadeClose: false,
+            shade: shade,
+            offset: offset,
+            closeBtn: 3,
+            // maxmin: true, //开启最大化最小化按钮
+            area: [width, height],
+            anim: anim,
+            content: url,
+            end: function() {
+                if (1 == $(obj).data('closereload')) window.location.reload();
+            },
+            success: function(layero, index){
+                if ('r' == offset) {
+                    $('.layui-layer-shade').click(function(){
+                        layer.close(index);
+                    });
+                }
+            }
+        });
+        if (width == '100%' && height == '100%') {
+            layer.full(iframes);
+        }
+    }
+    //跳转走
+    function toTopFame(obj){
+        var url = $(obj).data('href');
+        title = '即将跳转到新页面,编辑内容不会保存，确认跳转？';
+        btn = ['确定', '取消']; //按钮
+        top.layer.confirm(title, {
+                shade: layer_shade,
+                area: ['480px', '190px'],
+                move: false,
+                title: '提示',
+                btnAlign:'r',
+                closeBtn: 3,
+                btn: btn, //按钮
+                success: function () {
+                   top.$(".layui-layer-content").css('text-align', 'left');
+                }
+            }, function(index){
+                // 确定
+                top.layer.close(index);
+                top.$("#workspace").attr('src', url);
+//                parent.parent.location.href = url;
+            }, function(index){
+                top.layer.close(index);
+                return false;// 取消
+            }
+        );
+    }
+</script>
+
+{include file="public/footer" /}

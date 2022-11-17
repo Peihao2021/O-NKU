@@ -1,0 +1,289 @@
+{include file="public/layout" /}
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page" style="box-shadow:none;">
+    <form class="form-horizontal" id="PostForm">
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit">
+                    <label for="ac_name"><em>*</em>表单名称</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="form_name" value="" id="form_name" class="input-txt">
+                    <span class="err" id="err_attr_name" style="color: #F00; display: none;"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+
+            <dl class="row">
+                <dt class="tit">
+                    <label for="attr_input_type"><em>*</em>表单属性</label>
+                </dt>
+                <dd class="opt">
+                    <a href="JavaScript:void(0);" class="ncap-btn ncap-btn-green" onclick="Add();">新增字段</a>
+                    <div class="" style="margin-top: 15px;">
+                        <div class="flexigrid">
+                            <div class="hDiv">
+                                <div class="hDivBox">
+                                    <table cellspacing="0" cellpadding="0" style="width: 100%;">
+                                        <thead>
+                                        <tr>
+                                            <th abbr="article_title" axis="col3" class="">
+                                                <div style="text-align: left; padding-left: 10px;" class="">字段名称</div>
+                                            </th>
+
+                                            <th abbr="article_time" axis="col4" class="w250">
+                                                <div class="tc">字段类型</div>
+                                            </th>
+
+                                            <th abbr="article_time" axis="col4" class="w250">
+                                                <div class="tc" id="PromptText">字段可选值</div>
+                                            </th>
+
+                                            <th abbr="is_fill" axis="col4" class="w100">
+                                                <div class="tc" >是否必填</div>
+                                            </th>
+
+                                            <th abbr="article_time" axis="col6" class="w100">
+                                                <div class="tc">操作</div>
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                                <div class="bDiv" style="height: auto;">
+                                    <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                                        <table style="width: 100%;">
+                                            <tbody id="Template">
+                                            <tr class="tr" id="tr_0">
+                                                <td style="width: 100%">
+                                                    <div style="">
+                                                        <input type="text" name="field_name[]" style="width: 90%;">
+                                                        <input type="hidden" name="field_id[]">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="w250 tc">
+                                                        <select name="field_type[]" class="w160" data-fill="fillContent_0" data-k="0" data-id="OptContent_0" onchange="ChangeDisplay(this);">
+                                                            {$field_type_html}
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="w250 tc" id="OptContent_0">
+                                                        <input type="text" name="field_value[]" placeholder="提醒文字" style="width: 226px;">
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <div class="w100 tc" id="fillContent_0">
+                                                        <select name="is_fill[]" >
+                                                            <option value="0" selected="true">否</option>
+                                                            <option value="1" >是</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <td class="">
+                                                    <div class="w100 tc">
+                                                        <a class="btn red" href="javascript:void(0);" data-id="tr_0" onclick="DelHtml(this)">删除</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+        <div class="ncap-form-default">
+            <div class="bot">
+                <a href="JavaScript:void(0);" class="ncap-btn-big ncap-btn-green" onclick="SubmitForm(this);" data-url="{:url('Form/field_add', ['_ajax'=>1])}">确认提交</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    // tr数,取唯一标识
+    var tr_id = $('#Template .tr').length;
+
+    function Add() {
+        var AddHtml = '';
+        AddHtml +=
+            '<tr class="tr" id="tr_'+tr_id+'">'+
+
+            '<td style="width: 100%">'+
+            '<div style="">'+
+            '<input type="text" name="field_name[]" style="width: 90%;">'+
+            '<input type="hidden" name="field_id[]">'+
+            '</div>'+
+            '</td>'+
+
+            '<td>'+
+            '<div class="w250 tc">'+
+            '<select name="field_type[]" class="w160" data-fill="fillContent_'+tr_id+'" data-k="'+tr_id+'" data-id="OptContent_'+tr_id+'" onchange="ChangeDisplay(this);">'+
+            '{$field_type_html}'+
+            '</select>'+
+            '</div>'+
+            '</td>'+
+
+            '<td>'+
+            '<div class="w250 tc" id="OptContent_'+tr_id+'">'+
+            '<input type="text" name="field_value[]" placeholder="提醒文字" style="width:226px;">'+
+            '<input type="hidden" name="region_id[]" id="RegionId_'+ tr_id +'" value="">'+
+            '<input type="hidden" name="region_names[]" id="region_names'+ tr_id +'" value="">'+
+            '<input type="hidden" name="region_ids[]" id="region_ids'+ tr_id +'" value="">'+
+            '</div>'+
+            '</td>'+
+
+            '<td>'+
+            '<div class="w100 tc" id="fillContent_'+tr_id+'">'+
+            '<select name="is_fill[]" ><option value="0" selected="true" >否</option><option value="1">是</option></select>'+
+            '</div>'+
+            '</td>'+
+
+            '<td class="">'+
+            '<div class="w100 tc">'+
+            '<a class="btn red" href="javascript:void(0);" data-id="tr_'+tr_id+'" onclick="DelHtml(this)">删除</a>'+
+            '</div>'+
+            '</td>'+
+            '</tr>';
+        $('#Template').append(AddHtml);
+        tr_id += 1;
+    }
+
+    // 删除未保存的数据
+    function DelHtml(obj){
+        $('#'+$(obj).attr('data-id')).remove();
+    }
+    var province_list = {$province_list|json_encode};
+    // 字段切换，字段可选值框跟着改变
+    function ChangeDisplay(obj) {
+        var value = $(obj).val();
+        var k = $(obj).attr('data-k');
+        //切换
+        var html = "";
+        if ('text' == value || 'multitext' == value || 'mobile' == value  || 'email' == value ) {
+            html = '<input type="text" name="field_value[]" placeholder="提醒文字" style="width: 226px;">';
+        }else if('region' == value){
+            html = ' <select id="province_'+ k +'" onchange="GetRegionData(this,\'province\',\''+ k +'\');">';
+            for(var i in province_list){
+                var item = province_list[i];
+                html += '<option value="'+ item.id +'">'+ item.name +'</option>';
+            }
+            html += '</select>'+
+                '<select id="city_'+ k +'" onchange="GetRegionData(this,\'city\',\''+ k +'\');" style="display:none;">'+
+                '</select>'+
+                '<input type="hidden" name="field_value[]" value="">';
+        }else if ('radio' == value || 'select' == value || 'checkbox' == value) {
+            html = '<textarea rows="5" cols="30" name="field_value[]" style="height: 60px;" placeholder="多个值可选值请使用小写逗号(,)分隔"></textarea>';
+        }else{
+            html = '<input type="hidden" name="field_value[]" value="">';
+        }
+        html += ' <input type="hidden" name="region_id[]" id="RegionId_'+ k +'" value="">'+
+            '<input type="hidden" name="region_names[]" id="region_names'+ k +'" value="">'+
+            '<input type="hidden" name="region_ids[]" id="region_ids'+ k +'" value="">';
+        $('#'+$(obj).attr('data-id')).empty().html(html);
+
+        //切换是否为空
+//        var fill_html = "";
+//        if ('text' == value || 'multitext' == value || 'datetime' == value || 'mobile' == value  || 'email' == value){
+//            fill_html = '<select name="is_fill[]" ><option value="0" selected="true" >否</option><option value="1">是</option></select>';
+//        }else{
+//            fill_html = '<input type="hidden" name="is_fill[]" value="0">';
+//        }
+//        $('#'+$(obj).attr('data-fill')).empty().html(fill_html);
+    }
+
+    // 添加新增数据
+    function SubmitForm(obj) {
+
+        var num = $('#Template .tr').length;
+        if (0 == num) {
+            showErrorMsg('至少新增一个字段！');
+            return false;
+        }
+
+        var is_empty = false;
+        $('input[name^=field_name]').each(function(index, item){
+            if ($.trim($(item).val()) == '') {
+                is_empty = true;
+                $(item).focus();
+                return false; //跳出循环
+            }
+        });
+        if(is_empty){
+            showErrorMsg('字段名称不能为空！');
+            return false;
+        }
+
+        var parentObj = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+
+        layer_loading('正在处理');
+        $.ajax({
+            url : $(obj).attr('data-url'),
+            data: $('#PostForm').serialize(),
+            type: 'post',
+            dataType: 'json',
+            success: function(res) {
+                layer.closeAll();
+                if (res.code == 1) {
+                    var _parent = parent;
+                    _parent.layer.close(parentObj);
+                    _parent.layer.msg(res.msg, {shade: layer_shade, time: 1000}, function(){
+                        _parent.location.reload();
+                    });
+                } else {
+                    layer.alert(res.msg, {icon: 2, title: false, closeBtn: 0});
+                }
+            },
+            error: function(e) {
+                layer.closeAll();
+                showErrorMsg(e.responseText);
+            }
+        })
+    }
+    // 获取联动地址
+    function GetRegionData(obj,type,next_id){
+        var parent_id = $(obj).val();
+        if(!parent_id){
+            return false;
+        }
+        var url = "{:url('Field/ajax_get_region_data')}";
+        $.ajax({
+            url: url,
+            data: {parent_id:parent_id,_ajax:1},
+            type:'post',
+            dataType:'json',
+            success:function(res){
+                // 判断是否隐藏第二级地区选择栏
+                if (0 <= $.inArray(parent_id, res.parent_array)) {
+                    $('#city_'+next_id).hide();
+                }else{
+                    $('#city_'+next_id).show();
+                }
+                // 加载城市名称数据到textarea
+                $('#region_names_'+next_id).val(res.region_names);
+                // 加载城市ID数据到input
+                $('#region_ids_'+next_id).val(res.region_ids);
+                // 加载ID到input
+                $('#RegionId_'+next_id).val(parent_id);
+                // 输出下一级栏目选项
+                if ('province' == type) {
+                    res = '<option value='+parent_id+'>请选择</option>'+ res.region_html;
+                    $('#city_'+next_id).empty().html(res);
+                }
+            },
+            error : function(e) {
+                layer.closeAll();
+                showErrorAlert(e.responseText);
+            }
+        });
+    }
+</script>
+{include file="public/footer" /}

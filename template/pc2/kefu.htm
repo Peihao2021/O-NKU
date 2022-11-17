@@ -1,0 +1,38 @@
+  <script type="text/javascript" src="/template/pc/static/js/aspcms_statistics.js"></script> <!--qq客服框begin-->
+  <div class="online" id="onlineQQ">
+    <div class="onlinecon">
+      <ul>
+        <li>客服热线：<br />
+          {eyou:global name='web_attr_11' /}</li>
+        <li class="onlineweixin">
+          <h2>IC产品咨询</h2>
+          <span><A class=kefu_Type_qq href="tencent://message/?uin={eyou:global name='web_attr_12' /}&amp;Menu=yes"><img border="0" src="/template/pc/static/picture/96c558dcba4e47beab796d2ed59984b5.gif" alt="点击这里给我发消息" title="点击这里给我发消息"></A></span> 
+        
+        </li>
+        <li class="onlineweixin">
+          <h2>方案咨询</h2>
+          <span><A class=kefu_Type_qq href="tencent://message/?uin={eyou:global name='web_attr_13' /}&amp;Menu=yes"><img border="0" src="/template/pc/static/picture/e8e5e6d10ad1404d8738deb4afc6c43a.gif" alt="点击这里给我发消息" title="点击这里给我发消息"></A></span> </li>
+      </ul>
+      <div id="onlinQQbtn"></div>
+    </div>
+  </div>
+  <!--qq客服框end--> 
+  
+  <script type="text/javascript" src="/template/pc/static/js/jquery.scroll-follow.js"></script> 
+  <script type="text/javascript">
+    $(function () {
+        if ($.browser.msie && ($.browser.version <= "8.0") && !$.support.style) {
+        }
+        else {
+            $('#onlineQQ').scrollFollow({ offset: 100 });
+        }
+           
+            $("#onlineQQ").hover(function () {
+                $(".online").stop().animate({ width: "187px" }, 500);
+            }, function () {
+            $(".online").stop().animate({ width: "22px" }, 500);
+            });
+
+        });
+
+</script> 

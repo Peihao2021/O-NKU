@@ -1,0 +1,358 @@
+{include file="public/layout" /}
+<script type="text/javascript" src="__SKIN__/js/clipboard.min.js"></script>
+<body class="bodystyle" style="overflow-y: scroll; cursor: default; -moz-user-select: inherit;min-width:auto;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page" style="min-width:auto;padding-bottom: 15px;">
+    <div class="flexigrid flexigrid-xin">
+        <div class="header-bar">
+            <div class="more">
+                <div class="search">
+                    <div class="content">
+                        <form id="postForm" action="{:url('ShopService/users_edit_after_service')}" method="get" onsubmit="layer_loading('正在处理');" style="display: unset;">
+                            {$searchform.hidden|default=''}
+                            <input type="hidden" name="users_id" value="{$Request.param.users_id}">
+                            <div class="ey-form-item"><label class="users-form-item-label">关键词：</label>
+                                <div class="users-form-item-content">
+                                    <div class="users-select">
+                                        <div tabindex="0" class="users-select-selection">
+                                            <!-- 订单号查询 -->
+                                            <div class="sDiv2">
+                                                <input type="text" size="50" name="order_code" id="order_code" value="{$Request.param.order_code}" class="qsbox" style="width: 170px;" placeholder="订单号或商品名称...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="ey-form-item" style="margin-left: 20px;">
+                            <div class="users-form-item-content">
+                                <span class="bt-xin" onclick="OrderQuery();">查询</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="geduan-xin"></div>
+</div>
+
+<div class="page" style="min-width:auto;">
+    <div class="flexigrid flexigrid-xin" style=" padding-right: 1px; ">
+        <div class="tableDiv  bubbleInfo">
+            <table cellspacing="0" cellpadding="0" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th align="center" abbr="article_title" axis="col3"> <div class="">商品信息</div> </th>
+                        <th abbr="article_time" axis="col6" class="w200"> <div class="">单价/数量</div> </th>
+                        <th abbr="article_time" axis="col6" class="w240"> <div class="">退还金额</div> </th>
+                        <th abbr="article_time" axis="col6" class="w160"> <div class="">处理状态</div> </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {empty name="Service"}
+                    <tr>
+                        <td class="no-data" align="center" axis="col0" colspan="50">
+                            <div class="">
+                                <div class="no_pic"><img src="__SKIN__/images/null-data.png"></div>
+                            </div>
+                        </td>
+                    </tr>
+                {else/}
+                    {volist name="Service" id="vo"}
+                    <tr class="order-empty"> <td colspan="8"></td> </tr>
+                    <tr>
+                        <td class="biaotou" colspan="8">
+                             <span class="mr15" style=" display: flex; flex-direction: row; align-items: center; ">
+                                <i class="iconfont e-shijian"></i><span class="mr15">{$vo.add_time}</span>
+                                <span class="mr15">订单号：{$vo.order_code} <a class="copy order_code" onclick="OrderCopy('order_code');" data-clipboard-text="{$vo.order_code}">复制</a></span>
+                                <span class="mr15">服务单号：{$vo.refund_code} <a class="copy refund_code" onclick="OrderCopy('refund_code');" data-clipboard-text="{$vo.refund_code}">复制</a></span>
+                             </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="goods-detail">
+                                <div class="goods-image">
+                                    <a href="{$vo.arcurl}" target="_blank"><img src="{$vo.product_img}"></a>
+                                </div>
+                                <div class="goods-info">
+                                    <p class="goods-title"><!-- <span class="shi">实</span> -->{$vo.product_name}</p>
+                                    <p class="goods-spec">{$vo.product_spec}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class=""><p style="font-weight: 600;">￥{$vo.product_price} X {$vo.num}</p></td>
+                    
+                        <td class="" rowspan="1"><p>￥{$vo.refund_price}</p></td>
+
+
+                    
+                        <td class="" rowspan="1">
+                            <p>
+                                {if condition="1 == $vo.status"}
+                                <span class="zt" style="color: #ff9900;">{$ServiceStatus[$vo.status]|default=''}</span>
+                                {elseif condition="in_array($vo.status, [2, 4, 5, 6, 7])"}
+                                <span class="zt" style="color: #19be6b;">{$ServiceStatus[$vo.status]|default=''}</span>
+                                {else}
+                                <span class="zt" style="color: #939799;">{$ServiceStatus[$vo.status]|default=''}</span>
+                                {/if}
+                            </p>
+                            
+                        </td>
+
+                    </tr>
+                    {/volist}
+                {/empty}
+                </tbody>
+            </table>
+        </div>
+        <div class="tDiv"> <div class="tDiv2"> {include file="public/page" /} </div> <div style="clear:both"></div> </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function() {
+        $('input[name*=ids]').click(function(){
+            if ($('input[name*=ids]').length == $('input[name*=ids]:checked').length) {
+                $('.checkAll').prop('checked','checked');
+            } else {
+                $('.checkAll').prop('checked', false);
+            }
+        });
+        $('input[type=checkbox].checkAll').click(function(){
+            $('input[type=checkbox]').prop('checked',this.checked);
+        });
+    });
+
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#add_time_begin' //指定元素
+        });
+        laydate.render({
+            elem: '#add_time_end' //指定元素
+        });
+    });
+
+    $(document).ready(function() {
+        // 表格行点击选中切换
+        $('#flexigrid > table>tbody >tr').click(function(){
+            $(this).toggleClass('trSelected');
+        });
+
+        // 点击刷新数据
+        $('.fa-refresh').click(function(){
+            location.href = location.href;
+        });
+    });
+
+    // 订单查询
+    function OrderQuery(isReset) {
+        if (isReset && 'reset' == isReset) {
+            window.location.href = "{:url('ShopService/after_service')}";
+        } else {
+            $('#postForm').submit();
+        }
+    }
+
+    // 订单号复制
+    function OrderCopy(copyClass) {
+        var clipboard1 = new Clipboard("." + copyClass);
+        clipboard1.on("success", function(e) {
+            layer.msg("复制成功");
+        });
+        clipboard1.on("error", function(e) {
+            layer.msg("复制失败！请手动复制", {icon: 5});
+        }); 
+    }
+
+    // AJAX调用下载
+    function OrderExcelExport(obj) {
+        layer_loading('订单导出中');
+        $.ajax({
+            type: 'post',
+            url : $(obj).attr('data-url'),
+            data: {
+                _ajax: 1,
+                // 导出类型，售后订单固定值6
+                export_type: 6,
+                // 搜索条件信息，可为空
+                pay_name: "{$Request.param.pay_name}",
+                order_code: "{$Request.param.order_code}",
+                end_time: "{$Request.param.add_time_end}",
+                start_time: "{$Request.param.add_time_begin}",
+                order_terminal: "{$Request.param.order_terminal}",
+            },
+            dataType: 'json',
+            success: function(res) {
+                layer.closeAll();
+                if (1 == res.code) {
+                    window.location.href = res.url;
+                } else {
+                    showErrorAlert(res.msg);
+                }
+            },
+            error: function(e) {
+                layer.closeAll();
+                showErrorAlert(e.responseText);
+            }
+        });
+    }
+
+    // 确认收货
+    function ConfirmReceipt(service_id, users_id, order_id, status) {
+        // 需要二次确认
+        layer.confirm('确认收到货物？', {
+            title: false,
+            closeBtn: 0
+        }, function() {
+            PerformOperation(service_id, users_id, order_id, status, 0, 0, 0, '');
+        }, function(index) {
+            layer.closeAll(index);
+        });
+    }
+
+    // 确认发货
+    function ConfirmSend(service_id, users_id, order_id, status) {
+        var confirmTitle = '快递公司：<input type="text" id="deliveryName"><br/><br/>';
+        confirmTitle += '快递单号：<input type="text" id="deliveryCode">';
+        layer.confirm(confirmTitle, {
+            title: false,
+            closeBtn: 0
+        }, function() {
+            var deliveryName = $('#deliveryName').val();
+            var deliveryCode = $('#deliveryCode').val();
+            var delivery = {name: deliveryName,code: deliveryCode};
+            PerformOperation(service_id, users_id, order_id, status, 0, 0, 0, '', delivery);
+        }, function(index) {
+            layer.closeAll(index);
+        });
+    }
+
+    // 售后服务手动完成服务单并自行退款
+    function ManualRefund(service_id, users_id, order_id, service_type) {
+        layer.prompt({
+            formType: 2,
+            value: ' ',
+            title: false,
+            closeBtn: 0,
+            id: 'manualRefund',
+            btn: ['完成并退款', '取消'],
+            area: ['300px', '100px'],
+            success: function(layero, index) {
+                var msg = '<span style="color: red; font-size: 16px;">是否确认手动完成服务单并自行退款？</span><br/><br/> <span style="color: #999; font-size: 14px;">请填写手动完成服务单原因(非必填)。</span><br/><br/> ';
+                $("#manualRefund").prepend(msg);
+            }
+        }, function(value, index, elem) {
+            // 售后服务手动完成服务单并自行退款
+            var status = 1 == service_type ? 6 : 7;
+            PerformOperation(service_id, users_id, order_id, status, 0, 0, 1, value);
+            layer.close(index);
+        });
+    }
+
+    // 查看手动退款原因
+    function BrowseRefundNote(layer_str) {
+        layer.confirm(layer_str, {title: false, closeBtn: 0, btn: ['关闭'], area: ['25%', '25%']});
+    }
+
+    // 确认审核意见
+    function AuditOpinion(service_id, users_id, order_id, service_type, status) {
+        var type = 1 == service_type ? "<span style='color: blue;'> 换货 </span>" : "<span style='color: red;'> 退货 </span>";
+        if (2 == status) {
+            var confirmMsg = '确认通过'+type+'申请？';
+            var confirmBtn = ['通过审核', '取消'];
+        } else if (3 == status) {
+            var confirmMsg = '确认驳回'+type+'申请？';
+            var confirmBtn = ['驳回申请', '取消'];
+        } else {
+            layer.msg('类型错误，刷新重试', {time: 1500}, function() {window.location.reload();});
+        }
+        layer.confirm(confirmMsg, {
+            closeBtn: 0,
+            title: false,
+            btn: confirmBtn,
+        }, function() {
+            // 确认执行
+            PerformOperation(service_id, users_id, order_id, status, 0, 0);
+        });
+    }
+
+    // 确认完成服务
+    function CarryOut(service_id, users_id, order_id, status) {
+        var confirmMsg = '';
+        if (2 == status) {
+            confirmMsg = "目前处于<span style='color: blue;'>等待会员发货</span>阶段，";
+        } else if (4 == status) {
+            confirmMsg = "目前处于<span style='color: blue;'>等待商家收货</span>阶段，";
+        } else if (5 == status) {
+            confirmMsg = "目前处于<span style='color: blue;'>等待商家发货</span>阶段，";
+        }
+        layer.confirm(confirmMsg + "确认完成<span style='color: blue;'>换货</span>服务？", {
+            closeBtn: 0,
+            title: false,
+            btn: ['完成换货', '取消'],
+        }, function() {
+            // 确认换货结束
+            PerformOperation(service_id, users_id, order_id, 6, 0, 0);
+        });
+    }
+
+    // 确认退款操作
+    function Refund(service_id, users_id, order_id, status, refund_price) {
+        var confirmMsg = '';
+        if (2 == status) {
+            confirmMsg = "目前处于<span style='color: red;'>等待会员发货</span>阶段，";
+        } else if (4 == status) {
+            confirmMsg = "目前处于<span style='color: red;'>等待商家收货</span>阶段，";
+        } else if (5 == status) {
+            confirmMsg = "商家已收货，";
+        }
+        layer.confirm(confirmMsg + "确认完成<span style='color: red;'>退货</span>服务并<span style='color: red;'>退款到余额</span>？", {
+            closeBtn: 0,
+            title: false,
+            btn: ['退款到余额', '取消'],
+        }, function() {
+            // 确认
+            PerformOperation(service_id, users_id, order_id, 7, 1, refund_price);
+        });
+    }
+
+    // 执行审核操作
+    function PerformOperation(service_id, users_id, order_id, status, is_refund, refund_price, manual_refund, refund_note, delivery) {
+        layer_loading('正在处理');
+        $.ajax({
+            url: "{:url('ShopService/after_service_deal_with')}",
+            data: {
+                service_id: service_id,
+                users_id: users_id,
+                order_id: order_id,
+                status: status,
+                is_refund: is_refund,
+                refund_price: refund_price,
+                manual_refund: manual_refund,
+                refund_note: refund_note,
+                delivery: delivery,
+                _ajax: 1
+            },
+            type: 'post',
+            dataType: 'json',
+            success:function(res) {
+                layer.closeAll();
+                if (1 == res.code) {
+                    layer.msg(res.msg, {time: 1500}, function() {
+                        window.location.reload();
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1500});
+                }
+            }
+        });
+    }
+</script>
+
+{include file="public/footer" /}

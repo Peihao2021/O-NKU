@@ -1,0 +1,53 @@
+{include file="public/layout" /}
+<body style="background-color: rgb(255, 255, 255); overflow: hidden; cursor: default; -moz-user-select: inherit;min-width: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page" style="min-width: auto;box-shadow:none; padding-bottom: 0px;">
+    <form class="form-horizontal" id="post_form" action="{:url('Search/conf')}" method="post">
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit">
+                    <label>搜索模式</label>
+                </dt>
+                <dd class="opt" style="width: auto;">
+                    <label class="curpoin"><input type="radio" name="search_model" value="default" {if condition="empty($search.search_model) || 'default' == $search.search_model"} checked="checked" {/empty}>检索标题</label>&nbsp;&nbsp;
+                    <br/>
+                    <label class="curpoin"><input type="radio" name="search_model" value="intellect" {eq name="$search.search_model" value="intellect"} checked="checked" {/eq}>智能模糊（检索标题+seo关键词）</label>&nbsp;&nbsp;
+                </dd>
+            </dl>
+            <div class="bot">
+                <a href="JavaScript:void(0);" onclick="checkForm();" class="ncap-btn-big ncap-btn-green" id="submitBtn">确认提交</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+
+    var parentObj = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+    
+    function checkForm() {
+        layer_loading('正在处理');
+        $.ajax({
+            type : 'post',
+            url : "{:url('Search/conf')}",
+            data : $('#post_form').serialize(),
+            dataType : 'json',
+            success : function(res){
+                layer.closeAll();
+                if(res.code == 1){
+                    var _parent = parent;
+                    _parent.layer.close(parentObj);
+                    _parent.layer.msg(res.msg, {shade: 0.1, time: 1000});
+                }else{
+                    showErrorMsg(res.msg);
+                }
+            },
+            error: function(e){
+                layer.closeAll();
+                showErrorAlert(e.responseText);
+            }
+        });
+    }
+</script>
+{include file="public/footer" /}

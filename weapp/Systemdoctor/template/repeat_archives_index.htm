@@ -1,0 +1,179 @@
+{include file="header.htm" /}
+<body class="bodystyle" style="cursor: default; -moz-user-select: inherit; min-width:400px;">
+<div class="page" style="min-width: 400px;">
+    <form class="form-horizontal" id="post_form" action="{:weapp_url('Systemdoctor/Systemdoctor/repeat_archives_index')}" method="get">
+        {$searchform.hidden|default=''}
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit">
+                    <label for="channel">频道模型</label>
+                </dt>
+                <dd class="opt">
+                    <select name="channel">
+                        <option value="">--全部--</option>
+                        {volist name='$channeltype_list' id='vo'}
+                        <option value="{$vo.id}" {if condition="$vo.id == $Request.param.channel"}selected{/if}>{$vo.title}</option>
+                        {/volist}
+                    </select>
+                    <span class="err"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+             <dl class="row">
+                <dt class="tit">
+                    <label for="deltype">删除选项</label>
+                </dt>
+                <dd class="opt">
+                    <label><input type="radio" name="deltype" value="delnew" checked onclick="change_deltype('delnew');">&nbsp;保留最旧的一条</label>&nbsp;
+                    <br/>
+                    <label><input type="radio" name="deltype" value="delold" onclick="change_deltype('delold');">&nbsp;保留最新的一条</label>&nbsp;
+                    <span class="err"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="size">每排列出记录</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="size" id="size" value="{$Request.param.size|default='100'}" style="width: 80px;">&nbsp;条
+                    <span class="err"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="info">&nbsp;</label>
+                </dt>
+                <dd class="opt">
+                    <input type="hidden" name="testing" value="1">
+                    <a href="JavaScript:void(0);" onclick="check_submit()" class="ncap-btn-big ncap-btn-green" id="submitBtn">分析标题重复的文档</a>
+                </dd>
+            </dl>
+        </div>
+    </form>
+    {notempty name='$testing'}
+    <div style="clear: both; border-top:1px solid #ccc;"></div>
+    <div class="flexigrid" style="height: 600px;overflow-y: auto;box-sizing: border-box;">
+        <div class="mDiv">
+            <div class="ftitle">
+                <h3>重复文档列表</h3>
+                <h5>(共{$count}条记录)</h5>
+            </div>
+            <div title="刷新数据" class="pReload"><i class="fa fa-refresh"></i></div>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th class="sign w40" axis="col0">
+                            <div class="tc">选择</div>
+                        </th>
+                        <th abbr="article_show" axis="col5" class="w200">
+                            <div class="tc">重复数量</div>
+                        </th>
+                        <th abbr="ac_id" axis="col4">
+                            <div class="">标题</div>
+                        </th>
+                        <th axis="col1" class="w120">
+                            <div class="tc">操作</div>
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table style="width: 100%">
+                    <tbody>
+                    {empty name="list"}
+                        <tr>
+                            <td class="no-data" align="center" axis="col0" colspan="50">
+                                <i class="fa fa-exclamation-circle"></i>没有符合条件的记录
+                            </td>
+                        </tr>
+                    {else/}
+                        {volist name="list" id="vo"}
+                        <tr>
+                            <td class="sign">
+                                <div class="w40 tc"><input type="checkbox" name="ids[]" value="{$vo.aids}"></div>
+                            </td>
+                            <td class="sort">
+                                <div class="w200 tc">
+                                    {$vo.nums}
+                                </div>
+                            </td>
+                            <td style="width: 100%">
+                                <div style="">
+                                    {$vo.title}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w120 tc">
+                                    <a class="btn red single_del"  href="javascript:void(0);" data-url="{:weapp_url('Systemdoctor/Systemdoctor/repeat_archives_del',['deltype'=>'delnew'])}" data-id="{$vo.aids}" {eq name='$recycle_switch' value='1'} data-deltype="del" {else /} data-deltype="pseudo" {/eq} onClick="delfun(this);"><i class="fa fa-trash-o"></i>删除</a>
+                                    <!--<a href="{$vo.arcurl}" target="_blank" class="btn blue"><i class="fa fa-pencil-square-o"></i>浏览</a>-->
+                                </div>
+                            </td>
+                        </tr>
+                        {/volist}
+                    {/empty}
+                    </tbody>
+                </table>
+            </div>
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+        <div class="tDiv">
+            <div class="tDiv2">
+                <div class="fbutton checkboxall">
+                    <input type="checkbox" onclick="javascript:$('input[name*=ids]').prop('checked',this.checked);">
+                </div>
+                <div class="fbutton">
+                    <a onclick="batch_del(this, 'ids');"  id="batch_del" data-url="{:weapp_url('Systemdoctor/Systemdoctor/repeat_archives_del',['deltype'=>'delnew'])}" {eq name='$recycle_switch' value='1'} data-deltype="del" {else /} data-deltype="pseudo" {/eq}>
+                        <div class="add" title="批量删除">
+                            <span><i class="fa fa-close"></i>批量删除</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div style="clear:both"></div>
+        </div>
+        <!--分页位置-->
+        {$pageStr}
+    </div>
+    {/notempty}
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        // 表格行点击选中切换
+        $('#flexigrid > table>tbody >tr').click(function(){
+            $(this).toggleClass('trSelected');
+        });
+
+        // 点击刷新数据
+        $('.fa-refresh').click(function(){
+            location.href = location.href;
+        });
+    });
+
+    // 判断输入框是否为空
+    function check_submit(){
+        layer_loading('正在处理');
+        $('#post_form').submit();
+    }
+
+    function change_deltype(deltype) {
+        var url = "{:weapp_url('Systemdoctor/Systemdoctor/repeat_archives_del',['deltype'=>'delnew'])}";
+        if ('delold' == deltype) {
+            url = "{:weapp_url('Systemdoctor/Systemdoctor/repeat_archives_del',['deltype'=>'delold'])}"
+        }
+        $('.single_del').each(function(){
+            $(this).attr('data-url',url);
+        });
+        $('#batch_del').attr('data-url',url);
+
+    }
+</script>
+{include file="footer.htm" /}

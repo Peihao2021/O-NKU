@@ -1,0 +1,81 @@
+{include file="public/layout" /}
+<body class="bodystyle" style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit;min-width: auto;padding: 5px;">
+<div class="page" style="min-width: auto;box-shadow:none;padding-top: 0px;">
+    <form class="form-horizontal" id="postForm" action="{:url('Archives/ajax_get_stypeid_list')}" method="post">
+        <div class="ncap-form-default">
+            <dl class="row pt5">
+                <dd class="opt" style="width: 100%;">
+                    <!-- <p><label><input type="checkbox" id="select_all" />全部选择</label></p> -->
+                    {volist name='$list' id='vo'}
+                        {if condition="!empty($vo['child'])"}
+                            <div class="admin_poplistdiv">
+                                <h2>
+                                    {if condition="$channel == $vo['current_channel']"}
+                                        <!-- <label><input type="checkbox" name="stypeid[]" value="{$vo.id}" data-typename="{$vo.typename}" {if condition="in_array($vo.id, $stypeid_arr)"}checked="checked"{/if}>{$vo.typename}</label> -->
+                                        {$vo.typename}
+                                    {else /}
+                                        {$vo.typename}
+                                    {/if}
+                                </h2>
+                                <p>
+                                    {volist name='$vo.child' id='v2'}
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<label><input type="checkbox" name="stypeid[]" value="{$v2.id}" data-typename="{$v2.typename}" {if condition="in_array($v2.id, $stypeid_arr)"}checked="checked"{/if}>{$v2.typename}</label>
+                                    {/volist}
+                                </p>
+                            </div>
+                        {elseif condition="$channel == $vo['current_channel']" /}
+                            <div class="admin_poplistdiv">
+                                <h2><label><input type="checkbox" name="stypeid[]" value="{$vo.id}" data-typename="{$vo.typename}" {if condition="in_array($vo.id, $stypeid_arr)"}checked="checked"{/if}>{$vo.typename}</label></h2>
+                            </div>
+                        {/if}
+                    {/volist}
+                </dd>
+            </dl>
+            <div class="">
+                <a href="JavaScript:void(0);" onclick="checkForm();" class="ncap-btn-big ncap-btn-green" id="submitBtn">确认提交</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $('#select_all').bind('click', function(){
+        if($(this).attr('checked')){
+            $('input[name^="stypeid"]').attr('checked', 'checked');
+        }else{
+            $('input[name^="stypeid"]').removeAttr('checked');
+        }
+    });
+
+    $('input[name^="stypeid"]').bind('click', function(){
+        if($(this).attr('checked')){
+            if ($('input[name^="stypeid"]:checked').length >= $('input[name^="stypeid"]').length) {
+                $('#select_all').attr('checked', 'checked');
+            } else {
+                $('#select_all').removeAttr('checked');
+            }
+        }else{
+            $('#select_all').removeAttr('checked');
+        }
+    });
+
+    function checkForm()
+    {
+        var typeid = {$typeid|default=0};
+        var typeid_arr = [];
+        var typename_arr = [];
+        $('input[name^="stypeid"]:checked').each(function(index, item){
+            // if (typeid != $(item).val()) {
+                typeid_arr.push($(item).val());
+                typename_arr.push('<span>'+$(item).data('typename')+'('+$(item).val()+')</span>');
+            // }
+        });
+
+        var typeids = typeid_arr.join(',');
+        var typenames = typename_arr.join('&nbsp;&nbsp;|&nbsp;&nbsp;');
+
+        parent.layer.closeAll();
+        $('#stypeid', window.parent.document).val(typeids);
+        $('#stypeid_txt', window.parent.document).html(typenames);
+    }
+</script>
+{include file="public/footer" /}

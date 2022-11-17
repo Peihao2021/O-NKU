@@ -1,0 +1,141 @@
+{include file="public/layout" /}
+<body class="bodystyle" style="overflow-y: scroll;min-width:auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page" style="min-width: auto;box-shadow:none;">
+    <form class="form-horizontal" id="post_form" action="{:url('Citysite/conf')}" method="post">
+        <div class="ncap-form-default help">
+            <dl class="row">
+                <dt class="tit" style="width: auto">
+                    <label><b>主站配置</b></label>
+                </dt>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="title">默认区域</label>
+                </dt>
+                <dd class="opt"> 
+                    <select name="site_default_home" id="site_default_home">
+                        <option value="0">不选择区域</option>
+                        {$citysite_html}
+                    </select>
+                    <span class="err"></span>
+                    <p class="notic">如果设置，主站将显示该区域的内容</p>
+                </dd>
+            </dl>
+            <dl class="row {notempty name='$site_default_home'}none{/notempty}" id="dl_site_showall">
+                <dt class="tit">
+                    <label>显示分站文档</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin"><input id="site_showall1" name="site_showall" value="1" type="radio" {if condition="!empty($row.site_showall)"} checked="checked"{/if}>开启</label>
+                    &nbsp;
+                    <label class="curpoin"><input id="site_showall0" name="site_showall" value="0" type="radio" {if condition="empty($row.site_showall)"} checked="checked"{/if}>关闭</label>
+                    <p class="notic">默认不选区域时，主站是否显示分站的文档</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit" style="width: auto">
+                    <label><b>分站统一设置</b></label>
+                </dt>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>分站SEO</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin"><input id="site_seoset1" name="site_seoset" value="1" type="radio" {if condition="!empty($row.site_seoset)"} checked="checked"{/if}>开启</label>
+                    &nbsp;
+                    <label class="curpoin"><input id="site_seoset0" name="site_seoset" value="0" type="radio" {if condition="empty($row.site_seoset)"} checked="checked"{/if}>关闭</label>
+                    <p class="notic">如需实现主站和分站首页SEO信息不一致，则需填写以下信息</p>
+                </dd>
+            </dl>
+            <div class="{if empty($row.site_seoset)} none {/if}" id="div_seoset_html">
+                <dl class="row">
+                    <dt class="tit">
+                        <label for="seo_title">分站SEO标题</label>
+                    </dt>
+                    <dd class="opt">
+                        <input type="text" value="{$row.site_seo_title|default=''}" name="site_seo_title" id="site_seo_title" class="input-txt" style="width: 436px!important;">
+                        <p class="notic">可以在里面添加变量<br/>{region}表示当前分站区域<br/>{regionAll}表示当前分站完整区域<br/>{parent}表示当前分站上级区域<br/>{top}表示当前分站顶级区域</p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">
+                        <label>分站SEO关键词</label>
+                    </dt>
+                    <dd class="opt">          
+                        <textarea rows="5" cols="60" id="site_seo_keywords" name="site_seo_keywords" style="height:40px;">{$row.site_seo_keywords|default=''}</textarea>
+                        <span class="err"></span>
+                        <p class="notic">可以在里面添加变量<br/>{region}表示当前分站区域<br/>{regionAll}表示当前分站完整区域<br/>{parent}表示当前分站上级区域<br/>{top}表示当前分站顶级区域</p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">
+                        <label>分站SEO描述</label>
+                    </dt>
+                    <dd class="opt">          
+                        <textarea rows="5" cols="60" id="site_seo_description" name="site_seo_description" style="height:80px;">{$row.site_seo_description|default=''}</textarea>
+                        <span class="err"></span>
+                        <p class="notic">可以在里面添加变量<br/>{region}表示当前分站区域<br/>{regionAll}表示当前分站完整区域<br/>{parent}表示当前分站上级区域<br/>{top}表示当前分站顶级区域</p>
+                    </dd>
+                </dl>
+            </div>
+            <div class="bot">
+                <a href="JavaScript:void(0);" onclick="checkForm();" class="ncap-btn-big ncap-btn-green" id="submitBtn">确认提交</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    var parentObj = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+
+    $(function () {
+        $('input[name=site_seoset]').click(function(){
+            var site_seoset = $(this).val();
+            if (0 == site_seoset) {
+                $('#div_seoset_html').hide();
+            } else {
+                $('#div_seoset_html').show();
+            }
+        });
+
+        $('select[name=site_default_home]').change(function(){
+            var site_default_home = $(this).val();
+            if (0 == site_default_home) {
+                $('#dl_site_showall').show();
+            } else {
+                $('#dl_site_showall').hide();
+            }
+        });
+    });
+
+    // 判断输入框是否为空
+    function checkForm(){
+        layer_loading('正在处理');
+        $.ajax({
+            type : 'post',
+            url : "{:url('Citysite/conf', ['_ajax'=>1])}",
+            data : $('#post_form').serialize(),
+            dataType : 'json',
+            success : function(res){
+                layer.closeAll();
+                if(res.code == 1){
+                    var _parent = parent;
+                    _parent.layer.close(parentObj);
+                    _parent.layer.msg(res.msg, {icon: 1, shade: layer_shade, time: 1000}, function(){
+                        _parent.window.location.reload();
+                    });
+                }else{
+                    showErrorMsg(res.msg);
+                }
+            },
+            error: function(e){
+                layer.closeAll();
+                showErrorAlert(e.responseText);
+            }
+        });
+    }
+</script>
+{include file="public/footer" /}

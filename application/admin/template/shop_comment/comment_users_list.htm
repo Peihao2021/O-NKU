@@ -1,0 +1,197 @@
+{include file="public/layout" /}
+<style type="text/css">
+    .upload-body .upload-footer {
+        position: fixed;
+        text-align: center;
+        padding: 10px 0;
+        width: 100%;
+        left: 0;
+        bottom: 0;
+        background-color: #ffff;
+        z-index: 999;
+        border-top: 1px solid #eee;
+    }
+</style>
+<body class="bodystyle" style="overflow: auto; cursor: default; -moz-user-select: inherit;background-color:#F4F4F4;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div id="geduan_div" class="h15"></div>
+<div id="page_div" class="page min-hg-c mb-20 upload-body" style="min-width: auto; box-shadow: none;">
+    <div class="flexigrid member_lt">
+
+        <div class="mDiv" style=" padding-top: 0; ">
+            <div class="ftitle_nav">
+                {volist name='$levelCountList' id='vo'}
+                <div class="fbutton">
+                    <a href="{:url('Member/users_index', ['level'=>$vo.level_id])}">
+                        <div class="{eq name='$Request.param.level' value='$vo.level_id'}cur{/eq}" title="{$vo.level_name}〔{$vo.level_count}〕">
+                            {$vo.level_name}<span>{$vo.level_count}</span>
+                        </div>
+                    </a>
+                </div>
+                {/volist}
+            </div>
+            <form class="navbar-form form-inline" id="searchForm" action="{:url('ShopComment/comment_goods_list')}" method="get" onsubmit="layer_loading('正在处理');">
+                {$searchform.hidden|default=''}
+                <div class="sDiv">
+                    <div class="sDiv2">
+                        <input type="text" size="30" name="keywords" value="{$Request.param.keywords}" class="qsbox" placeholder="商品搜索...">
+                        <input type="submit" class="btn" value="搜索">
+                        <i class="iconfont e-sousuo"></i>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th abbr="article_title" axis="col3" class="w70">
+                            <div class="tc sort_style"><a href="{:getArchivesSortUrl('id')}">ID&nbsp;<i {eq name='$Request.param.orderby' value='id'}{eq name='$Request.param.orderway' value='asc'}class="asc"{else /}class="desc"{/eq}{/eq}></i></a></div>
+                        </th>
+                        <th align="center" abbr="article_title" axis="col3" class="w50">
+                            <div class="tc">头像</div>
+                        </th>
+                        <th align="left" abbr="article_title" axis="col3" class="">
+                            <div class="ml15">昵称/绑定</div>
+                        </th>
+                        <th align="left" abbr="" axis="col3" class="w80">
+                            <div class="tc sort_style">会员等级</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w160">
+                            <div class="tc sort_style">注册时间</div>
+                        </th>
+                        <th axis="col1" class="w160">
+                            <div class="tc">操作</div>
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table style="width: 100%">
+                    <tbody>
+                    {empty name="list"}
+                    <tr>
+                        <div class="no_row">
+                            <div class="no_pic"><img src="__PUBLIC__/static/admin/images/null-data.png"></div>
+                        </div>
+                    </tr>
+                    {else/}
+                    {foreach name="list" item="vo" key="k" }
+                    <tr>
+                        <td class="sort">
+                            <div class="w70 tc">{$vo.users_id}</div>
+                        </td>
+                        <td class="sign">
+                            <div class="w50 tc">
+                                <img id="img_head_pic" style="height: 40px;margin-right: 5px;float: unset;margin: auto;" src="{$vo.head_pic|get_head_pic=###,false,$vo['sex']}" />
+                            </div>
+                        </td>
+                        <td style="width: 100%">
+                            <div class="text-l10">
+                                <p style="margin-top: -5px;">
+                                    {eq name="'Member@users_edit'|is_check_access" value="1"}
+                                    <a href="{:url('Member/syn_users_login', ['users_id'=>$vo.users_id, 'mca'=>'user/Users/index'])}" target="_blank">{$vo.nickname|default=$vo.username}</a>
+                                    {else /}
+                                    {$vo.nickname|default=$vo.username}
+                                    {/eq}
+                                </p>
+
+                                <p class="binding">
+                                    {eq name='$vo.is_mobile' value='1'}
+                                    <img src="__STATIC__/admin/images/r_phone.png">
+                                    {/eq}
+                                    {if condition="in_array($vo['thirdparty'], [5]) || !empty($wxlogin[$vo['users_id']]['openid'])"}
+                                    <img src="__STATIC__/admin/images/r_weixin.png">
+                                    {/if}
+                                    {if condition="in_array($vo['thirdparty'], [6])"}
+                                    <img src="__STATIC__/admin/images/r_wechat.png">
+                                    {/if}
+                                    {if condition="!empty($qqlogin[$vo['users_id']])"}
+                                    <img src="__STATIC__/admin/images/r_qq.png">
+                                    {/if}
+                                    {if condition="in_array($vo['thirdparty'], [4])"}
+                                    <img src="__STATIC__/admin/images/r_wxapp.png">
+                                    {/if}
+                                    {if condition="!empty($wblogin[$vo['users_id']])"}
+                                    <img src="__STATIC__/admin/images/r_wb.png">
+                                    {/if}
+                                </p>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="w100 tc">
+                                <p>{$vo.level_name}</p>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="w150 tc">
+                                <p>{$vo.reg_time|MyDate='Y-m-d H:i:s',###}</p>
+                            </div>
+                        </td>
+                        <td class="operation">
+                            <div class="w160 tc">
+                                <a id="xz_{$vo.users_id}" href="JavaScript:void(0);" data-id="{$vo.users_id}" onclick="parent.usersSelect(this);" class="btn" style="display: none;">选择</a>
+                                <a id='yx_{$vo.users_id}' href="JavaScript:void(0);" data-id="{$vo.users_id}" onclick="parent.usersSelect(this);" class="btn" style="display: none; color: red;">已选</a>
+                                <script type="text/javascript">
+                                    var list_users_id = '{$vo.users_id}';
+                                    var list_index = $.inArray(parseInt(list_users_id), parent.usersID);
+                                    if (list_index >= 0) {
+                                        $('#yx_' + list_users_id).show();
+                                    } else {
+                                        $('#xz_' + list_users_id).show();
+                                    }
+                                </script>
+                            </div>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    {/empty}
+                    </tbody>
+                </table>
+            </div>
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+        <div class="footer-oper" style="border-bottom: 30px solid #f7f7f7;"> 
+            <div class="nav-dropup"></div> 
+            {include file="public/page" /}  
+        </div>
+    </div>
+    <div class="upload-footer">
+        <button type="button" class="layui-btn layui-btn-primary" onclick="parent.closeUsersSelect(true);">取消</button>
+        <button type="button" class="layui-btn layui-btn-normal" onclick="parent.submitUsersSelect();">确定</button>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function() {
+        try {
+            if (typeof(eval('is_conceal_1649209614')) == "function" && is_conceal_1649209614()) {
+                $(".page").css("margin-left","");
+            } else {
+                $(".page").css("margin-left","115px");
+            }
+
+            var mt20_1649209614 = sessionStorage.getItem("mt20_1649209614");
+            if (mt20_1649209614 == 1){
+                $("#geduan_div").removeClass("h15");
+            } else {
+                $("#geduan_div").addClass("h15");
+            }
+        } catch(e) {}
+
+        // 提示请选择会员
+        var parentAddUsersID = parent.addUsersID;
+        var parentAddUsersMsg = parent.addUsersMsg;
+        if (parseInt(parentAddUsersID) === 0 && parseInt(parentAddUsersMsg) === 1) {
+            layer.msg('请选择会员', {icon: 5, time: 1000});
+            parent.addUsersMsg = 0;
+        }
+    });
+</script>
+
+{include file="public/footer" /}

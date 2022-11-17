@@ -1,0 +1,294 @@
+{include file="public/layout" /}
+<body class="bodystyle" style="overflow-y: scroll;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    {include file="system/bar" /}
+    <form method="post" id="handlepost" action="{:U('System/web2')}" enctype="multipart/form-data" name="form1">
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit">系统模式</dt>
+                <dd class="opt">
+                    <label class="curpoin"><input type="radio" name="web_cmsmode" value="2" {if condition='!isset($config.web_cmsmode) || $config.web_cmsmode eq 2'}checked="checked"{/if}>开发</label>
+                    &nbsp;
+                    <label class="curpoin"><input type="radio" name="web_cmsmode" value="1" {if condition='isset($config.web_cmsmode) && $config.web_cmsmode eq 1'}checked="checked"{/if}>运营</label>
+                    <br/>
+                    <p class="notic2">开发模式：方便修改模板，及时预览前台效果，没缓存，一改便生效。<br/>运营模式：提高前台响应速度，利于收录；改模板及后台发布内容需执行【<a href="{:U('System/clear_cache')}">更新缓存</a>】后才能在前台展示。</p>
+                </dd>
+            </dl>
+            {eq name="upgrade" value="0"}
+            <dl class="row">
+                <dt class="tit">
+                    <label for="site_url">升级提醒</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin" title="第一时间收到系统更新并弹窗提醒"><input type="radio" name="web_show_popup_upgrade" value="1" {if condition='!isset($config.web_show_popup_upgrade) || $config.web_show_popup_upgrade eq 1'}checked="checked"{/if}>开启提示</label>
+                    &nbsp;
+                    <label class="curpoin" title="仅收到系统更新提醒，静默不弹窗"><input type="radio" name="web_show_popup_upgrade" value="-1" {if condition='isset($config.web_show_popup_upgrade) && $config.web_show_popup_upgrade eq -1'}checked="checked"{/if}>静默模式</label>
+                    &nbsp;
+                    <label class="curpoin" title="不再收到系统更新提醒"><input type="radio" name="web_show_popup_upgrade" value="2" {if condition='isset($config.web_show_popup_upgrade) && $config.web_show_popup_upgrade eq 2'}checked="checked"{/if}>完全关闭</label>
+                    &nbsp;
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            {/eq}
+            <dl class="row">
+                <dt class="tit">
+                    <label for="web_mobile_domain_open">手机站域名</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin"><input type="radio" name="web_mobile_domain_open" value="1" {if condition='isset($config.web_mobile_domain_open) && $config.web_mobile_domain_open eq 1'}checked="checked"{/if}>开启</label>
+                    &nbsp;
+                    <label class="curpoin"><input type="radio" name="web_mobile_domain_open" value="0" {if condition='empty($config.web_mobile_domain_open)'}checked="checked"{/if}>关闭</label>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <dl class="row {if condition='empty($config.web_mobile_domain_open)'}none{/if}" id="dl_web_mobile_domain">
+                <dt class="tit">
+                    <label for="web_mobile_domain"></label>
+                </dt>
+                <dd class="opt">
+                    {eq name="$is_localhost" value="1"}
+                    <p class="red">本地url路径不支持指定手机站二级域名</p>
+                    {else /}
+                    <input id="web_mobile_domain" name="web_mobile_domain" value="{$config.web_mobile_domain|default=''}" type="text" placeholder="手机域名" onKeyUp="this.value=this.value.replace(/[^0-9a-z]/g,'');" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^0-9a-z]/g,''));" style="width: 60px;" />.{$Request.rootDomain}__ROOT_DIR__
+                    <p class="notic">为了更好的体验效果，IP访问不会自动跳转到手机站域名访问。</p>
+                    <p class="{empty name='$config.web_mobile_domain'}none{/empty} red" id="p_web_mobile_domain">先做好子域名 <span id="span_web_mobile_domain">{$config.web_mobile_domain|default=''}</span>.{$Request.rootDomain} 的解析及绑定 ，已处理请忽略！ <a href="JavaScript:void(0);" onclick="click_to_eyou_1575506523('https://www.eyoucms.com/plus/view.php?aid=8432','域名解析与绑定')">【操作示例】</a></p>
+                    {/eq}
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="site_url">URL启用https</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin"><input type="radio" name="web_is_https" value="1" {if condition='isset($config.web_is_https) && $config.web_is_https eq 1'}checked="checked"{/if}>开启</label>
+                    &nbsp;
+                    <label class="curpoin"><input type="radio" name="web_is_https" value="0" {if condition='empty($config.web_is_https)'}checked="checked"{/if}>关闭</label>
+                    <p class="notic">开启之后，sitemap.xml地图以及全站URL将带有https头协议</p>
+                    <p class="notic2">开启前，请先在空间正确配置SSL证书。<br/>在能正常访问https://域名的情况下，才开启这个功能，使整站的URL都强制采用https协议访问。</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="switch">回收站</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin"><input type="radio" name="recycle_switch" value="0" {if condition='empty($recycle_switch)'}checked="checked"{/if}>开启</label>
+                    &nbsp;
+                    <label class="curpoin"><input type="radio" name="recycle_switch" value="1" {if condition='$recycle_switch eq 1'}checked="checked"{/if}>关闭</label>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="other_pcwapjs">pc跳转手机端js</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin"><input type="radio" name="other_pcwapjs" value="0" {if condition='empty($other_pcwapjs)'}checked="checked"{/if}>追加</label>
+                    &nbsp;
+                    <label class="curpoin"><input type="radio" name="other_pcwapjs" value="1" {if condition='!empty($other_pcwapjs)'}checked="checked"{/if}>关闭</label>
+                    <p class="notic">追加之后，生成静态模式下，自动在PC端模板头部head标签出现一段PC跳转手机端的JS代码，当在手机端访问PC端URL时，自动跳到相应的手机端URL。</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="web_stypeid_open">文档副栏目</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin"><input type="radio" name="web_stypeid_open" value="1" {if condition='isset($config.web_stypeid_open) && $config.web_stypeid_open eq 1'}checked="checked"{/if}>开启</label>
+                    &nbsp;
+                    <label class="curpoin"><input type="radio" name="web_stypeid_open" value="0" {if condition='empty($config.web_stypeid_open)'}checked="checked"{/if}>关闭</label>
+                    <p class="notic">开启之后，将在发布/编辑文档的页面出现选择副栏目，该功能会过多消耗性能，请悉知。</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="absolute_path_open">启用绝对网址</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin"><input type="radio" name="absolute_path_open" value="1" {if condition='isset($config.absolute_path_open) && $config.absolute_path_open eq 1'}checked="checked"{/if}>开启</label>
+                    &nbsp;
+                    <label class="curpoin"><input type="radio" name="absolute_path_open" value="0" {if condition='empty($config.absolute_path_open)'}checked="checked"{/if}>关闭</label>
+                    <p class="notic">开启此项后附件、图片、栏目链接、文档链接等启用绝对网址</p>
+                </dd>
+            </dl>
+            <!-- 
+            {if condition="$php_servicemeal >= 10"}
+            <dl class="row">
+                <dt class="tit">
+                    <label for="web_citysite_open">多站点</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin"><input type="radio" name="web_citysite_open" value="1" {if condition='isset($config.web_citysite_open) && $config.web_citysite_open eq 1'}checked="checked"{/if}>开启</label>
+                    &nbsp;
+                    <label class="curpoin"><input type="radio" name="web_citysite_open" value="0" {if condition='empty($config.web_citysite_open)'}checked="checked"{/if}>关闭</label>
+                    <p class="notic">开启之后，如果当前URL模式是静态页面，系统自动切换动态URL，多城市目前仅支持动态URL、伪静态这两种模式。</p>
+                </dd>
+            </dl>
+            {/if}
+             -->
+            <dl class="row none">
+                <dt class="tit">
+                    <label for="web_cmspath">系统安装目录</label>
+                </dt>
+                <dd class="opt">
+                    <input id="web_cmspath" name="web_cmspath" value="{$config.web_cmspath|default=''}" class="input-txt" type="text" />
+                    <p class="notic">目录后面不要带 / 反斜杆，一般适用于EyouCms安装在子目录</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="web_tpl_theme">前台模板风格</label>
+                </dt>
+                <dd class="opt">
+                    <select name="web_tpl_theme">
+                        <option value="">默认风格</option>
+                        {volist name='$tpl_theme_list' id='vo'}
+                            {notin name="$vo" value="default,plugins,weapp,pc,mobile"}
+                            <option value="{$vo}" {eq name='$config.web_tpl_theme' value='$vo'}selected{/eq}>{$vo}</option>
+                            {/notin}
+                        {/volist}
+                    </select>
+                    &nbsp;<a href="JavaScript:void(0);" onclick="click_to_eyou_1575506523('https://www.eyoucms.com/plus/view.php?aid=9976','如何防止网站模板文件被仿盗？')" style="font-size: 12px;padding-left: 38px;position:absolute;top: 18px;">查看教程？</a>
+                    <p class="notic">如果是静态URL模式，每次切换请重新生成所有静态页面！</p>
+                </dd>
+            </dl>
+            <div class="bot">
+                <a href="JavaScript:void(0);" class="ncap-btn-big ncap-btn-green" onClick="adsubmit();">确认提交</a>
+            </div>
+        </div>
+    </form>
+</div>
+<input type="hidden" id="show_uiset" value="{$show_uiset|default=''}">
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        
+        // 可视化编辑入口
+        var show_uiset = $('#show_uiset').val();
+        if ('pc+mobile' == show_uiset) { // 显示PC和手机入口
+            $('#Uiset_index', window.parent.document).show();
+            $('#Uiset_pc', window.parent.document).show();
+            $('#Uiset_mobile', window.parent.document).show();
+        } else if ('pc' == show_uiset) { // 显示PC入口
+            $('#Uiset_index', window.parent.document).show();
+            $('#Uiset_pc', window.parent.document).show();
+            $('#Uiset_mobile', window.parent.document).hide();
+        } else if ('mobile' == show_uiset) { // 显示手机入口
+            $('#Uiset_index', window.parent.document).show();
+            $('#Uiset_pc', window.parent.document).hide();
+            $('#Uiset_mobile', window.parent.document).show();
+        } else { // 隐藏PC和手机入口
+            $('#Uiset_index', window.parent.document).hide();
+            $('#Uiset_pc', window.parent.document).hide();
+            $('#Uiset_mobile', window.parent.document).hide();
+        }
+
+        // 升级提醒
+        $('input[name=web_show_popup_upgrade]').click(function(){
+            var value = $(this).val();
+            if(value == 1){
+                layer.alert('第一时间收到系统更新并弹窗提醒', {icon: 6, title: false, closeBtn: false, btn:['确定']});
+            } else if (value == -1) {
+                layer.alert('不弹窗提醒，请及时点击系统更新', {icon: 7, title: false, closeBtn: false, btn:['确定']});
+            } else if (value == 2) {
+                layer.alert('不更新可能有安全隐患，请知悉！', {icon: 5, title: false, closeBtn: false, btn:['确定']});
+            }
+        });
+
+        // 手机域名配置
+        $('input[name=web_mobile_domain_open]').click(function(){
+            if($(this).val() == 1){
+                $('#dl_web_mobile_domain').show();
+            }else{
+                $('#dl_web_mobile_domain').hide();
+            }
+        });
+
+        // 输入手机站域名的事件
+        $('#web_mobile_domain').keyup(function(){
+            var web_mobile_domain = $(this).val();
+            if (web_mobile_domain != '') {
+                $('#p_web_mobile_domain').show();
+                $('#span_web_mobile_domain').html(web_mobile_domain);
+            } else {
+                $('#p_web_mobile_domain').hide();
+            }
+        });
+
+        $('input[name="web_is_https"]').click(function(){
+            if (1 == $(this).val()) {
+                layer.confirm('确认空间已配置SSL证书，否则网站无法访问？', {
+                    shade: layer_shade,
+                    area: ['480px', '190px'],
+                    move: false,
+                    title: '提示',
+                    btnAlign:'r',
+                    closeBtn: 3,
+                    btn: ['确定', '取消'] ,//按钮
+                    success: function () {
+                          $(".layui-layer-content").css('text-align', 'left');
+                      }
+                }, function (index) {
+                    layer.close(index);
+                }, function (index) {
+                    $('label[for=web_is_https1]').removeClass('selected');
+                    $('#web_is_https1').attr('checked','');
+                    $('label[for=web_is_https0]').addClass('selected');
+                    $('#web_is_https0').attr('checked','checked');
+                    layer.close(index);
+                });
+            }
+        });
+
+        // $('input[name="web_citysite_open"]').click(function(){
+        //     if (1 == $(this).val()) {
+        //         $.ajax({
+        //             type : 'get',
+        //             url : "{:url('System/ajax_check_language_open', ['_ajax'=>1])}",
+        //             data : {},
+        //             dataType : 'json',
+        //             success : function(res){
+        //                 if (res.code == 0) {
+        //                     $('label[for=web_citysite_open1]').removeClass('selected');
+        //                     $('#web_citysite_open1').attr('checked','');
+        //                     $('label[for=web_citysite_open0]').addClass('selected');
+        //                     $('#web_citysite_open0').attr('checked','checked');
+        //                     layer.confirm('当前已开启多语言功能，不支持多城市站点！', {
+        //                         shade: layer_shade,
+        //                         area: ['480px', '190px'],
+        //                         move: false,
+        //                         title: '提示',
+        //                         btnAlign:'r',
+        //                         closeBtn: 3,
+        //                         btn: ['确定'] ,//按钮
+        //                         success: function () {
+        //                               $(".layui-layer-content").css('text-align', 'left');
+        //                           }
+        //                     });
+        //                 }
+        //             },
+        //             error: function(e){
+        //                 showErrorAlert(e.responseText);
+        //             }
+        //         });
+        //     }
+        // });
+    });
+
+    function adsubmit(){
+        // 手机域名开关
+        var web_mobile_domain_obj = $('input[name=web_mobile_domain]');
+        if ($('input[name=web_mobile_domain_open]:checked').val() == 1) {
+            if (web_mobile_domain_obj.val() == "{$subDomain|default='www'}") {
+                showErrorMsg('手机站域名配置不能与主站域名一致！');
+                web_mobile_domain_obj.focus();
+                return false;
+            }
+        }
+        layer_loading('正在处理');
+        $('#handlepost').submit();
+    }
+</script>
+
+{include file="public/footer" /}

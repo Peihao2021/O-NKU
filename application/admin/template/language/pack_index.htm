@@ -1,0 +1,225 @@
+{include file="public/layout" /}
+<script type="text/javascript" src="__SKIN__/js/clipboard.min.js"></script>
+<body class="bodystyle" style="cursor: default; -moz-user-select: inherit;min-width:auto;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page" style="min-width:auto;">
+    {include file="language/bar" /}
+    <div class="flexigrid">
+        <div class="mDiv">
+            <div class="ftitle">
+                <h3>模板语言变量</h3>
+                <h5>(共{$pageObj->totalRows}条数据)</h5>
+            </div>
+            <form class="navbar-form form-inline" action="{:url('Language/pack_index')}" method="get" onsubmit="layer_loading('正在处理');">
+                {$searchform.hidden|default=''}
+                <div class="sDiv">
+                    {eq name="'Language@pack_add'|is_check_access" value="1"}
+                    <div class="fbutton" style="float: none;">
+                          <a href="javascript:void(0);" data-href="{:url('Language/pack_add')}" onclick="openFullframe(this, '新增语言包变量', '600px', '420px');">
+                              <div class="add">
+                                  <span><i class="layui-icon layui-icon-addition"></i>新增变量</span>
+                              </div>
+                          </a>
+                    </div>
+                    {/eq}
+                    {eq name="'Language@pack_syn'|is_check_access" value="1"}
+                    <div class="fbutton check_pack_syn" style="float: none; display: none;">
+                          <a href="{:url("Language/pack_syn")}">
+                              <div class="add">
+                                  <span><i class="fa fa-download"></i>同步官方语言包</span>
+                              </div>
+                          </a>
+                    </div>
+                    {/eq}
+                    <div class="sDiv2">
+                        <input type="text" size="30" name="keywords" value="{$Request.param.keywords}" class="qsbox" placeholder="变量值搜索...">
+                        <input type="submit" class="btn" value="搜索">
+                        <i class="iconfont e-sousuo"></i>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th class="sign w40" axis="col0">
+                            <div class="tc">选择</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w200">
+                            <div class="tl text-l10">变量名</div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="">
+                            <div class="tl text-l10">变量值</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w100">
+                            <div class="tc">更新时间</div>
+                        </th>
+                        <th axis="col1" class="w160">
+                            <div class="tc">操作</div>
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table style="width: 100%;">
+                    <tbody>
+                    {empty name="list"}
+                        <tr>
+                            <td class="no-data" align="center" axis="col0" colspan="50">
+                                <div class="no_row">
+                                    <div class="no_pic"><img src="__SKIN__/images/null-data.png"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    {else/}
+                        {foreach name="list" item="vo" key="k" }
+                        <tr>
+                            <td class="sign">
+                                <div class="tc w40">
+                                    {neq name='$vo.is_syn' value='1'}
+                                    <input type="checkbox" autocomplete="off" name="ids[]" value="{$vo.id}">
+                                    {/neq}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w200 tl text-l10">
+                                    <a href="{:url('Language/pack_edit',array('id'=>$vo['id']))}">{$vo.name}</a>
+                                </div>
+                            </td>
+                            <td class="" style="width: 100%;">
+                                <div class="tl text-l10">
+                                    {$vo.value|htmlentities=###}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="w100 tc">
+                                    {$vo.update_time|date='Y-m-d',###}
+                                </div>
+                            </td>
+                            <td class="operation">
+                                <div class="w160 tc">
+                                    {eq name="'Language@pack_edit'|is_check_access" value="1"}
+                                    <a href="javascript:void(0);" data-href="{:url('Language/pack_edit',array('id'=>$vo['id']))}" onclick="openFullframe(this, '编辑模板语言变量', '600px', '420px');" class="btn blue">编辑</a>
+                                    <i></i>
+                                    {/eq}
+                                    {eq name="'Language@pack_del'|is_check_access" value="1"}
+                                        {neq name='$vo.is_syn' value='1'}
+                                        <a class="btn red"  href="javascript:void(0);" data-url="{:url('Language/pack_del')}" data-id="{$vo.id}" onClick="delfun(this);">删除</a>
+                                        <i></i>
+                                        {/neq}
+                                    {/eq}
+                                    <a href="javascript:void(0);" onclick="showtext('{$vo['name']}');" class="btn blue {$vo['name']}" data-clipboard-text="{{php} echo 'eyou:lang name=\'';{/php}{$vo['name']}{php} echo '\' /';{/php}}">复制标签</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {/foreach}
+                    {/empty}
+                    </tbody>
+                </table>
+            </div>
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+        <div class="tDiv">
+            <div class="tDiv2">
+                <div class="fbutton checkboxall">
+                    <input type="checkbox" autocomplete="off" onclick="javascript:$('input[name*=ids]').prop('checked',this.checked);">
+                </div>
+                {eq name="'Language@pack_del'|is_check_access" value="1"}
+                <div class="fbutton">
+                    <a onclick="batch_del(this, 'ids');" data-url="{:url('Language/pack_del')}">
+                        <div class="add" title="批量删除">
+                            <span>批量删除</span>
+                        </div>
+                    </a>
+                </div>
+                {/eq}
+                {eq name="'Language@pack_add'|is_check_access" value="1"}
+                <div class="fbutton">
+                    <a href="javascript:void(0);" data-href="{:url('Language/pack_add')}" onclick="openFullframe(this, '新增语言包变量', '600px', '420px');">
+                        <div class="add" title="新增变量">
+                            <span class="red">新增变量</span>
+                        </div>
+                    </a>
+                </div>
+                {/eq}
+                {eq name="'Language@pack_batch_add'|is_check_access" value="1"}
+                <div class="fbutton">
+                    <a href="javascript:void(0);" data-href="{:url('Language/pack_batch_add')}" onclick="openFullframe(this, '批量新增语言包变量', '600px', '550px');">
+                        <div class="add" title="批量新增变量">
+                            <span class="red">批量新增变量</span>
+                        </div>
+                    </a>
+                </div>
+                {/eq}
+            </div>
+            <div style="clear:both"></div>
+        </div>
+        <!--分页位置-->
+        {$pageStr}
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        // 表格行点击选中切换
+        $('#flexigrid > table>tbody >tr').click(function(){
+            $(this).toggleClass('trSelected');
+        });
+
+        // 点击刷新数据
+        $('.fa-refresh').click(function(){
+            location.href = location.href;
+        });
+    });
+
+    // 复制标签
+    function showtext(classname){
+        var clipboard1 = new Clipboard("."+classname);clipboard1.on("success", function(e) {layer.msg("复制成功");});clipboard1.on("error", function(e) {layer.msg("复制失败！请手动复制", {icon:5});}); 
+    }
+  
+    function delfun(obj){
+      var title = $(obj).attr('data-typename');
+      layer.confirm('<font color="#ff0000">将同步删除全部语言的该变量</font>，确认删除？', {
+          shade: layer_shade,
+          area: ['480px', '190px'],
+          move: false,
+          title: '提示',
+          btnAlign:'r',
+          closeBtn: 3,
+          btn: ['确定', '取消'] ,//按钮
+          success: function () {
+                $(".layui-layer-content").css('text-align', 'left');
+            }
+        }, function(){
+          layer_loading('正在处理');
+        // 确定
+          $.ajax({
+            type : 'post',
+            url : $(obj).attr('data-url'),
+            data : {del_id:$(obj).attr('data-id'), _ajax:1},
+            dataType : 'json',
+            success : function(data){
+              layer.closeAll();
+              if(data.code == 1){
+                layer.msg(data.msg, {icon: 1});
+                window.location.reload();
+              }else{
+                layer.alert(data.msg, {icon: 2, title:false});
+              }
+            }
+          })
+        }, function(index){
+          layer.close(index);
+        }
+      );
+      return false;
+    }  
+</script>
+
+{include file="public/footer" /}

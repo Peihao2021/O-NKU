@@ -1,0 +1,969 @@
+{include file="public/layout" /}
+<body class="bodystyle">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page atta">
+    {include file="seo/bar" /}
+    <form method="post" id="handlepost" action="{:url('Seo/handle')}" enctype="multipart/form-data" name="form1">
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit">
+                    <label for="seo_pseudo">URL模式</label>
+                </dt>
+                <dd class="opt">
+                    {volist name="seo_pseudo_list" id="vo"}
+                        <label class="curpoin">
+                            <input type="radio" name="seo_pseudo" value="{$key}" {if condition='isset($config.seo_pseudo) && $config.seo_pseudo eq $key'}checked="checked"{/if} {if condition="!empty($default_lang) && $default_lang != 'cn' && $key == 2"}disabled{/if}/>{$vo}&nbsp;
+                        </label>
+                    {/volist}
+                    {if condition="!empty($default_lang) && $default_lang != 'cn'"}
+                        <p class="notic">前台默认语言不是中文时，不允许使用静态模式！</p>
+                    {/if}
+                    <!-- &nbsp;&nbsp;<a id="a_seo_build" {if condition="empty($config['seo_pseudo']) || 2 != $config['seo_pseudo']"}style="display: none;"{/if} href="javascript:void(0);" data-url="{:url('Seo/build')}" onclick="seo_build(this);">[前往生成静态]</a> -->
+                    <input type="hidden" id="seo_pseudo_old" value="{$config.seo_pseudo|default='1'}"/>
+                    <input type="hidden" name="seo_html_arcdir_limit" value="{$seo_html_arcdir_limit}"/>
+                    <input type="hidden" id="seo_inlet" value="{$config.seo_inlet}"/>
+                    <input type="hidden" id="init_html" value="{$init_html|default='1'}"/>
+                </dd>
+            </dl>
+            <dl class="row {if condition='empty($config.seo_pseudo) || 1 != $config.seo_pseudo || (1 == $config.seo_pseudo && 1 == $config.seo_dynamic_format)'}none{/if}" id="dl_seo_dynamic_format">
+                <dt class="tit">
+                    <label>动态格式</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin"><input type="radio" name="seo_dynamic_format" value="1" {if condition="!isset($config.seo_dynamic_format) OR $config.seo_dynamic_format eq 1"}checked="checked"{/if}>完全兼容（<a href="javascript:void(0);" onclick="view_exp('view_1_1');">查看例子</a><span id="view_1_1" class="none">：__SITE_URL____ROOT_DIR__/index.php?m=home&amp;c=Lists&amp;a=index&amp;tid=1</span>）</label>&nbsp;
+                    {if condition="isset($config.seo_dynamic_format) AND $config.seo_dynamic_format eq 2"}
+                    <br/>
+                    <label class="curpoin"><input type="radio" name="seo_dynamic_format" value="2" checked="checked">部分兼容&nbsp;<font color="red">[部分空间不支持]</font>（<a href="javascript:void(0);" onclick="view_exp('view_1_2');">查看例子</a><span id="view_1_2" class="none">：__SITE_URL____ROOT_DIR__/home/Lists/index.html?tid=1</span>）</label>&nbsp;
+                    {/if}
+                    <span class="err"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <div class="row {if condition='isset($config.seo_pseudo) && $config.seo_pseudo != 2'}none{/if}" id="dl_seo_html_format">
+                {notempty name="$seo_pseudo_lang"}
+                <dl class="row">
+                    <dt class="tit">
+                        <label for="seo_pseudo_lang">多语言URL</label>
+                    </dt>
+                     <dd class="opt">
+                        <label class="curpoin"><input type="radio" name="seo_pseudo_lang" value="1" {if condition='!isset($seo_pseudo_lang) OR $seo_pseudo_lang neq 3'}checked="checked"{/if}/>动态URL</label>&nbsp;
+                        <label class="curpoin"><input type="radio" name="seo_pseudo_lang" value="3" {if condition="isset($seo_pseudo_lang) AND $seo_pseudo_lang eq 3"}checked="checked"{/if}>伪静态化</label>&nbsp;
+                        <span class="err"></span>
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+                {/notempty}
+                <dl class="row">
+                    <dt class="tit">
+                        <label for="seo_html_arcdir">页面保存目录</label>
+                    </dt>
+                    <dd class="opt">
+                        <input id="seo_html_arcdir" name="seo_html_arcdir" value="{$config.seo_html_arcdir|default=''}" placeholder="留空默认根目录" type="text" />
+                        （如：html）
+                        <p class="notic">填写需要生成静态页面的文件夹名称，不能包含特殊字符，不能和根目录系统文件夹重名</p>
+                        <p class="{empty name='$seo_html_arcdir_1'}none{/empty}" style="color: red;" id="tips_seo_html_arcdir_1">页面将保存在 __SITE_URL____ROOT_DIR__<span id="tips_seo_html_arcdir_2">{$seo_html_arcdir_1|default=''}</span>/</p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">
+                        <label>栏目页面名称</label>
+                    </dt>
+                    <dd class="opt">
+                        <label class="curpoin"><input type="radio" name="seo_html_listname" value="1" {if condition="isset($config.seo_html_listname) && $config.seo_html_listname eq 1"}checked="checked"{/if}>{notempty name='$root_dir'}子目录名称/{/notempty}顶级目录名称/lists_ID.html（<a href="javascript:void(0);" onclick="view_exp('lists_2_1');">查看例子</a><span id="lists_2_1" class="none">：__SITE_URL____ROOT_DIR__<span id="exp_seo_html_arcdir">{$seo_html_arcdir_1}</span>/news/lists_1.html</span>）</label>&nbsp;
+                        <br/>
+                        <label class="curpoin"><input type="radio" name="seo_html_listname" value="2" {if condition="!isset($config.seo_html_listname) || $config.seo_html_listname neq 1"}checked="checked"{/if}>{notempty name='$root_dir'}子目录名称/{/notempty}父级目录名称/子目录名称/（<a href="javascript:void(0);" onclick="view_exp('lists_2_2');">查看例子</a><span id="lists_2_2" class="none">：__SITE_URL____ROOT_DIR__<span id="exp_seo_html_arcdir">{$seo_html_arcdir_1}</span>/news/lol/</span>）</label>&nbsp;
+                        <br/>
+                        <label class="curpoin"><input type="radio" name="seo_html_listname" value="3" {if condition="isset($config.seo_html_listname) && $config.seo_html_listname eq 3"}checked="checked"{/if}>{notempty name='$root_dir'}子目录名称/{/notempty}子目录名称/（<a href="javascript:void(0);" onclick="view_exp('lists_2_3');">查看例子</a><span id="lists_2_3" class="none">：__SITE_URL____ROOT_DIR__<span id="exp_seo_html_arcdir">{$seo_html_arcdir_1}</span>/lol/</span>）</label>&nbsp;
+                        <br/>
+                        <label class="curpoin"><input type="radio" name="seo_html_listname" value="4" {if condition="isset($config.seo_html_listname) && $config.seo_html_listname eq 4"}checked="checked"{/if}>自定义（<a href="javascript:void(0);" onclick="view_exp('lists_2_4');">点击查看</a><span id="lists_2_4" class="none">：在【栏目管理】新增/编辑栏目可以自定义文件保存目录和列表命名规则</span>）</label>&nbsp;
+                        <span class="err"></span>
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">
+                        <label>文档页面名称</label>
+                    </dt>
+                    <dd class="opt">
+                        <label class="curpoin"><input type="radio" name="seo_html_pagename" value="1" {if condition="isset($config.seo_html_pagename) && $config.seo_html_pagename eq 1"}checked="checked"{/if}>{notempty name='$root_dir'}子目录名称/{/notempty}顶级目录名称/ID.html（<a href="javascript:void(0);" onclick="view_exp('view_2_1');">查看例子</a><span id="view_2_1" class="none">：__SITE_URL____ROOT_DIR__<span id="exp_seo_html_arcdir">{$seo_html_arcdir_1}</span>/news/10.html</span>）</label>&nbsp;
+                        <br/>
+                        <label class="curpoin"><input type="radio" name="seo_html_pagename" value="2" {if condition="!isset($config.seo_html_pagename) || $config.seo_html_pagename neq 1"}checked="checked"{/if}>{notempty name='$root_dir'}子目录名称/{/notempty}父级目录名称/子目录名称/ID.html（<a href="javascript:void(0);" onclick="view_exp('view_2_2');">查看例子</a><span id="view_2_2" class="none">：__SITE_URL____ROOT_DIR__<span id="exp_seo_html_arcdir">{$seo_html_arcdir_1}</span>/news/lol/20.html</span>）</label>&nbsp;
+                        <br/>
+                        <label class="curpoin"><input type="radio" name="seo_html_pagename" value="3" {if condition="isset($config.seo_html_pagename) && $config.seo_html_pagename eq 3"}checked="checked"{/if}>{notempty name='$root_dir'}子目录名称/{/notempty}子目录名称/ID.html（<a href="javascript:void(0);" onclick="view_exp('view_2_3');">查看例子</a><span id="view_2_3" class="none">：__SITE_URL____ROOT_DIR__<span id="exp_seo_html_arcdir">{$seo_html_arcdir_1}</span>/lol/20.html</span>）</label>&nbsp;
+                        <br/>
+                        <label class="curpoin"><input type="radio" name="seo_html_pagename" value="4" {if condition="isset($config.seo_html_pagename) && $config.seo_html_pagename eq 4"}checked="checked"{/if}>自定义（<a href="javascript:void(0);" onclick="view_exp('view_2_4');">点击查看</a><span id="view_2_4" class="none">：在【栏目管理】新增/编辑栏目可以自定义文件保存目录和文档命名规则</span>）</label>&nbsp;
+                        <span class="err"></span>
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+            </div>
+            <dl class="row {if condition='isset($config.seo_pseudo) && $config.seo_pseudo != 3'}none{/if}" id="dl_seo_rewrite_format">
+                <dt class="tit">
+                    <label>URL格式</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin">
+                        <input type="radio" name="seo_rewrite_format" {if condition="!isset($config.seo_rewrite_format) OR $config.seo_rewrite_format eq 1"} value="1" checked="checked" {else if condition="isset($config.seo_rewrite_format) AND $config.seo_rewrite_format eq 3" /} value="3" checked="checked" {/if}>目录名称（<a href="javascript:void(0);" onclick="view_exp('view_3_1');">示例</a><span id="view_3_1" class="none">：__SITE_URL____ROOT_DIR__/news/</span>）
+                    </label>&nbsp;
+                    <br/>
+                    <label class="curpoin"><input type="radio" name="seo_rewrite_format" value="2" {if condition="isset($config.seo_rewrite_format) AND $config.seo_rewrite_format eq 2"}checked="checked"{/if}>模型标识（<a href="javascript:void(0);" onclick="view_exp('view_3_2');">示例</a><span id="view_3_2" class="none">：__SITE_URL____ROOT_DIR__/article/news.html</span>）</label>&nbsp;
+                    <span class="err"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <dl class="row {if condition='!isset($config.seo_pseudo) OR $config.seo_pseudo != 3 OR $config.seo_rewrite_format == 2'}none{/if}" id="dl_seo_rewrite_view_format">
+                <dt class="tit">
+                    <label>文档隶属URL</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin"><input type="radio" name="seo_rewrite_view_format" value="1" {if condition="(!isset($config.seo_rewrite_format) OR $config.seo_rewrite_format eq 1) OR (!isset($config.seo_rewrite_view_format) OR $config.seo_rewrite_view_format == 1)"}checked="checked"{/if}>父目录</label>&nbsp;
+                    <label class="curpoin"><input type="radio" name="seo_rewrite_view_format" value="3" {if condition="(isset($config.seo_rewrite_format) AND $config.seo_rewrite_format eq 3) OR $config.seo_rewrite_view_format == 3"}checked="checked"{/if}>当前目录</label>&nbsp;
+                    <span class="err"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>栏目标题格式</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin"><input type="radio" name="seo_liststitle_format" value="3" {if condition="isset($config.seo_liststitle_format) AND $config.seo_liststitle_format eq 3"}checked="checked"{/if}>栏目名称</label>&nbsp;
+                    <br/>
+                    <label class="curpoin"><input type="radio" name="seo_liststitle_format" value="1" {if condition="isset($config.seo_liststitle_format) AND $config.seo_liststitle_format eq 1"}checked="checked"{/if}>栏目名称<span class="sp_seo_title_symbol">{if condition="!isset($config['seo_title_symbol'])"}_{else /}{$config.seo_title_symbol|default=''}{/if}</span>网站名称</label>&nbsp;
+                    <br/>
+                    <label class="curpoin"><input type="radio" name="seo_liststitle_format" value="4" {if condition="isset($config.seo_liststitle_format) AND $config.seo_liststitle_format eq 4"}checked="checked"{/if}>栏目名称<span class="sp_seo_title_symbol">{if condition="!isset($config['seo_title_symbol'])"}_{else /}{$config.seo_title_symbol|default=''}{/if}</span>第N页</label>&nbsp;
+                    <br/>
+                    <label class="curpoin"><input type="radio" name="seo_liststitle_format" value="2" {if condition="!isset($config.seo_liststitle_format) OR $config.seo_liststitle_format eq 2"}checked="checked"{/if}>栏目名称<span class="sp_seo_title_symbol">{if condition="!isset($config['seo_title_symbol'])"}_{else /}{$config.seo_title_symbol|default=''}{/if}</span>第N页<span class="sp_seo_title_symbol">{if condition="!isset($config['seo_title_symbol'])"}_{else /}{$config.seo_title_symbol|default=''}{/if}</span>网站名称</label>&nbsp;
+                    <span class="err"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>文档标题格式</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin"><input type="radio" name="seo_viewtitle_format" value="1" {if condition="isset($config.seo_viewtitle_format) AND $config.seo_viewtitle_format eq 1"}checked="checked"{/if}>内容标题</label>&nbsp;
+                    <br/>
+                    <label class="curpoin"><input type="radio" name="seo_viewtitle_format" value="2" {if condition="!isset($config.seo_viewtitle_format) OR $config.seo_viewtitle_format eq 2"}checked="checked"{/if}>内容标题<span class="sp_seo_title_symbol">{if condition="!isset($config['seo_title_symbol'])"}_{else /}{$config.seo_title_symbol|default=''}{/if}</span>网站名称</label>&nbsp;
+                    <br/>
+                    <label class="curpoin"><input type="radio" name="seo_viewtitle_format" value="3" {if condition="isset($config.seo_viewtitle_format) AND $config.seo_viewtitle_format eq 3"}checked="checked"{/if}>内容标题<span class="sp_seo_title_symbol">{if condition="!isset($config['seo_title_symbol'])"}_{else /}{$config.seo_title_symbol|default=''}{/if}</span>栏目名称<span class="sp_seo_title_symbol">{if condition="!isset($config['seo_title_symbol'])"}_{else /}{$config.seo_title_symbol|default=''}{/if}</span>网站名称</label>&nbsp;
+                    <span class="err"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="seo_title_symbol">标题连接符号</label>
+                </dt>
+                <dd class="opt">
+                    <input id="seo_title_symbol" name="seo_title_symbol" {if condition="!isset($config['seo_title_symbol'])"}value="_"{else /}value="{$config.seo_title_symbol|default=''}"{/if} type="text" />
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <!-- <dl class="row {if condition="empty($config['seo_inlet']) OR (1 == $config['seo_inlet'] AND 1 == $config['seo_force_inlet'])"}{else /}none{/if}" id="dl_seo_force_inlet"> -->
+            <dl class="row none" id="dl_seo_force_inlet">
+                <dt class="tit">
+                    <label for="site_url">强制去除index.php</label>
+                </dt>
+                <dd class="opt">
+                    <div class="onoff">
+                        <label for="seo_force_inlet1" class="cb-enable {if condition='isset($config.seo_force_inlet) && $config.seo_force_inlet eq 1'}selected{/if}">开启</label>
+                        <label for="seo_force_inlet0" class="cb-disable {if condition='empty($config.seo_force_inlet)'}selected{/if}">关闭</label>
+                        <input id="seo_force_inlet1" name="seo_force_inlet" value="1" type="radio" {if condition="isset($config.seo_force_inlet) && $config.seo_force_inlet eq 1"} checked="checked"{/if}>
+                        <input id="seo_force_inlet0" name="seo_force_inlet" value="0" type="radio" {if condition="empty($config.seo_force_inlet)"} checked="checked"{/if}>
+                    </div>
+                    <br/>
+                    <p class=""></p>
+                </dd>
+            </dl>
+            <dl class="row {if condition='isset($config.seo_pseudo) && $config.seo_pseudo != 2'}none{/if}" id="dl_seo_uphtml_after">
+                <dt class="tit">
+                    <label>发布文档后</label>
+                </dt>
+                <dd class="opt">
+                    <label class="curpoin"><input type="checkbox" name="seo_uphtml_after_home" value="1" {if condition="!isset($config.seo_uphtml_after_home) OR $config.seo_uphtml_after_home eq 1"}checked="checked"{/if}>更新首页</label>&nbsp;&nbsp;
+                    <label class="curpoin"><input type="checkbox" name="seo_uphtml_after_channel" value="1" {if condition="!isset($config.seo_uphtml_after_channel) OR $config.seo_uphtml_after_channel eq 1"}checked="checked"{/if}>更新相关栏目</label>&nbsp;&nbsp;
+                    <label class="curpoin"><input type="checkbox" name="seo_uphtml_after_pernext" value="1" {if condition="!isset($config.seo_uphtml_after_pernext) OR $config.seo_uphtml_after_pernext eq 1"}checked="checked"{/if}>更新上下篇</label>&nbsp;&nbsp;
+                    <span class="err"></span>
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <div class="bot">
+                <input type="hidden" id="is_change_data" value="0">
+                <input type="hidden" id="seo_html_arcdir_old" value="{$config.seo_html_arcdir|default=''}"/>
+                <input type="hidden" id="seo_html_listname_old" value="{$config.seo_html_listname|default=''}"/>
+                <input type="hidden" id="seo_html_pagename_old" value="{$config.seo_html_pagename|default=''}"/>
+                <input type="hidden" id="seo_liststitle_format_old" value="{$config.seo_liststitle_format|default=''}"/>
+                <input type="hidden" id="seo_viewtitle_format_old" value="{$config.seo_viewtitle_format|default=''}"/>
+                <input type="hidden" id="seo_uphtml_after_home_old" value="{$config.seo_uphtml_after_home|default=''}"/>
+                <input type="hidden" id="seo_uphtml_after_channel_old" value="{$config.seo_uphtml_after_channel|default=''}"/>
+                <input type="hidden" id="seo_uphtml_after_pernext_old" value="{$config.seo_uphtml_after_pernext|default=''}"/>
+                <a href="JavaScript:void(0);" class="ncap-btn-big ncap-btn-green" onclick="adsubmit();">确认提交</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+
+    // 静态模式下，是否改变任意配置
+    function change_html_confdata()
+    {
+        // 是否改变任意一项配置
+        var is_change_data = 0;
+        
+        var seo_pseudo = $('input[name=seo_pseudo]:checked').val();
+        var seo_pseudo_old = $('#seo_pseudo_old').val();
+        if (seo_pseudo == 2 && seo_pseudo_old != seo_pseudo) {
+            is_change_data = 1;
+        } else {
+            is_change_data = 0;
+        }
+
+        if (0 == is_change_data) {
+            var seo_html_arcdir_old = $('#seo_html_arcdir_old').val();
+            var seo_html_arcdir = $('#seo_html_arcdir').val();
+            if (seo_html_arcdir_old != seo_html_arcdir) {
+                is_change_data = 1;
+            } else {
+                is_change_data = 0;
+            }
+        }
+
+        if (0 == is_change_data) {
+            var seo_html_listname_old = $('#seo_html_listname_old').val();
+            var seo_html_listname = $('input[name=seo_html_listname]:checked').val();
+            if (seo_html_listname_old != seo_html_listname) {
+                is_change_data = 1;
+            } else {
+                is_change_data = 0;
+            }
+        }
+
+        if (0 == is_change_data) {
+            var seo_html_pagename_old = $('#seo_html_pagename_old').val();
+            var seo_html_pagename = $('input[name=seo_html_pagename]:checked').val();
+            if (seo_html_pagename_old != seo_html_pagename) {
+                is_change_data = 1;
+            } else {
+                is_change_data = 0;
+            }
+        }
+        
+        if (0 == is_change_data) {
+            var seo_liststitle_format_old = $('#seo_liststitle_format_old').val();
+            var seo_liststitle_format = $('input[name=seo_liststitle_format]:checked').val();
+            if (seo_liststitle_format_old != seo_liststitle_format) {
+                is_change_data = 1;
+            } else {
+                is_change_data = 0;
+            }
+        }
+        
+        if (0 == is_change_data) {
+            var seo_viewtitle_format_old = $('#seo_viewtitle_format_old').val();
+            var seo_viewtitle_format = $('input[name=seo_viewtitle_format]:checked').val();
+            if (seo_viewtitle_format_old != seo_viewtitle_format) {
+                is_change_data = 1;
+            } else {
+                is_change_data = 0;
+            }
+        }
+        
+        if (0 == is_change_data) {
+            var seo_uphtml_after_home_old = $('#seo_uphtml_after_home_old').val();
+            if (0 == seo_uphtml_after_home_old) {
+                seo_uphtml_after_home_old = undefined;
+            }
+            var seo_uphtml_after_home = $('input[name=seo_uphtml_after_home]:checked').val();
+            if (seo_uphtml_after_home_old != seo_uphtml_after_home) {
+                is_change_data = 1;
+            } else {
+                is_change_data = 0;
+            }
+        }
+        
+        if (0 == is_change_data) {
+            var seo_uphtml_after_channel_old = $('#seo_uphtml_after_channel_old').val();
+            if (0 == seo_uphtml_after_channel_old) {
+                seo_uphtml_after_channel_old = undefined;
+            }
+            var seo_uphtml_after_channel = $('input[name=seo_uphtml_after_channel]:checked').val();
+            if (seo_uphtml_after_channel_old != seo_uphtml_after_channel) {
+                is_change_data = 1;
+            } else {
+                is_change_data = 0;
+            }
+        }
+        
+        if (0 == is_change_data) {
+            var seo_uphtml_after_pernext_old = $('#seo_uphtml_after_pernext_old').val();
+            if (0 == seo_uphtml_after_pernext_old) {
+                seo_uphtml_after_pernext_old = undefined;
+            }
+            var seo_uphtml_after_pernext = $('input[name=seo_uphtml_after_pernext]:checked').val();
+            if (seo_uphtml_after_pernext_old != seo_uphtml_after_pernext) {
+                is_change_data = 1;
+            } else {
+                is_change_data = 0;
+            }
+        }
+
+        $('#is_change_data').val(is_change_data);
+    }
+
+    $(function(){
+        // 栏目页面名称
+        $('input[name=seo_html_listname]').click(function(){
+            var seo_html_listname = $(this).val();
+            var seo_html_pagename = $('input[name=seo_html_pagename]:checked').val();
+            if (4 == seo_html_listname && 4 != seo_html_pagename) {
+                layer.alert('文档页面名称也可以自定义哦！', {icon: 6, closeBtn:false, title: false});
+            }
+            // 静态模式下，是否改变任意一项配置
+            change_html_confdata();
+        });
+        // 文档页面名称
+        $('input[name=seo_html_pagename]').click(function(){
+            var seo_html_pagename = $(this).val();
+            var seo_html_listname = $('input[name=seo_html_listname]:checked').val();
+            if (4 == seo_html_pagename && 4 != seo_html_listname) {
+                layer.alert('栏目页面名称也可以自定义哦！', {icon: 6, closeBtn:false, title: false});
+            }
+            // 静态模式下，是否改变任意一项配置
+            change_html_confdata();
+        });
+        // 栏目标题格式
+        $('input[name=seo_liststitle_format]').click(function(){
+            // 静态模式下，是否改变任意一项配置
+            change_html_confdata();
+        });
+        // 文档标题格式
+        $('input[name=seo_viewtitle_format]').click(function(){
+            // 静态模式下，是否改变任意一项配置
+            change_html_confdata();
+        });
+        // 标题连接符号
+        $('#seo_title_symbol').keyup(function(){
+            var seo_title_symbol = $(this).val();
+            $('.sp_seo_title_symbol').html(seo_title_symbol);
+        });
+        // 发布文档后，更新哪些页面
+        $('input[name=seo_uphtml_after_home],input[name=seo_uphtml_after_channel],input[name=seo_uphtml_after_pernext]').click(function(){
+            // 静态模式下，是否改变任意一项配置
+            change_html_confdata();
+        });
+
+        $('input[name=seo_pseudo]').click(function(){
+            var _this = this;
+            $('#dl_seo_dynamic_format').hide();
+            $('#dl_seo_html_format').hide();
+            $('#a_seo_build').hide();
+            $('#dl_seo_uphtml_after').hide();
+            // $('#tab_base_html').attr('style','display:none!important');
+            $('#dl_seo_rewrite_format').hide();
+            $('#seo_right_uphtml').hide();
+            var seo_pseudo = $(_this).val();
+            if (1 == seo_pseudo) {
+                $('#dl_seo_rewrite_view_format').hide();
+                if (1 != $('input[name=seo_dynamic_format]:checked').val()) {
+                    $('#dl_seo_dynamic_format').show();
+                }
+                if (1 != $('#seo_inlet').val()) {
+                    $('#dl_seo_force_inlet').show();
+                } else {
+                    $('#dl_seo_force_inlet').hide();
+                }
+            } else if (2 == seo_pseudo) {
+                $('#dl_seo_force_inlet').hide();
+                $('#dl_seo_rewrite_view_format').hide();
+                msg = "静态模式下注意几点：<br/>1、修改模板记得生成<br/>2、更新后台数据记得生成<br/>3、安装的插件需要更新至最新版本";
+                layer.alert(msg, {icon: 6, closeBtn:false, title: false});
+                $('#dl_seo_html_format').show();
+                $('#a_seo_build').show();
+                $('#dl_seo_uphtml_after').show();
+                // $('#tab_base_html').show();
+                $('#seo_right_uphtml').show();
+            } else {
+                $('#dl_seo_rewrite_format').show();
+                var seo_rewrite_format = $('input[name=seo_rewrite_format]:checked').val();
+                if (seo_rewrite_format == 1 || seo_rewrite_format == 3) {
+                    $('#dl_seo_rewrite_view_format').show();
+                } else {
+                    $('#dl_seo_rewrite_view_format').hide();
+                }
+                
+                if (1 != $('#seo_inlet').val()) {
+                    $('#dl_seo_force_inlet').show();
+                } else {
+                    $('#dl_seo_force_inlet').hide();
+                }
+            }
+
+            // 静态模式下，是否改变任意一项配置
+            change_html_confdata();
+
+            var seo_pseudo_old = $('#seo_pseudo_old').val();
+            if (3 == seo_pseudo) {
+                layer_loading('正在检测');
+                $.ajax({
+                    url: "{:url('Seo/ajax_checkHtmlDirpath')}",
+                    type: "POST",
+                    dataType: "json",
+                    data: {seo_pseudo_new:seo_pseudo, _ajax:1},
+                    // async: true,
+                    success: function(res){
+                        layer.closeAll();
+                        if (res.code == 0) {
+                            layer.msg(res.msg, {icon: 5, time: 1500});
+                        } else {
+                            if (res.data.msg != '') {
+                                $('input[name=seo_pseudo]').each(function(i,o){
+                                    if($(o).val() == seo_pseudo_old){
+                                        $(o).attr('checked',true);
+                                    } else {
+                                        $(o).attr('checked',false);
+                                    }
+                                })
+                                $('#dl_seo_html_format').show();
+                                $('#a_seo_build').show();
+                                $('#dl_seo_uphtml_after').show();
+                                $('#seo_right_uphtml').show();
+                                // $('#tab_base_html').show();
+                                var seo_pseudo = $(_this).val();
+                                //询问框
+                                var height = res.data.height + 116;
+                                if (350 <= height) height = 350;
+                                var intro = '<style type="text/css">.layui-layer-content{height:270px!important;text-align:left!important;}</style>';
+                                intro += res.data.msg;
+                                var confirm1 = layer.confirm(intro, {
+                                        title: false
+                                        ,area: ['320px', height+'px']
+                                        ,btn: ['手工删除','自动删除'] //按钮
+
+                                    }, function(){
+                                        layer.close(confirm1);
+
+                                    }, function(){
+                                        layer_loading('正在处理');
+                                        $.ajax({
+                                            url: "{:url('Seo/ajax_delHtmlDirpath')}",
+                                            type: "POST",
+                                            dataType: "json",
+                                            data: {_ajax:1},
+                                            success: function(res){
+                                                layer.closeAll();
+                                                if (1 == res.code) {
+                                                    $('input[name=seo_pseudo]').each(function(i,o){
+                                                        if($(o).val() == seo_pseudo){
+                                                            $(o).attr('checked',true);
+                                                        } else {
+                                                            $(o).attr('checked',false);
+                                                        }
+                                                    })
+                                                    $('#dl_seo_html_format').hide();
+                                                    $('#a_seo_build').hide();
+                                                    $('#dl_seo_uphtml_after').hide();
+                                                    $('#seo_right_uphtml').hide();
+                                                    // $('#tab_base_html').attr('style','display:none!important');
+                                                    layer.msg(res.msg, {icon: 1, time: 1500});
+                                                } else {
+                                                    layer.alert(res.data.msg, {icon: 5, title: false});
+                                                }
+                                            },
+                                            error: function(e){
+                                                layer.closeAll();
+                                                layer.alert(e.responseText, {icon: 5, title:false});
+                                            }
+                                        })
+                                    }
+                                );
+                            }
+                        }
+                    },
+                    error: function(e){
+                        layer.closeAll();
+                        layer.alert(e.responseText, {icon: 5, title:false});
+                    }
+                });
+            }
+        });
+
+        $('input[name=seo_rewrite_format]').click(function(){
+            var seo_rewrite_format = $(this).val();
+            if (1 == seo_rewrite_format || 3 == seo_rewrite_format) {
+                $('#dl_seo_rewrite_view_format').show();
+            } else {
+                $('#dl_seo_rewrite_view_format').hide();
+            }
+        });
+
+        $('#seo_html_arcdir').keyup(function(){
+            var seo_html_arcdir = $(this).val();
+            if (seo_html_arcdir != '') {
+                if (seo_html_arcdir.substr(0,1) == '/') seo_html_arcdir = seo_html_arcdir.substr(1);
+                seo_html_arcdir = '/' + seo_html_arcdir;
+                $('#tips_seo_html_arcdir_1').show();
+                $('#tips_seo_html_arcdir_2').html(seo_html_arcdir);
+            } else {
+                $('#tips_seo_html_arcdir_1').hide();
+            }
+            $('#exp_seo_html_arcdir').html(seo_html_arcdir);
+
+            // 静态模式下，是否改变任意一项配置
+            change_html_confdata();
+        });
+
+        $('input[name="seo_force_inlet"]').click(function(){
+            if (1 == $(this).val()) {
+                layer.open({
+                    type: 2,
+                    title: false,
+                    area: ['0px', '0px'],
+                    shade: 0.0,
+                    closeBtn: 0,
+                    shadeClose: true,
+                    content: '//{$Request.host}__ROOT_DIR__/api/Rewrite/testing.html',
+                    success: function(layero, index){
+                        layer.close(index);
+                        var body = layer.getChildFrame('body', index);
+                        var content = body.html();
+                        if (content.indexOf("Congratulations on passing") == -1)
+                        {
+                            $('label[for=seo_force_inlet1]').removeClass('selected');
+                            $('#seo_force_inlet1').attr('checked','');
+                            $('label[for=seo_force_inlet0]').addClass('selected');
+                            $('#seo_force_inlet0').attr('checked','checked');
+                            layer.alert('不支持去除index.php，请<a href="javascript:void(0);" onclick="layer.closeAll();click_to_eyou_1575506523(\'https://www.eyoucms.com/plus/view.php?aid=7874\',\'去掉URL中的index.php教程\');">点击查看教程</a>', {icon: 2, title:false});
+                        }
+                    }
+                });
+            }
+        });
+
+        /**
+         * 初始化数据缓存
+         * @return {[type]} [description]
+         */
+        function init_data_cache() {
+            $.ajax({
+                url : "{:url('Seo/init_data_cache')}",
+                type: 'post',
+                data: {'_ajax': 1},
+                dataType: 'JSON',
+                success: function(res) {
+                    
+                }
+            });
+        }
+        init_data_cache();
+
+        // 自动检测隐藏index.php
+        function checkInlet() {
+            if (2 == $('input[name=seo_pseudo]:checked').val()) {
+                $('#dl_seo_force_inlet').hide();
+            }
+            layer.open({
+                type: 2,
+                title: false,
+                area: ['0px', '0px'],
+                shade: 0.0,
+                closeBtn: 0,
+                shadeClose: true,
+                content: '//{$Request.host}__ROOT_DIR__/api/Rewrite/setInlet.html',
+                success: function(layero, index){
+                    layer.close(index);
+                    var body = layer.getChildFrame('body', index);
+                    var content = body.html();
+                    if (content.indexOf("Congratulations on passing") == -1)
+                    {
+                        $('#seo_inlet').val(0);
+                        $('label[for=seo_force_inlet1]').removeClass('selected');
+                        $('#seo_force_inlet1').attr('checked','');
+                        $('label[for=seo_force_inlet0]').addClass('selected');
+                        $('#seo_force_inlet0').attr('checked','checked');
+                        if (2 != $('input[name=seo_pseudo]:checked').val()) {
+                            $('#dl_seo_force_inlet').show();
+                        }
+                        $.ajax({
+                            type : "POST",
+                            url  : "__ROOT_DIR__/index.php?m=api&c=Rewrite&a=setInlet",
+                            data : {seo_inlet:0,_ajax:1},
+                            dataType : "JSON",
+                            success: function(res) {
+
+                            }
+                        });
+                    } else {
+                        $('#seo_inlet').val(1);
+                        $('#dl_seo_force_inlet').hide();
+                        $('label[for=seo_force_inlet0]').removeClass('selected');
+                        $('#seo_force_inlet0').attr('checked','');
+                        $('label[for=seo_force_inlet1]').addClass('selected');
+                        $('#seo_force_inlet1').attr('checked','checked');
+                    }
+                }
+            });
+        }
+        checkInlet();
+    });
+
+    function adsubmit(){
+        if($("input[name='seo_pseudo']:checked").val() == '2'){
+            var seo_html_arcdir = $('input[name="seo_html_arcdir"]').val();
+            if (seo_html_arcdir != '') {
+                seo_html_arcdir = seo_html_arcdir_new = seo_html_arcdir.replace('\\', '/');
+                var reg = /^([0-9a-zA-Z\_\-\/]+)$/;
+                if (seo_html_arcdir != '/' && reg.test(seo_html_arcdir)) {
+                    // 去掉最前面的斜杆
+                    if (seo_html_arcdir_new.substr(0,1) == '/') seo_html_arcdir_new = seo_html_arcdir_new.substr(1);
+                    var html_arcdir_arr = seo_html_arcdir_new.split("/");
+                    var html_arcdir_one = html_arcdir_arr[0]; // 一级路径名
+                    var seo_html_arcdir_limit = $('input[name="seo_html_arcdir_limit"]').val();
+                    var seo_html_arcdir_limit_arr = seo_html_arcdir_limit.split(",");
+                    if (seo_html_arcdir_limit_arr.indexOf(html_arcdir_one) >= 0){
+                        layer.msg('页面保存路径的目录名 '+html_arcdir_one+' 与内置禁用的重复!', {icon: 2,time: 3000});
+                        $('input[name="seo_html_arcdir"]').focus();
+                        return false;
+                    }
+                }else{
+                    showErrorMsg('页面保存路径的格式错误！');
+                    $('input[name="seo_html_arcdir"]').focus();
+                    return false;
+                }
+            }
+        }
+        layer_loading("正在处理");
+        var init_html = $('#init_html').val();
+        $.ajax({
+            url: "{:url('Seo/handle', ['_ajax'=>1])}",
+            type: 'POST',
+            dataType: 'json',
+            data: $('#handlepost').serialize(),
+            success: function(res){
+                if (1 == res.code) {
+                    if (2 == init_html || 2 != $("input[name='seo_pseudo']:checked").val()) {
+                        // layer.closeAll();
+                        layer.msg(res.msg, {icon: 1, time: 1000}, function(){
+                            if(parent.$('.left_menu_2003004').length > 0){
+                                $('.left_menu_2003004',window.parent.document).show();
+                            }
+                            window.location.href = res.url;
+                        });
+                    } else {
+                        layer.closeAll();
+                        var confirm1 = layer.confirm('配置成功，是否要生成整站页面？', {
+                                shade: layer_shade,
+                                area: ['480px', '190px'],
+                                move: false,
+                                title: '提示',
+                                btnAlign:'r',
+                                closeBtn: 3,
+                                btn: ['是','否'] ,//按钮
+                                success: function () {
+                                      $(".layui-layer-content").css('text-align', 'left');
+                                  }
+                            }, function(){
+                                var url = eyou_basefile+"?m=admin&c=Seo&a=site&lang="+__lang__;
+                                var index = layer.open({
+                                    type: 2,
+                                    shade: layer_shade,
+                                    title: '开始生成',
+                                    area: ['500px', '300px'],
+                                    fix: false, 
+                                    maxmin: false,
+                                    content: url,
+                                    end: function(layero, index){
+                                        layer.msg(res.msg, {icon: 1, time: 1000}, function(){
+                                            window.location.href = res.url;
+                                        });
+                                    }
+                                });
+                            }, function(){
+                                layer.msg(res.msg, {icon: 1, time: 1000}, function(){
+                                    window.location.href = res.url;
+                                });
+                            }
+                        );
+                    }
+                } else {
+                    layer.closeAll();
+                    layer.alert(res.msg, {icon: 5, title:false});
+                }
+            },
+            error: function(e){
+                layer.closeAll();
+                layer.alert(e.responseText, {icon: 5, title:false});
+            }
+        });
+    }
+
+    function view_exp(id)
+    {
+        $('#'+id).toggle();
+    }
+
+    function seo_build(obj)
+    {
+        var is_change_data = $('#is_change_data').val();
+        if (0 == is_change_data) {
+            window.location.href = $(obj).data('url');
+        } else {
+            $.ajax({
+                url: "{:url('Seo/handle', ['_ajax'=>1])}",
+                type: 'POST',
+                dataType: 'json',
+                data: $('#handlepost').serialize(),
+                beforeSend:function(){
+                    layer_loading('保存跳转');
+                },
+                success: function(res){
+                    layer.closeAll();
+                    if (0 == res.code) {
+                        showErrorAlert(res.msg);
+                    } else {
+                        window.location.href = $(obj).data('url');
+                    }
+                },
+                error: function(e){
+                    layer.closeAll();
+                    layer.alert(e.responseText, {icon: 5, title:false});
+                }
+            });
+        }
+    }
+</script>
+
+<div class="seo-right {if condition='2 != $config.seo_pseudo'}none{/if}" id="seo_right_uphtml">
+    <style>
+        .seo-right{
+            position: fixed;
+            top: 70px;
+            margin-top: 0px;
+    /*        top: 50%;
+            margin-top: -185px;*/
+            right: 30px;
+            width: 350px;
+            height: 280px;
+            background-color:#fff;
+            z-index:666666;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .seo-html dt.tit {
+           width: 60px;
+           padding-left:20px;
+        }   
+    </style>
+    <div class="page">
+        <form method="get" id="html_handlepost" name="form2">
+            <div class="ncap-form-default seo-html">
+                <dl class="row">
+                    <dt class="tit">
+                        <label>整站页面</label>
+                    </dt>
+                    <dd class="opt w0">       
+                        <a href="javascript:void(0);" id="up_site" class="ncap-btn ncap-btn-green">一键生成</a>
+                        <span class="err"></span>
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">
+                        <label>首页</label>
+                    </dt>
+                    <dd class="opt w0">       
+                        <a href="javascript:void(0);" id="up_index" class="ncap-btn ncap-btn-green">一键生成</a>
+                        <span class="err"></span>
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">栏目页</dt>
+                    <dd class="opt w0">
+                        <select name="html_typeid" id="html_typeid" style="width: 150px;">
+                            <option value="0">所有栏目…</option>
+                            {$select_html}
+                        </select>
+                        &nbsp;<a href="javascript:void(0);" id="up_channel" class="ncap-btn ncap-btn-green">一键生成</a>
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit">文档页</dt>
+                    <dd class="opt w0">
+                        <select name="html_arc_typeid" id="html_arc_typeid" style="width: 150px;">
+                            <option value="0">所有文档…</option>
+                            {$select_html}
+                        </select>
+                        &nbsp;<a href="javascript:void(0);" id="up_article" class="ncap-btn ncap-btn-green">一键生成</a>
+                        <p class="notic"></p>
+                    </dd>
+                </dl>
+                <dl class="row">
+                    <dt class="tit" style="width: 100%;">
+                        <a id="a_seo_build" href="javascript:void(0);" data-url="{:url('Seo/build')}" onclick="seo_build(this);">更多静态生成配置>></a>
+                    </dt>
+                </dl>
+            </div>
+        </form>
+    </div>
+    <script type="text/javascript">
+
+        function check_index_file()
+        {
+            var is_index_file = {$is_index_file|default=0};
+            if (0 == is_index_file) {
+                showErrorAlert('网站根目录缺少 index.php 文件，请拷贝该文件上传到空间里！');
+                return false;
+            }
+            return true;
+        }
+
+        $(function(){
+            
+            //生成整站
+            $("#up_site").click(function(){
+                if (!check_index_file()) {return false;}
+                $.ajax({
+                    url: "{:url('Seo/handle', ['_ajax'=>1])}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: $('#handlepost').serialize(),
+                    beforeSend:function(){
+                        layer.load(3, {shade: layer_shade});
+                    },
+                    success: function(res){
+                        layer.closeAll();
+                        if (0 == res.code) {
+                            showErrorAlert(res.msg);
+                        } else {
+                            var url = eyou_basefile+"?m=admin&c=Seo&a=site&uphtmltype=0&lang="+__lang__;
+                            var index = layer.open({type: 2,shade: layer_shade,title: '开始生成',area: ['500px', '300px'],fix: false, maxmin: false,content: url});
+                        }
+                    },
+                    error: function(e){
+                        layer.closeAll();
+                        layer.alert(e.responseText, {icon: 5, title:false});
+                    }
+                });
+            })
+
+            //生成首页
+            $("#up_index").click(function(){
+                if (!check_index_file()) {return false;}
+                $.ajax({
+                    url: "{:url('Seo/handle', ['_ajax'=>1])}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: $('#handlepost').serialize(),
+                    beforeSend:function(){
+                        layer.load(3, {shade: layer_shade});
+                    },
+                    success: function(res){
+                        if (0 == res.code) {
+                            layer.closeAll();
+                            showErrorAlert(res.msg);
+                        } else {
+                            var timestamp1 = Date.parse(new Date());
+                            $.ajax({
+                                url:__root_dir__+"/index.php?m=home&c=Buildhtml&a=buildIndex&lang="+__lang__+"&_ajax=1",
+                                type:'GET',
+                                dataType:'json',
+                                data: {},
+                                beforeSend:function(){
+                                    // layer.load(3, {shade: [0.1,'#000']});
+                                },
+                                success:function(res1){
+                                    if(res1.msg !== "" && -1 == res1.msg.indexOf('浏览')){
+                                        layer.alert(res1.msg, {icon: 5, title:false,closeBtn: 0 },function () {
+                                            layer.closeAll();
+                                        } );
+                                    }else{
+                                        layer.closeAll();
+                                        var timestamp2 = Date.parse(new Date());
+                                        var timestamp3 = (timestamp2 - timestamp1) / 1000;
+                                        if (timestamp3 < 1) timestamp3 = 1; 
+                                        layer.msg("生成完毕，共耗时：<font color='red'>"+timestamp3+"</font> 秒",{icon:1,time:2000}); 
+                                    }
+                                },
+                                complete:function(){
+                                    // layer.alert(1, {icon: 5, title:false});
+                                },
+                                error: function(e){
+                                    layer.closeAll();
+                                    showErrorAlert(e.responseText);
+                                }
+                            });
+                        }
+                    },
+                    error: function(e){
+                        layer.closeAll();
+                        showErrorAlert(e.responseText);
+                    }
+                });
+            })
+            
+            //生成栏目页
+            $("#up_channel").click(function(){
+                if (!check_index_file()) {return false;}
+                $.ajax({
+                    url: "{:url('Seo/handle', ['_ajax'=>1])}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: $('#handlepost').serialize(),
+                    beforeSend:function(){
+                        layer.load(3, {shade: layer_shade});
+                    },
+                    success: function(res){
+                        layer.closeAll();
+                        if (0 == res.code) {
+                            showErrorAlert(res.msg);
+                        } else {
+                            var typeid = $("#html_typeid").val();     //栏目id
+                            var url = eyou_basefile+"?m=admin&c=Seo&a=channel&typeid="+typeid+"&lang="+__lang__;
+                            var index = layer.open({type: 2,shade: layer_shade,title: '开始生成',area: ['500px', '300px'],fix: false, maxmin: false,content: url});
+                        }
+                    },
+                    error: function(e){
+                        layer.closeAll();
+                        showErrorAlert(e.responseText);
+                    }
+                });
+            })
+
+            //生成文章页
+            $("#up_article").click(function(){
+                if (!check_index_file()) {return false;}
+                $.ajax({
+                    url: "{:url('Seo/handle', ['_ajax'=>1])}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: $('#handlepost').serialize(),
+                    beforeSend:function(){
+                        layer.load(3, {shade: layer_shade});
+                    },
+                    success: function(res){
+                        layer.closeAll();
+                        if (0 == res.code) {
+                            showErrorAlert(res.msg);
+                        } else {
+                            var typeid = $("#html_arc_typeid").val();     //栏目id
+                            var url = eyou_basefile+"?m=admin&c=Seo&a=article&typeid="+typeid+"&lang="+__lang__;
+                            var index = layer.open({type: 2,shade: layer_shade,title: '开始生成',area: ['500px', '300px'],fix: false, maxmin: false,content: url});
+                        }
+                    },
+                    error: function(e){
+                        layer.closeAll();
+                        showErrorAlert(e.responseText);
+                    }
+                });
+            })
+        })
+    </script>
+</div>
+
+{include file="public/footer" /}

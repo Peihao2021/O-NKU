@@ -1,0 +1,29 @@
+{include file="header.htm" /}
+
+<body class="bodystyle" style="cursor: default; -moz-user-select: inherit; min-width:400px;">
+<div class="page" style="min-width: 400px;">
+    <div id="error_notic_show" hidden style="font-size: 16px;">
+
+    </div>
+</div>
+<script type="text/javascript">
+    var parentObj = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+    layer_loading('正在处理');
+    $.ajax({
+        url: "{:weapp_url('Systemdoctor/Systemdoctor/check_permission')}",
+        data: {_ajax:1},
+        type: 'post',
+        dataType: 'json',
+        success: function (res) {
+            layer.closeAll();
+            if ('1' == res.code) {
+                var _parent = parent;
+                _parent.layer.close(parentObj);
+                _parent.layer.msg(res.msg, {shade: 0.3, time: 1000});
+            } else {
+                $("#error_notic_show").show().html(res.msg);
+            }
+        }
+    });
+</script>
+{include file="footer.htm" /}

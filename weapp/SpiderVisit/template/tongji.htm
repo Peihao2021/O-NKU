@@ -1,0 +1,136 @@
+{include file="header.htm" /}
+<body class="bodystyle" style="overflow-y: scroll; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page" style="min-width: auto;">
+    {include file="bar.htm" /}
+    <div class="flexigrid">
+        <div class="mDiv">
+            <div class="ftitle">
+                <h3>蜘蛛统计</h3>
+                <h5>(共{$pageObj->totalRows}条数据，统计安装至今的总量)</h5>
+            </div>
+            <div title="刷新数据" class="pReload"><i class="fa fa-refresh"></i></div>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th class="sign w10" axis="col0">
+                            <div class="tc"></div>
+                        </th>
+                        <th abbr="ac_id" axis="col4">
+                            <div style="text-align: left; padding-left: 10px;" class="">蜘蛛引擎</div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="w120">
+                            <div class="tc">当天</div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="w120">
+                            <div class="tc">昨天</div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="w120">
+                            <div class="tc">本周</div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="w120">
+                            <div class="tc">上一周</div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="w120">
+                            <div class="tc">最近30天</div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="w120">
+                            <div class="tc">访问总量</div>
+                        </th>
+                        <th abbr="article_title" axis="col3" class="w120">
+                            <div class="tc">更新时间</div>
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table style="width: 100%">
+                    <tbody>
+                    {empty name="list"}
+                        <tr>
+                            <td class="no-data" align="center" axis="col0" colspan="50">
+                                <i class="fa fa-exclamation-circle"></i>没有符合条件的记录
+                            </td>
+                        </tr>
+                    {else/}
+                        {volist name="list" id="vo"}
+                        <tr>
+                            <td class="sign">
+                                <div class="w10 tc"></div>
+                            </td>
+                            <td class="" style="width: 100%;">
+                                <div class="tl" style="padding-left: 10px;">
+                                    {$spiderTypes[$vo['spider']]|default='未知'}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w120 tc">
+                                    {$vo.day}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w120 tc">
+                                    {$vo.pre_day}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w120 tc">
+                                    {$vo.week}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w120 tc">
+                                    {$vo.pre_week}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w120 tc">
+                                    {$vo.month}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w120 tc">
+                                    {$vo.total}
+                                </div>
+                            </td>
+                            <td class="">
+                                <div class="w120 tc">
+                                    {$vo.update_time|MyDate='Y-m-d',###}
+                                </div>
+                            </td>
+                        </tr>
+                        {/volist}
+                    {/empty}
+                    </tbody>
+                </table>
+            </div>
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+        <div class="tDiv">
+            <div class="tDiv2">
+            </div>
+            <div style="clear:both"></div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        // 表格行点击选中切换
+        $('#flexigrid > table>tbody >tr').click(function(){
+            $(this).toggleClass('trSelected');
+        });
+
+        // 点击刷新数据
+        $('.fa-refresh').click(function(){
+            location.href = location.href;
+        });
+    });
+</script>
+{include file="footer.htm" /}

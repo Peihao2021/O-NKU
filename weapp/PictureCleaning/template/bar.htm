@@ -1,0 +1,29 @@
+
+    <div class="fixed-bar">
+        <div class="item-title">
+            <a class="back_xin" href="{if condition="'PictureCleaning' == $Request.param.sc && 'index' == $Request.param.sa"}{:url("Weapp/index")}{else /}{:weapp_url("PictureCleaning/PictureCleaning/index")}{/if}" title="返回"><i class="iconfont e-fanhui"></i></a>
+            <div class="subject">
+                <h3>{$weappInfo['name']}</h3>
+                <h5></h5>
+            </div>
+            <ul class="tab-base nc-row">
+                <li>
+                {eq name="$Request.param.sa" value="index"}
+                    <a href="javascript:void(0);" class="tab current"><span>扫描清理</span></a>
+                {else /}
+                    <a href="{:weapp_url("PictureCleaning/PictureCleaning/index")}" class="tab"><span>扫描清理</span></a>
+                {/eq}
+                </li>
+
+                <li>
+                {range name="$Request.param.sa" value="lists"}
+                    <a href="javascript:void(0);" class="tab current"><span>回收站</span></a>
+                {else /}
+                    <a href="{:weapp_url("PictureCleaning/PictureCleaning/lists")}" class="tab"><span>回收站</span></a>
+                {/range}
+                </li>
+
+               
+            </ul>
+        </div>
+    </div>

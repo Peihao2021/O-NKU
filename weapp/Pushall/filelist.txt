@@ -1,0 +1,5 @@
+application/plugins/controller/Pushall.php
+application/plugins/logic/PushallLogic.php
+application/plugins/model/Pushall.php
+template/plugins/pushall
+weapp/Pushall

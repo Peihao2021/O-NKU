@@ -1,0 +1,37 @@
+<div class="sidebar-second ">
+    <ul>
+        <li class="sidebar-second-title">会员中心</li>
+
+        {eq name="'Member@users_index'|is_check_access" value="1"}
+        <li>
+            <a {if condition="in_array($Think.const.ACTION_NAME, ['users_index','users_edit'])"}class="active"{/if} href='{:url("Member/users_index")}'>会员列表</a>
+        </li>
+        {/eq}
+
+        {eq name="'Member@level_index'|is_check_access" value="1"}
+        <li>
+            <a {if condition="in_array($Request.action, ['level_index','level_add','level_edit'])"}class="active"{/if} href='{:url("Member/level_index")}'>会员级别</a>
+        </li>
+        {/eq}
+
+        {eq name="'Member@attr_index'|is_check_access" value="1"}
+        <li>
+            <a {if condition="in_array($Request.action, ['attr_index','attr_add','attr_edit'])"}class="active"{/if} href='{:url("Member/attr_index")}'>会员属性</a>
+        </li>
+        {/eq}
+
+        {eq name="'Member@users_config'|is_check_access" value="1"}
+        <li>
+            <a {if condition="in_array($Request.action, ['users_config'])"}class="active"{/if} href='{:url("Member/users_config")}'>功能配置</a>
+        </li>
+        {/eq}
+                
+        {if condition="$php_servicemeal > 1"}
+            {eq name="'UsersScore@conf'|is_check_access" value="1"}
+            <li>
+                <a {if condition="in_array($Think.const.CONTROLLER_NAME, ['UsersScore'])"}class="active"{/if} href='{:url("UsersScore/conf")}'>积分管理</a>
+            </li>
+            {/eq}
+        {/if}
+    </ul>
+</div>

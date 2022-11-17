@@ -1,0 +1,202 @@
+{include file="public/layout" /}
+<body class="bodystyle" style="overflow-y: scroll; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+{include file="member/left" /}
+<div class="page" style="min-width:auto;margin-left:100px;">
+    <!-- <div class="fixed-bar">
+        <div class="item-title">
+            <ul class="tab-base nc-row">
+                {eq name="'Member@attr_index'|is_check_access" value="1"}
+                <li>
+                    <a {if condition="in_array($Request.action, ['attr_index','attr_add','attr_edit'])"}class="current"{/if} href='{:url("Member/attr_index")}'>
+                        <span>会员属性</span>
+                    </a>
+                </li>
+                {/eq}
+            </ul>
+        </div>
+    </div> -->
+    <div class="flexigrid">
+        <!-- 操作说明 -->
+        <div id="explanation" class="explanation" style="color: rgb(44, 188, 163); background-color: rgb(237, 251, 248); width: 99%; height: 100%;">
+            <div id="checkZoom" class="title"><i class="fa fa-lightbulb-o"></i>
+                <h4 title="提示相关设置操作时应注意的要点">提示</h4>
+                <span title="收起提示" id="explanationZoom" style="display: block;"></span>
+            </div>
+            <ul>
+                <li>必填：只针对前台的会员属性有效。</li>
+            </ul>
+        </div>
+        <br/>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0" style="width: 100%">
+                   <thead>
+                    <tr>
+                        
+                        <th abbr="article_title" axis="col3" class="w40">
+                            <div class="tc">ID</div>
+                        </th>
+                        <th abbr="ac_id" axis="col4">
+                            <div class="text-l10">标题</div>
+                        </th>
+                        <th abbr="article_time" axis="col4" class="w150">
+                            <div class="tc">类型</div>
+                        </th>
+                        <th abbr="ac_id" axis="col4" class="w80">
+                            <div class="tc">注册表单</div>
+                        </th>
+                        <th axis="col1" class="w120">
+                            <div class="tc">操作</div>
+                        </th>
+                        <th abbr="article_time" axis="col6" class="w60">
+                            <div class="tc">排序</div>
+                        </th>
+                    </tr>
+                    </thead> 
+                </table>
+            </div>
+        </div>
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table style="width: 100%">
+                    <tbody>
+                    {empty name="info"}
+                        <tr>
+                            <div class="no_row">
+                                <div class="no_pic"><img src="__SKIN__/images/null-data.png"></div>
+                            </div>
+                        </tr>
+                    {else/}
+                        {foreach name="info" item="vo" key="k" }
+                        <tr>
+                            
+                            <td class="sort">
+                                <div class="w40 tc">{$vo.para_id}</div>
+                            </td>
+                            <td style="width: 100%">
+                                <div class="text-l10">
+                                    {eq name="'Member@attr_edit'|is_check_access" value="1"}
+                                        <a href="javascript:void(0);" data-href="{:url('Member/attr_edit',array('id'=>$vo['para_id']))}" onclick="openFullframe(this, '会员中心 - 编辑属性');">{$vo.title}</a>
+                                    {else /}
+                                        {$vo.title}
+                                    {/eq}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="w150 tc">
+                                   {$vo.dtypetitle}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="w80 tc">
+                                    {if condition='$vo.is_reg == 1'}
+                                        <span class="yes" {eq name="$Think.const.CONTROLLER_NAME.'@edit'|is_check_access" value="1"}onClick="changeTableVal('users_parameter','para_id','{$vo.para_id}','is_reg',this);"{/eq}><i class="fa fa-check-circle"></i>是</span>
+                                    {else /}
+                                        <span class="no" {eq name="$Think.const.CONTROLLER_NAME.'@edit'|is_check_access" value="1"}onClick="changeTableVal('users_parameter','para_id','{$vo.para_id}','is_reg',this);"{/eq}><i class="fa fa-ban"></i>否</span>
+                                    {/if}
+                                </div>
+                            </td>
+                            <td class="operation">
+                                <div class="w120 tc">
+                                    {eq name="'Member@attr_edit'|is_check_access" value="1"}
+                                    <a href="javascript:void(0);" data-href="{:url('Member/attr_edit',array('id'=>$vo['para_id']))}" class="btn blue" onclick="openFullframe(this, '会员中心 - 编辑属性');">编辑</a>
+                                    {/eq}
+                                    {eq name="$vo.is_system" value="0"}
+                                        {eq name="'Member@attr_del'|is_check_access" value="1"}
+											<i></i>
+                                            <a class="btn red"  href="javascript:void(0);" data-url="{:url('Member/attr_del')}" data-title="{$vo.title}" data-id="{$vo.para_id}" onClick="usersdel(this);">删除</a>
+                                        {/eq}
+                                        {else /}
+                                        {eq name="'Member@attr_del'|is_check_access" value="1"}
+                                        	<i></i>
+                                            <a class="btn grey"  href="javascript:void(0);">删除</a>
+                                        {/eq}
+                                    {/eq}
+                                </div>
+                            </td>
+                             <td class="sort">
+                                <div class="w60 tc">
+                                    {eq name="'Member@edit'|is_check_access" value="1"}
+                                    <input class="tc" type="text" onchange="changeTableVal('users_parameter','para_id','{$vo.para_id}','sort_order',this);"  size="4"  value="{$vo.sort_order}" />
+                                    {else /}
+                                    {$vo.sort_order}
+                                    {/eq}
+                                </div>
+                            </td>
+                        </tr>
+                        {/foreach}
+                    {/empty}
+                    </tbody>
+                </table>
+            </div>
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+        <div class="tDiv">
+            <div class="tDiv2">
+                {eq name="'Member@attr_add'|is_check_access" value="1"}
+                <div class="fbutton" >
+                    <a href="javascript:void(0);" data-href="{:url('Member/attr_add')}" class="layui-btn layui-btn-primary" onclick="openFullframe(this, '会员中心 - 新增属性');">
+                            <span class="red">新增属性</span>
+                    </a>
+                </div>
+                {/eq}
+				
+            </div>
+            <div style="clear:both"></div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        // 表格行点击选中切换
+        $('#flexigrid > table>tbody >tr').click(function(){
+            $(this).toggleClass('trSelected');
+        });
+
+        // 点击刷新数据
+        $('.fa-refresh').click(function(){
+            location.href = location.href;
+        });
+    });
+
+    // 删除
+    function usersdel(obj){
+        layer.confirm('确认彻底删除？该属性的数据将一起清空。', {
+            shade: layer_shade,
+            area: ['480px', '190px'],
+            move: false,
+            title: '提示',
+            btnAlign:'r',
+            closeBtn: 3,
+            btn: ['确定','取消'] ,//按钮
+            success: function () {
+                  $(".layui-layer-content").css('text-align', 'left');
+              }
+        }, function(){
+            layer_loading('正在处理');
+            // 确定
+            $.ajax({
+                type : 'post',
+                url : $(obj).attr('data-url'),
+                data : {del_id:$(obj).attr('data-id'),_ajax:1},
+                dataType : 'json',
+                success : function(data){
+                    layer.closeAll();
+                    if(data.code == 1){
+                        layer.msg(data.msg, {icon: 1});
+                        window.location.reload();
+                    }else{
+                        layer.alert(data.msg, {icon: 2, title:false});
+                    }
+                }
+            })
+        }, function(index){
+            layer.close(index);
+        });
+        return false;
+    }
+</script>
+
+{include file="public/footer" /}
