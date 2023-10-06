@@ -1,3 +1,5 @@
+# Due to the lack of fund from the University, we are no longer able to support the database and team management. The website will be closed permanently. 
+
 # Welcome to O-NKU!
 ## [www.onku.ink](www.onku.ink)
 ### GOAL: 
